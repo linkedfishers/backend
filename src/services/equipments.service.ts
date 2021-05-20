@@ -189,17 +189,20 @@ class EquipmentService {
     }
 
     public async getEquipment(id: string): Promise<Equipment> {
-        const eq = await this.equipments.findById(id);
+        const eq = await this.equipments.findById(id)
+            .populate('owner', 'fullName slug profilePicture');
         return eq;
     }
 
     public async getBoat(id: string): Promise<Boat> {
-        const boat = await this.boats.findById(id);
+        const boat = await this.boats.findById(id)
+            .populate('owner', 'fullName slug profilePicture');
         return boat;
     }
 
     public async getHebergement(id: string): Promise<Hebergement> {
-        const hebergement = await this.hebergements.findById(id);
+        const hebergement = await this.hebergements.findById(id)
+            .populate('owner', 'fullName slug profilePicture');
         return hebergement;
     }
 }
