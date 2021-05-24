@@ -6,6 +6,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: "Full name can't be empty",
   },
+  firstName: {
+    type: String,
+    required: false,
+  },
+  lastName: {
+    type: String,
+    required: false,
+  },
   email: String,
   slug: {
     type: String,
@@ -53,6 +61,10 @@ const userSchema = new mongoose.Schema({
   country: String,
   activated: Boolean,
   wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hebergement' }],
+  googleId: {
+    type: String,
+    required: false,
+  },
 });
 
 userSchema.set('timestamps', true);

@@ -112,6 +112,23 @@ class AuthService {
     return tokenData;
   }
 
+  public async loginWithGoogle(userData: User): Promise<TokenData> {
+    if (isEmptyObject(userData)) throw new HttpException(400, 'Missing credentials');
+    console.log(userData)
+    let user: User = await this.users.findOne({ googleId: userData.googleId });
+    if (!user) {
+      const u = new this.users({ ...userData });
+      u.slug = slugify(u.fullName);
+      u.activated = true;
+      if (this.users.exists({ slug: u.slug })) {
+        u.slug = u.slug + shortid.generate();
+      }
+      user = await u.save();
+    }
+    const tokenData = this.createToken(user);
+    return tokenData;
+  }
+
   public async verifyActivationToken(token: string): Promise<User> {
     const user: User = await this.users.findOne({ confirmationToken: token });
     if (!user || user.activated) {

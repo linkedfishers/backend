@@ -1,6 +1,9 @@
 export class User {
   _id: string;
   fullName: string;
+  firstName: string;
+  lastName: string;
+  googleId: string;
   slug: string;
   email: string;
   phone: string;
