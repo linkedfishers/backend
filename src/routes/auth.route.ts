@@ -26,6 +26,8 @@ class AuthRoute implements Route {
     this.router.get(`${this.path}/verify-password-token/:token`, this.authController.verifyResetPasswordToken);
     this.router.post(`${this.path}/reset-password`, this.authController.resetPassword);
 
+    this.router.post(`${this.path}/google`, this.authController.logInWithGoogle)
+
   }
 }
 

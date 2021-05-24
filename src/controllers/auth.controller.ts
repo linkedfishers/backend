@@ -28,6 +28,16 @@ class AuthController {
     }
   };
 
+  public logInWithGoogle = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userData = req.body;
+      const tokenData: TokenData = await this.authService.loginWithGoogle(userData);
+      res.status(200).json({ data: tokenData, message: 'logged in with google' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userData: User = req.user;
