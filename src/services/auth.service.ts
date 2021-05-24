@@ -29,14 +29,14 @@ class AuthService {
     u.confirmationToken = uuidv4() + randomString(60) + shortid.generate();
     u.activated = false;
 
-    let url = `http://linkedfishers.com/activate/${u.confirmationToken}`;
+    const url = `http://linkedfishers.com/activate/${u.confirmationToken}`;
     try {
       await this.sendConfirmationEmail(u, url);
     } catch (err) {
       if (isEmptyObject(userData)) throw new HttpException(500, err);
     }
     const createUserData: User = await u.save();
-    return "Sent confirmation mail";
+    return 'Sent confirmation mail';
   }
 
   public async requestPasswordReset(email: string) {
@@ -44,40 +44,43 @@ class AuthService {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     const resetPasswordToken = randomString(60) + shortid.generate() + uuidv4();
-    const user = await this.users.findOneAndUpdate({ email: email }, {
-      $set: {
-        resetPasswordToken: resetPasswordToken,
-        resetPasswordExpires: tomorrow
-      }
-    });
+    const user = await this.users.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          resetPasswordToken: resetPasswordToken,
+          resetPasswordExpires: tomorrow,
+        },
+      },
+    );
 
     if (!user) {
       throw new HttpException(400, 'No user with this email');
     }
 
-    let url = `http://linkedfishers.com/reset-password/${resetPasswordToken}`;
+    const url = `http://linkedfishers.com/reset-password/${resetPasswordToken}`;
     this.sendPasswordResetEmail(user, url);
-    return "Sent Reset password mail";
+    return 'Sent Reset password mail';
   }
 
   public async verifyResetPasswordToken(token: string): Promise<User> {
     if (!token) {
-      throw new HttpException(409, "Missing token!");
+      throw new HttpException(409, 'Missing token!');
     }
-    let user: User = await this.users.findOne({ resetPasswordToken: token });
+    const user: User = await this.users.findOne({ resetPasswordToken: token });
     if (!user) {
-      throw new HttpException(409, "Invalid password token");
+      throw new HttpException(409, 'Invalid password token');
     }
     if (user.resetPasswordExpires < new Date()) {
-      throw new HttpException(409, "Token expired");
+      throw new HttpException(409, 'Token expired');
     }
-    return user
+    return user;
   }
 
   public async resetPassword(token: string, newPassword: string) {
     let user: User = await this.verifyResetPasswordToken(token);
     if (!user) {
-      throw new HttpException(409, "Token expired");
+      throw new HttpException(409, 'Token expired');
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user = await this.users.findByIdAndUpdate(user._id, {
@@ -85,9 +88,9 @@ class AuthService {
         password: hashedPassword,
       },
       $unset: {
-        resetPasswordExpires: "",
-        resetPasswordToken: ""
-      }
+        resetPasswordExpires: '',
+        resetPasswordToken: '',
+      },
     });
     const tokenData = this.createToken(user);
     return tokenData;
@@ -110,19 +113,19 @@ class AuthService {
   }
 
   public async verifyActivationToken(token: string): Promise<User> {
-    let user: User = await this.users.findOne({ confirmationToken: token });
+    const user: User = await this.users.findOne({ confirmationToken: token });
     if (!user || user.activated) {
-      throw new HttpException(409, "Invalid confirmation token");
+      throw new HttpException(409, 'Invalid confirmation token');
     }
     await this.users.findByIdAndUpdate(user._id, { $set: { activated: true }, $unset: { confirmationToken: 1 } });
-    return user
+    return user;
   }
 
   public async logout(userData: User): Promise<User> {
-    if (isEmptyObject(userData)) throw new HttpException(400, "Invalid user");
+    if (isEmptyObject(userData)) throw new HttpException(400, 'Invalid user');
 
     const findUser: User = await this.users.findOne({ email: userData.email });
-    if (!findUser) throw new HttpException(409, "User not found");
+    if (!findUser) throw new HttpException(409, 'User not found');
 
     return findUser;
   }
@@ -138,19 +141,19 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user = await this.users.findByIdAndUpdate(user._id, {
       $set: {
-        password: hashedPassword
-      }
+        password: hashedPassword,
+      },
     });
     const tokenData = this.createToken(user);
     return tokenData;
   }
 
   public async updateUser(userId: string, userData: User): Promise<TokenData> {
-    if (isEmptyObject(userData)) throw new HttpException(400, "Missing user data");
-    if (userId != userData._id) throw new HttpException(401, "Unauthorized");
+    if (isEmptyObject(userData)) throw new HttpException(400, 'Missing user data');
+    if (userId != userData._id) throw new HttpException(401, 'Unauthorized');
 
     if (await this.users.exists({ $and: [{ email: userData.email }, { _id: { $ne: userId } }] })) {
-      throw new HttpException(400, "Email already exists!");
+      throw new HttpException(400, 'Email already exists!');
     }
 
     if (userData.slug) {
@@ -158,11 +161,11 @@ class AuthService {
     }
 
     if (await this.users.exists({ $and: [{ slug: userData.slug }, { _id: { $ne: userId } }] })) {
-      throw new HttpException(400, "user url already exists!");
+      throw new HttpException(400, 'user url already exists!');
     }
 
     const user: User = await this.users.findByIdAndUpdate(userId, userData, { new: true }).select('-__v -password');
-    if (!user) throw new HttpException(409, "User not found");
+    if (!user) throw new HttpException(409, 'User not found');
 
     const tokenData = this.createToken(user);
     return tokenData;
@@ -170,11 +173,12 @@ class AuthService {
 
   public createToken(user: User): TokenData {
     const dataStoredInToken: DataStoredInToken = {
-      _id: user._id, profilePicture: user.profilePicture,
+      _id: user._id,
+      profilePicture: user.profilePicture,
       fullName: user.fullName,
       role: user.role,
       language: user.language,
-      slug: user.slug
+      slug: user.slug,
     };
     const secret: string = process.env.JWT_SECRET;
     const expiresIn: number = 60 * 60 * 60;
@@ -187,32 +191,31 @@ class AuthService {
   }
 
   private async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
-    var smtpConfig = {
+    const smtpConfig = {
       host: 'ssl0.ovh.net',
       port: 465,
       secure: true, // use SSL
       requireTLS: true,
       auth: {
         user: 'contact@linkedfishers.com',
-        pass: 'AzertY12345'
+        pass: 'AzertY12345',
       },
       logger: true,
     };
 
-    var transporter = nodemailer.createTransport(smtpConfig);
-    var mailOptions = {
+    const transporter = nodemailer.createTransport(smtpConfig);
+    const mailOptions = {
       from: 'contact@linkedfishers.com',
       to: emailAdress,
       subject: subject,
-      html: content
+      html: content,
     };
     return new Promise((resolve, reject) => {
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-          console.log("error is " + error);
+          console.log('error is ' + error);
           reject(error);
-        }
-        else {
+        } else {
           console.log('Email sent: ' + info.response);
           resolve(true);
         }
@@ -221,7 +224,7 @@ class AuthService {
   }
 
   private async sendConfirmationEmail(user: User, url: string): Promise<any> {
-    let html = `
+    const html = `
     <center>
     <td>
     <table align="center" bgcolor="#FFFFFF" class="m_444611345908390707row" style="margin:0 auto">
@@ -309,12 +312,12 @@ class AuthService {
 </td>
 </center>
 
-    `
-    return this.sendEmail(user.email, html, "Please activate your Linked Fishers account");
+    `;
+    return this.sendEmail(user.email, html, 'Please activate your Linked Fishers account');
   }
 
   private async sendPasswordResetEmail(user: User, url: string): Promise<any> {
-    let html = `
+    const html = `
     <center>
     <td>
     <table align="center" bgcolor="#FFFFFF" class="m_444611345908390707row" style="margin:0 auto">
@@ -402,11 +405,9 @@ class AuthService {
 </td>
 </center>
 
-    `
-    return this.sendEmail(user.email, html, "Password reset");
+    `;
+    return this.sendEmail(user.email, html, 'Password reset');
   }
-
-
 }
 
 export default AuthService;

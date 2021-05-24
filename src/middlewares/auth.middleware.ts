@@ -29,7 +29,6 @@ async function authMiddleware(req: RequestWithUser, res: Response, next: NextFun
   } catch (error) {
     next(new HttpException(401, 'Wrong authentication token'));
   }
-
 }
 
 export default authMiddleware;
