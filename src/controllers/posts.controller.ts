@@ -124,6 +124,31 @@ class PostController {
             next(error);
         }
     };
+  public updatePost = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const postId: string = req.params.id;
+      const postData = req.body;
+      const post2: Post = await this.postService.findPostById(postId)
+      post2.content = postData.content;
+      const post: Post = await this.postService.updatePost(post2, postId);
+      res.status(201).json({ data: post, message: 'Updated post' });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+  public updateComment = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const commentId: string = req.params.id;
+      const commentData = req.body;
+      const comment: Comment = await this.postService.updateComment(commentData, commentId);
+      res.status(201).json({ data: comment, message: 'Updated comment' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default PostController;

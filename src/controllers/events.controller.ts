@@ -134,6 +134,26 @@ class EventController {
             next(error);
         }
     }
+    
+    public deleteEvent = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            let id = req.params.id;
+            const event: Event = await this.eventService.deleteEvent(id);
+            res.status(200).json({ data: event });
+        } catch (error) {
+            next(error);
+        }
+    }
+    public updateEvent = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const eventId: string = req.params.id;
+            const eventData = req.body;
+            const event: Event = await this.eventService.updateEvent(eventData, eventId);
+            res.status(201).json({ data: event, message: 'Updated event' });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default EventController

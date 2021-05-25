@@ -109,13 +109,31 @@ class PostService {
         });
         return post;
     }
+    public async updatePost(postData: Post, postId): Promise<Post> {
+        if (isEmptyObject(postData) || !isValidObjectId(postData._id)) {
+            throw new HttpException(400, "Cannot update post");
+        }
+        return postModel.findByIdAndUpdate(postId, postData)
+    }
 
     public async deleteComment(commentId: string, author: User): Promise<Comment> {
         const comment: Comment = await commentModel.findOneAndDelete({
             _id: commentId,
             author
         });
+        const post: Post = await postModel.findByIdAndUpdate(comment.post, {
+            $inc: {
+                comments: -1
+            }
+        });
         return comment;
+    }
+
+    public async updateComment(commentData: Comment, commentId): Promise<Comment> {
+        if (isEmptyObject(commentData) || !isValidObjectId(commentData._id)) {
+            throw new HttpException(400, "Cannot update comment");
+        }
+        return commentModel.findByIdAndUpdate(commentId, commentData)
     }
 
     public async findCommentsByPost(id: string, count: number): Promise<Comment[]> {

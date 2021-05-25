@@ -98,6 +98,11 @@ class EventService {
         return events;
     }
 
+    public async deleteEvent(id: string): Promise<Event> {
+        const eq:Event = await eventModel.findByIdAndDelete(id);
+        return eq;
+    }
+
     public async findEventsSorted(limit: number, skip: number, sort: string): Promise<{ events: Event[], count: number }> {
         //sort = [ startDate || createdAt || going || comments ]
         let count: number = await eventModel.countDocuments({ endDate: { $gte: new Date() } });
@@ -144,6 +149,10 @@ class EventService {
                 break;
         }
         return { events, count };
+    }
+    public async updateEvent(eventData, eventId): Promise<Event> {
+        //TODO : delete old image if updated
+        return await eventModel.findByIdAndUpdate(eventData, eventId);
     }
 }
 

@@ -51,6 +51,8 @@ class EventsRoute implements Route {
     this.router.put(`${this.path}/remove-going/eventId`, authMiddleware, this.eventController.removeGoing);
     this.router.put(`${this.path}/remove-interested/eventId`, authMiddleware, this.eventController.removeInterested);
     //TODO : Add event comments...
+    this.router.delete(`${this.path}/:id`, authMiddleware, this.eventController.deleteEvent);
+    this.router.put(`${this.path}/:id`, authMiddleware, this.eventController.updateEvent);
   }
 }
 

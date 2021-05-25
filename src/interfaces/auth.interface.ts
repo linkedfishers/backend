@@ -4,6 +4,8 @@ import { User } from './users.interface';
 export interface DataStoredInToken {
   _id: string;
   fullName: string;
+  firstName: string;
+  lastName: string;
   profilePicture: string;
   role: string;
   language: string;
