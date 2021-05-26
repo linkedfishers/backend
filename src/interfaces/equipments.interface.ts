@@ -13,6 +13,15 @@ export class EquipmentType {
   _id: string;
   name: string;
   icon: string;
+  description: string;
+  items: any[];
+}
+
+export class BoatType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
   items: any[];
 }
 
@@ -26,6 +35,15 @@ export class Boat {
   price: number;
   position: any;
   adress: string;
+  type: BoatType;
+}
+
+export class HebergementType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
+  items: any[];
 }
 
 export class Hebergement {
@@ -38,6 +56,7 @@ export class Hebergement {
   adress: string;
   price: number;
   position: any;
+  type: HebergementType;
 }
 
 export class Reservation {

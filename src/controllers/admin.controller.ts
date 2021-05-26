@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserDto } from '../dtos/users.dto';
 import { RequestWithFile, RequestWithUser, TokenData } from '../interfaces/auth.interface';
-import { EquipmentType } from '../interfaces/equipments.interface';
+import { EquipmentType, BoatType, HebergementType } from '../interfaces/equipments.interface';
 import { User } from '../interfaces/users.interface';
 import AdminService from '../services/admin.service';
 import EquipmentService from '../services/equipments.service';
@@ -69,11 +69,59 @@ class AdminController {
         }
     };
 
+    public addBoatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+        try {
+
+            const boatData = req.body;
+            if (req.file) {
+                boatData.icon = req.file.path.split('/').splice(1).join('/');
+            }
+            const boatType = await this.equipmentService.addBoatType(boatData);
+            res.status(200).json({ data: boatType });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public addHebergementType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+        try {
+
+            const hebergementData = req.body;
+            if (req.file) {
+                hebergementData.icon = req.file.path.split('/').splice(1).join('/');
+            }
+            const hebergementType = await this.equipmentService.addHebergementType(hebergementData);
+            res.status(200).json({ data: hebergementType });
+        } catch (error) {
+            next(error);
+        }
+    };
+
     public deleteEquipmentType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
         try {
             const equipmentTypeId: string = req.params.id;
             const equipmentType = await this.equipmentService.deleteEquipmentType(equipmentTypeId);
             res.status(200).json({ data: equipmentType });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public deleteBoatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const typeId: string = req.params.id;
+            const type = await this.equipmentService.deleteBoatType(typeId);
+            res.status(200).json({ data: type });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public deleteHebergementType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const typeId: string = req.params.id;
+            const type = await this.equipmentService.deleteHebergement(typeId);
+            res.status(200).json({ data: type });
         } catch (error) {
             next(error);
         }

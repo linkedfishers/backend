@@ -1,8 +1,21 @@
 import mongoose from 'mongoose';
-import { Boat, Equipment, EquipmentType, Hebergement, Reservation } from '../interfaces/equipments.interface';
+import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType, Reservation } from '../interfaces/equipments.interface';
 
 const equipmentTypeSchema = new mongoose.Schema({
   name: { type: String, unique: true },
+  description: { type: String, required: false },
+  icon: { type: String },
+});
+
+const boatTypeSchema = new mongoose.Schema({
+  name: { type: String, unique: true },
+  description: { type: String, required: false },
+  icon: { type: String },
+});
+
+const hebergementTypeSchema = new mongoose.Schema({
+  name: { type: String, unique: true },
+  description: { type: String, required: false },
   icon: { type: String },
 });
 
@@ -24,6 +37,8 @@ const hebergementSchema = new mongoose.Schema({
   position: {
     coordinates: { type: [Number], index: '2dsphere' },
   },
+  type: { type: mongoose.Schema.Types.ObjectId, ref: 'HebergementType', required: true },
+
 });
 
 const boatSchema = new mongoose.Schema({
@@ -36,6 +51,8 @@ const boatSchema = new mongoose.Schema({
   position: {
     coordinates: { type: [Number], index: '2dsphere' },
   },
+  type: { type: mongoose.Schema.Types.ObjectId, ref: 'BoatType', required: true },
+
 });
 
 const reservationSchema = new mongoose.Schema({
@@ -46,6 +63,7 @@ const reservationSchema = new mongoose.Schema({
   dateEnd: mongoose.Schema.Types.Date,
   status: { type: mongoose.Schema.Types.String, default: 'pending' },
 });
+
 equipmentSchema.set('timestamps', true);
 hebergementSchema.set('timestamps', true);
 boatSchema.set('timestamps', true);
@@ -53,6 +71,8 @@ reservationSchema.set('timestamps', true);
 
 const equipmentModel = mongoose.model<Equipment & mongoose.Document>('Equipment', equipmentSchema);
 const equipmentTypetModel = mongoose.model<EquipmentType & mongoose.Document>('EquipmentType', equipmentTypeSchema);
+const hebergementType = mongoose.model<HebergementType & mongoose.Document>('HebergementType', equipmentTypeSchema);
+const boatType = mongoose.model<BoatType & mongoose.Document>('BoatType', equipmentTypeSchema);
 const hebergementtModel = mongoose.model<Hebergement & mongoose.Document>('Hebergement', hebergementSchema);
 const boattModel = mongoose.model<Boat & mongoose.Document>('Boat', boatSchema);
 const reservationtModel = mongoose.model<Reservation & mongoose.Document>('Reservation', reservationSchema);
@@ -62,6 +82,8 @@ const models = {
   hebergementtModel,
   boattModel,
   reservationtModel,
+  hebergementType,
+  boatType
 };
 
 export default models;

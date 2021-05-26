@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { RequestWithFile, RequestWithUser } from '../interfaces/auth.interface';
-import { Boat, Equipment, EquipmentType, Hebergement } from '../interfaces/equipments.interface';
+import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType } from '../interfaces/equipments.interface';
 import { User } from '../interfaces/users.interface';
 import EquipmentService from '../services/equipments.service';
 
@@ -147,9 +147,27 @@ class EquipmentController {
     }
   };
 
-  public findTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+  public findEquipmentTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const types: EquipmentType[] = await this.equipmentService.findEquipmentTypes();
+      res.status(200).json({ data: types });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public findBoatTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const types: BoatType[] = await this.equipmentService.findBoatTypes();
+      res.status(200).json({ data: types });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public findHebergementTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const types: HebergementType[] = await this.equipmentService.findHebergementTypes();
       res.status(200).json({ data: types });
     } catch (error) {
       next(error);

@@ -1,6 +1,6 @@
 import { isValidObjectId } from 'mongoose';
 import HttpException from '../exceptions/HttpException';
-import { Boat, Equipment, EquipmentType, Hebergement, Reservation } from '../interfaces/equipments.interface';
+import { Boat, Equipment, EquipmentType, BoatType, HebergementType, Hebergement, Reservation } from '../interfaces/equipments.interface';
 import { User } from '../interfaces/users.interface';
 import models from '../models/equipments.model';
 import userModel from '../models/users.model';
@@ -95,11 +95,35 @@ class EquipmentService {
     return await this.equipmentTypes.find();
   }
 
+  public async findBoatTypes(): Promise<BoatType[]> {
+    return await models.boatType.find();
+  }
+
+  public async findHebergementTypes(): Promise<BoatType[]> {
+    return await models.hebergementType.find();
+  }
+
   public async addEquipmentType(equipmentType: EquipmentType): Promise<EquipmentType> {
     if (!equipmentType.name || !equipmentType.icon) {
       throw new HttpException(400, 'Missing Equipment type informations!');
     }
     const newType = new this.equipmentTypes(equipmentType);
+    return await newType.save();
+  }
+
+  public async addBoatType(boatType: BoatType): Promise<BoatType> {
+    if (!boatType.name || !boatType.icon) {
+      throw new HttpException(400, 'Missing Boat type informations!');
+    }
+    const newType = new models.boatType(boatType);
+    return await newType.save();
+  }
+
+  public async addHebergementType(hebergementType: HebergementType): Promise<HebergementType> {
+    if (!hebergementType.name || !hebergementType.icon) {
+      throw new HttpException(400, 'Missing HebergementType type informations!');
+    }
+    const newType = new models.hebergementType(hebergementType);
     return await newType.save();
   }
 
@@ -109,6 +133,22 @@ class EquipmentService {
       fs.unlinkSync('uploads/' + equipmentType.icon);
     }
     return equipmentType;
+  }
+
+  public async deleteBoatType(typeId: string): Promise<BoatType> {
+    const type = await models.boatType.findByIdAndDelete(typeId);
+    if (fs.existsSync('uploads/' + type.icon)) {
+      fs.unlinkSync('uploads/' + type.icon);
+    }
+    return type;
+  }
+
+  public async deleteHebergementType(typeId: string): Promise<BoatType> {
+    const type = await models.hebergementType.findByIdAndDelete(typeId);
+    if (fs.existsSync('uploads/' + type.icon)) {
+      fs.unlinkSync('uploads/' + type.icon);
+    }
+    return type;
   }
 
   public async addDefaultTypes() {
@@ -170,6 +210,7 @@ class EquipmentService {
   }
 
   public async updateBoat(boatData, boatId): Promise<Boat> {
+    console.log(boatData.position);
     if (boatData.position) {
       boatData.position = {
         coordinates: [Number(boatData.lat), Number(boatData.lng)],
@@ -195,17 +236,23 @@ class EquipmentService {
   }
 
   public async getEquipment(id: string): Promise<Equipment> {
-    const eq = await this.equipments.findById(id).populate('owner', 'fullName slug profilePicture');
+    const eq = await this.equipments.findById(id)
+      .populate('owner', 'fullName slug profilePicture')
+      .populate('type', 'name description');
     return eq;
   }
 
   public async getBoat(id: string): Promise<Boat> {
-    const boat = await this.boats.findById(id).populate('owner', 'fullName slug profilePicture');
+    const boat = await this.boats.findById(id)
+      .populate('owner', 'fullName slug profilePicture')
+      .populate('type', 'name description');
     return boat;
   }
 
   public async getHebergement(id: string): Promise<Hebergement> {
-    const hebergement = await this.hebergements.findById(id).populate('owner', 'fullName slug profilePicture');
+    const hebergement = await this.hebergements.findById(id)
+      .populate('owner', 'fullName slug profilePicture')
+      .populate('type', 'name description');
     return hebergement;
   }
 }

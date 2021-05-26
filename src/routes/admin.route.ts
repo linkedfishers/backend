@@ -39,7 +39,11 @@ class AdminRoute implements Route {
     this.router.delete(`${this.path}/reports/:id`, adminMiddleware, this.adminController.deleteReport);
     this.router.get(`${this.path}/overview`, adminMiddleware, this.adminController.getOverview);
     this.router.post(`${this.path}/equipment/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addEquipmentType);
+    this.router.post(`${this.path}/boat/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addBoatType);
+    this.router.post(`${this.path}/hebergement/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addHebergementType);
     this.router.delete(`${this.path}/equipment/:id`, adminMiddleware, this.adminController.deleteEquipmentType);
+    this.router.delete(`${this.path}/boat/:id`, adminMiddleware, this.adminController.deleteBoatType);
+    this.router.delete(`${this.path}/hebergement/:id`, adminMiddleware, this.adminController.deleteHebergementType);
   }
 }
 
