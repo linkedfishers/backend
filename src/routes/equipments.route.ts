@@ -73,6 +73,12 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/boat/:id`, authMiddleware, this.equipmentController.getBoat);
     this.router.get(`${this.path}/equipment/:id`, authMiddleware, this.equipmentController.getEquipment);
     this.router.get(`${this.path}/hebergement/:id`, authMiddleware, this.equipmentController.getHebergement);
+
+    //reviews
+    this.router.post(`${this.path}/boat/review`, authMiddleware, this.equipmentController.createBoatReview);
+    this.router.post(`${this.path}/hebergement/review`, authMiddleware, this.equipmentController.createHebergementReview);
+    this.router.get(`${this.path}/boat/:id/reviews`, authMiddleware, this.equipmentController.createBoatReview);
+
   }
 }
 

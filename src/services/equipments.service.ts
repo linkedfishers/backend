@@ -6,6 +6,7 @@ import models from '../models/equipments.model';
 import userModel from '../models/users.model';
 import { isEmptyObject } from '../utils/util';
 import fs from 'fs';
+import { Review } from '../interfaces/review.interface';
 class EquipmentService {
   public equipments = models.equipmentModel;
   public equipmentTypes = models.equipmentTypetModel;
@@ -210,7 +211,6 @@ class EquipmentService {
   }
 
   public async updateBoat(boatData, boatId): Promise<Boat> {
-    console.log(boatData.position);
     if (boatData.position) {
       boatData.position = {
         coordinates: [Number(boatData.lat), Number(boatData.lng)],
@@ -238,22 +238,94 @@ class EquipmentService {
   public async getEquipment(id: string): Promise<Equipment> {
     const eq = await this.equipments.findById(id)
       .populate('owner', 'fullName slug profilePicture')
-      .populate('type', 'name description');
+      .populate('type', 'name description')
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'author',
+          model: 'User',
+          select: 'fullName slug profilePicture'
+        }
+      }).lean();
     return eq;
   }
 
   public async getBoat(id: string): Promise<Boat> {
     const boat = await this.boats.findById(id)
       .populate('owner', 'fullName slug profilePicture')
-      .populate('type', 'name description');
+      .populate('type', 'name description')
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'author',
+          model: 'User',
+          select: 'fullName slug profilePicture'
+        }
+      }).lean();
+    let avgRating = 0;
+    if (boat.reviews && boat.reviews.length > 0) {
+      avgRating = boat.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= boat.reviews.length;
+    }
+    boat.rating = avgRating + 0.001;
     return boat;
   }
 
   public async getHebergement(id: string): Promise<Hebergement> {
     const hebergement = await this.hebergements.findById(id)
       .populate('owner', 'fullName slug profilePicture')
-      .populate('type', 'name description');
+      .populate('type', 'name description')
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'author',
+          model: 'User',
+          select: 'fullName slug profilePicture'
+        }
+      }).lean();
+    let avgRating = 0;
+    if (hebergement.reviews && hebergement.reviews.length > 0) {
+      avgRating = hebergement.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= hebergement.reviews.length;
+    }
+    hebergement.rating = avgRating + 0.001;
     return hebergement;
+  }
+
+  public async addBoatReview(reviewData): Promise<Review> {
+    if (isEmptyObject(reviewData)) throw new HttpException(400, "Can't create empty review");
+    const boat = await this.boats.findById(reviewData.boat).lean();
+    if (!boat) {
+      throw new HttpException(400, "Invalid boat");
+    }
+    if (reviewData.author == boat.owner._id.toString()) {
+      throw new HttpException(400, "Owner can't add review on own boat");
+    }
+    const review = new models.reviewModel(reviewData);
+    await review.save();
+    await this.boats.updateOne({ _id: reviewData.boat }, { $addToSet: { reviews: review } });
+    return review;
+  }
+
+  public async addHebergementReview(reviewData): Promise<Review> {
+    if (isEmptyObject(reviewData)) throw new HttpException(400, "Can't create empty review");
+
+    const hebergement = await this.hebergements.findById(reviewData.hebergement).lean();
+
+    if (!hebergement) {
+      throw new HttpException(400, "Invalid hebergement");
+    }
+    if (reviewData.author == hebergement.owner._id.toString()) {
+      throw new HttpException(400, "Owner can't add review on own hebergement");
+    }
+    const review = new models.reviewModel(reviewData);
+    await review.save();
+    await this.hebergements.updateOne({ _id: reviewData.hebergement }, { $addToSet: { reviews: review } });
+    return review;
   }
 }
 

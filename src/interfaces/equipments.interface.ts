@@ -8,6 +8,8 @@ export class Equipment {
   image: string;
   description: string;
   isAvailable: boolean;
+  reviews: any[];
+  rating: number;
 }
 export class EquipmentType {
   _id: string;
@@ -36,6 +38,8 @@ export class Boat {
   position: any;
   adress: string;
   type: BoatType;
+  reviews: any[]
+  rating: number;
 }
 
 export class HebergementType {
@@ -57,6 +61,8 @@ export class Hebergement {
   price: number;
   position: any;
   type: HebergementType;
+  reviews: any[]
+  rating: number;
 }
 
 export class Reservation {

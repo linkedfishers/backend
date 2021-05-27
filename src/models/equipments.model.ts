@@ -1,19 +1,8 @@
 import mongoose from 'mongoose';
 import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType, Reservation } from '../interfaces/equipments.interface';
+import { Review } from '../interfaces/review.interface';
 
 const equipmentTypeSchema = new mongoose.Schema({
-  name: { type: String, unique: true },
-  description: { type: String, required: false },
-  icon: { type: String },
-});
-
-const boatTypeSchema = new mongoose.Schema({
-  name: { type: String, unique: true },
-  description: { type: String, required: false },
-  icon: { type: String },
-});
-
-const hebergementTypeSchema = new mongoose.Schema({
   name: { type: String, unique: true },
   description: { type: String, required: false },
   icon: { type: String },
@@ -25,6 +14,7 @@ const equipmentSchema = new mongoose.Schema({
   image: String,
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: true },
   description: String,
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
 });
 
 const hebergementSchema = new mongoose.Schema({
@@ -38,7 +28,7 @@ const hebergementSchema = new mongoose.Schema({
     coordinates: { type: [Number], index: '2dsphere' },
   },
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'HebergementType', required: true },
-
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
 });
 
 const boatSchema = new mongoose.Schema({
@@ -52,8 +42,14 @@ const boatSchema = new mongoose.Schema({
     coordinates: { type: [Number], index: '2dsphere' },
   },
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'BoatType', required: true },
-
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
 });
+
+const reviewSchema = new mongoose.Schema({
+  content: String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  rating: Number
+})
 
 const reservationSchema = new mongoose.Schema({
   reservedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -68,6 +64,7 @@ equipmentSchema.set('timestamps', true);
 hebergementSchema.set('timestamps', true);
 boatSchema.set('timestamps', true);
 reservationSchema.set('timestamps', true);
+reviewSchema.set('timestamps', true);
 
 const equipmentModel = mongoose.model<Equipment & mongoose.Document>('Equipment', equipmentSchema);
 const equipmentTypetModel = mongoose.model<EquipmentType & mongoose.Document>('EquipmentType', equipmentTypeSchema);
@@ -76,6 +73,7 @@ const boatType = mongoose.model<BoatType & mongoose.Document>('BoatType', equipm
 const hebergementtModel = mongoose.model<Hebergement & mongoose.Document>('Hebergement', hebergementSchema);
 const boattModel = mongoose.model<Boat & mongoose.Document>('Boat', boatSchema);
 const reservationtModel = mongoose.model<Reservation & mongoose.Document>('Reservation', reservationSchema);
+const reviewModel = mongoose.model<Review & mongoose.Document>('Review', reviewSchema);
 const models = {
   equipmentModel,
   equipmentTypetModel,
@@ -83,7 +81,8 @@ const models = {
   boattModel,
   reservationtModel,
   hebergementType,
-  boatType
+  boatType,
+  reviewModel
 };
 
 export default models;

@@ -1,6 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { RequestWithFile, RequestWithUser } from '../interfaces/auth.interface';
 import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType } from '../interfaces/equipments.interface';
+import { Review } from '../interfaces/review.interface';
 import { User } from '../interfaces/users.interface';
 import EquipmentService from '../services/equipments.service';
 
@@ -229,6 +230,31 @@ class EquipmentController {
       next(error);
     }
   };
+
+  public createBoatReview = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const reviewData = req.body;
+      reviewData.author = user._id;
+      const review: Review = await this.equipmentService.addBoatReview(reviewData);
+      res.status(201).json({ data: review, message: 'Added review' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public createHebergementReview = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const reviewData = req.body;
+      reviewData.author = user._id;
+      const review: Review = await this.equipmentService.addHebergementReview(reviewData);
+      res.status(201).json({ data: review, message: 'Added review' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }
 
 export default EquipmentController;

@@ -193,6 +193,8 @@ class AuthService {
       _id: user._id,
       profilePicture: user.profilePicture,
       fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       role: user.role,
       language: user.language,
       slug: user.slug,
