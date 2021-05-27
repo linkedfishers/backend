@@ -114,7 +114,7 @@ class AuthService {
 
   public async loginWithGoogle(userData: User): Promise<TokenData> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Missing credentials');
-    console.log(userData)
+    console.log(userData);
     let user: User = await this.users.findOne({ googleId: userData.googleId });
     if (!user) {
       const u = new this.users({ ...userData });

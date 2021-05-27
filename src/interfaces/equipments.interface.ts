@@ -27,6 +27,27 @@ export class BoatType {
   items: any[];
 }
 
+export class Service {
+  _id: string;
+  name: string;
+  owner: User;
+  image: string;
+  description: string;
+  isAvailable: boolean;
+  price: number;
+  position: any;
+  adress: string;
+  type: BoatType;
+  reviews: any[];
+  rating: number;
+}
+export class ServiceType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
+  items: any[];
+}
 export class Boat {
   _id: string;
   name: string;
@@ -38,7 +59,7 @@ export class Boat {
   position: any;
   adress: string;
   type: BoatType;
-  reviews: any[]
+  reviews: any[];
   rating: number;
 }
 
@@ -61,7 +82,7 @@ export class Hebergement {
   price: number;
   position: any;
   type: HebergementType;
-  reviews: any[]
+  reviews: any[];
   rating: number;
 }
 
