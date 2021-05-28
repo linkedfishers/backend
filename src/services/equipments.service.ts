@@ -137,7 +137,7 @@ class EquipmentService {
   public async findServiceType(): Promise<ServiceType[]> {
     const serviceTypes: ServiceType[] = await this.serviceTypes.find();
     if (serviceTypes.length == 0) {
-      this.addDefaultTypes();
+      this.addDefaultTypesService();
     }
     return await this.serviceTypes.find();
   }
@@ -168,7 +168,7 @@ class EquipmentService {
 
   public async addServiceType(serviceType: ServiceType): Promise<ServiceType> {
     if (!serviceType.name || !serviceType.icon) {
-      throw new HttpException(400, 'Missing Boat type informations!');
+      throw new HttpException(400, 'Missing Service type informations!');
     }
     const newType = new models.serviceTypeModel(serviceType);
     return await newType.save();
@@ -205,6 +205,15 @@ class EquipmentService {
     return type;
   }
 
+
+  public async deleteServiceType(typeId: string): Promise<BoatType> {
+    const type = await models.serviceTypeModel.findByIdAndDelete(typeId);
+    if (fs.existsSync('uploads/' + type.icon)) {
+      fs.unlinkSync('uploads/' + type.icon);
+    }
+    return type;
+  }
+
   public async addDefaultTypes() {
     const types = [
       { name: 'Fishing Pole', icon: 'equipments/fishing-rod.png' },
@@ -221,9 +230,9 @@ class EquipmentService {
   }
   public async addDefaultTypesService() {
     const types = [
-      { name: 'test', icon: 'equipments/fishing-rod.png' },
-      { name: 'test', icon: 'equipments/fishing-baits.png' },
-      { name: 'test', icon: 'equipments/fishing-net.png' },
+      { name: 'test 1', icon: 'equipments/fishing-rod.png' },
+      { name: 'test 2', icon: 'equipments/fishing-baits.png' },
+      { name: 'test 3', icon: 'equipments/fishing-net.png' },
     ];
     for (let i = 0; i < types.length; i++) {
       const type = new this.serviceTypes(types[i]);

@@ -128,7 +128,17 @@ class AdminController {
   public deleteHebergementType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const typeId: string = req.params.id;
-      const type = await this.equipmentService.deleteHebergement(typeId);
+      const type = await this.equipmentService.deleteHebergementType(typeId);
+      res.status(200).json({ data: type });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public deleteServiceType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId: string = req.params.id;
+      const type = await this.equipmentService.deleteServiceType(typeId);
       res.status(200).json({ data: type });
     } catch (error) {
       next(error);
