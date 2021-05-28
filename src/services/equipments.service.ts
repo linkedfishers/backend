@@ -1,6 +1,16 @@
 import { isValidObjectId } from 'mongoose';
 import HttpException from '../exceptions/HttpException';
-import { Boat, Equipment, EquipmentType, BoatType, HebergementType, Hebergement, Reservation } from '../interfaces/equipments.interface';
+import {
+  Boat,
+  Equipment,
+  EquipmentType,
+  BoatType,
+  HebergementType,
+  Hebergement,
+  Reservation,
+  Service,
+  ServiceType,
+} from '../interfaces/equipments.interface';
 import { User } from '../interfaces/users.interface';
 import models from '../models/equipments.model';
 import userModel from '../models/users.model';
@@ -10,8 +20,10 @@ import { Review } from '../interfaces/review.interface';
 class EquipmentService {
   public equipments = models.equipmentModel;
   public equipmentTypes = models.equipmentTypetModel;
+  public serviceTypes = models.serviceTypeModel;
   public hebergements = models.hebergementtModel;
   public boats = models.boattModel;
+  public services = models.serviceModel;
   public reservations = models.reservationtModel;
 
   public async createBoat(boatData): Promise<Boat> {
@@ -23,6 +35,17 @@ class EquipmentService {
     }
     const boat = new this.boats(boatData);
     return await boat.save();
+  }
+
+  public async createService(serviceData): Promise<Boat> {
+    if (isEmptyObject(serviceData)) throw new HttpException(400, "Can't create empty boat");
+    if (serviceData.position) {
+      serviceData.position = {
+        coordinates: [Number(serviceData.lat), Number(serviceData.lng)],
+      };
+    }
+    const service = new this.services(serviceData);
+    return await service.save();
   }
 
   public async createEquipment(equipmentData): Promise<Equipment> {
@@ -47,6 +70,10 @@ class EquipmentService {
     const hebergements: Hebergement[] = await this.hebergements.find().populate('owner', 'fullName slug');
     return hebergements;
   }
+  public async findAllService(): Promise<Service[]> {
+    const services: Service[] = await this.services.find().populate('owner', 'fullName slug');
+    return services;
+  }
 
   public async findAllBoatss(): Promise<Boat[]> {
     const boats: Boat[] = await this.boats.find().populate('owner', 'fullName slug');
@@ -62,6 +89,18 @@ class EquipmentService {
     }
     const boats: Boat[] = await this.boats.find({ owner: owner }).sort('-createdAt');
     return boats;
+  }
+
+  public async findServicesByUser(ownerId: string): Promise<Service[]> {
+    if (!isValidObjectId(ownerId)) {
+      throw new HttpException(400, 'Invalid user id');
+    }
+    const owner: User = await userModel.findById(ownerId);
+    if (!owner) {
+      return [];
+    }
+    const services: Service[] = await this.services.find({ owner: owner }).sort('-createdAt');
+    return services;
   }
 
   public async findEquipmentsByUser(ownerId: string): Promise<Equipment[]> {
@@ -95,6 +134,13 @@ class EquipmentService {
     }
     return await this.equipmentTypes.find();
   }
+  public async findServiceType(): Promise<ServiceType[]> {
+    const serviceTypes: ServiceType[] = await this.serviceTypes.find();
+    if (serviceTypes.length == 0) {
+      this.addDefaultTypes();
+    }
+    return await this.serviceTypes.find();
+  }
 
   public async findBoatTypes(): Promise<BoatType[]> {
     return await models.boatType.find();
@@ -120,6 +166,13 @@ class EquipmentService {
     return await newType.save();
   }
 
+  public async addServiceType(serviceType: ServiceType): Promise<ServiceType> {
+    if (!serviceType.name || !serviceType.icon) {
+      throw new HttpException(400, 'Missing Boat type informations!');
+    }
+    const newType = new models.serviceTypeModel(serviceType);
+    return await newType.save();
+  }
   public async addHebergementType(hebergementType: HebergementType): Promise<HebergementType> {
     if (!hebergementType.name || !hebergementType.icon) {
       throw new HttpException(400, 'Missing HebergementType type informations!');
@@ -166,6 +219,17 @@ class EquipmentService {
       await type.save();
     }
   }
+  public async addDefaultTypesService() {
+    const types = [
+      { name: 'test', icon: 'equipments/fishing-rod.png' },
+      { name: 'test', icon: 'equipments/fishing-baits.png' },
+      { name: 'test', icon: 'equipments/fishing-net.png' },
+    ];
+    for (let i = 0; i < types.length; i++) {
+      const type = new this.serviceTypes(types[i]);
+      await type.save();
+    }
+  }
 
   public async findEquipmentsByTypeAndUser(typeId: string, ownerId: string): Promise<{ equipments: Equipment[]; type: EquipmentType }> {
     if (!isValidObjectId(ownerId) || !isValidObjectId(typeId)) {
@@ -186,6 +250,25 @@ class EquipmentService {
     return { equipments, type };
   }
 
+  public async findServicesByTypeAndUser(typeId: string, ownerId: string): Promise<{ services: Service[]; type: EquipmentType }> {
+    if (!isValidObjectId(ownerId) || !isValidObjectId(typeId)) {
+      throw new HttpException(400, 'Invalid id!');
+    }
+    const type: ServiceType = await this.serviceTypes.findById(typeId);
+    if (!type) {
+      throw new HttpException(400, 'No Service type with this id!');
+    }
+    const owner: User = await userModel.findById(ownerId);
+    if (!owner) {
+      return { services: [], type };
+    }
+    const services: Service[] = await this.services.find({
+      owner: owner,
+      type: type,
+    });
+    return { services, type };
+  }
+
   public async deleteEquipment(id: string): Promise<Equipment> {
     const eq = await this.equipments.findByIdAndDelete(id);
     if (fs.existsSync('uploads/' + eq.image)) {
@@ -194,6 +277,13 @@ class EquipmentService {
     return eq;
   }
 
+  public async deleteService(id: string): Promise<Service> {
+    const service = await this.services.findByIdAndDelete(id);
+    if (fs.existsSync('uploads/' + service.image)) {
+      fs.unlinkSync('uploads/' + service.image);
+    }
+    return service;
+  }
   public async deleteBoat(id: string): Promise<Boat> {
     const boat = await this.boats.findByIdAndDelete(id);
     if (fs.existsSync('uploads/' + boat.image)) {
@@ -208,6 +298,16 @@ class EquipmentService {
       fs.unlinkSync('uploads/' + hebergement.image);
     }
     return hebergement;
+  }
+
+  public async updateService(serviceData, serviceId): Promise<Service> {
+    if (serviceData.position) {
+      serviceData.position = {
+        coordinates: [Number(serviceData.lat), Number(serviceData.lng)],
+      };
+    }
+    //TODO : delete old image if updated
+    return await this.services.findByIdAndUpdate(serviceId, serviceData);
   }
 
   public async updateBoat(boatData, boatId): Promise<Boat> {
@@ -236,7 +336,8 @@ class EquipmentService {
   }
 
   public async getEquipment(id: string): Promise<Equipment> {
-    const eq = await this.equipments.findById(id)
+    const eq = await this.equipments
+      .findById(id)
       .populate('owner', 'fullName slug profilePicture')
       .populate('type', 'name description')
       .populate({
@@ -244,14 +345,16 @@ class EquipmentService {
         populate: {
           path: 'author',
           model: 'User',
-          select: 'fullName slug profilePicture'
-        }
-      }).lean();
+          select: 'fullName slug profilePicture',
+        },
+      })
+      .lean();
     return eq;
   }
 
   public async getBoat(id: string): Promise<Boat> {
-    const boat = await this.boats.findById(id)
+    const boat = await this.boats
+      .findById(id)
       .populate('owner', 'fullName slug profilePicture')
       .populate('type', 'name description')
       .populate({
@@ -259,9 +362,10 @@ class EquipmentService {
         populate: {
           path: 'author',
           model: 'User',
-          select: 'fullName slug profilePicture'
-        }
-      }).lean();
+          select: 'fullName slug profilePicture',
+        },
+      })
+      .lean();
     let avgRating = 0;
     if (boat.reviews && boat.reviews.length > 0) {
       avgRating = boat.reviews.reduce((sum, review) => {
@@ -274,7 +378,8 @@ class EquipmentService {
   }
 
   public async getHebergement(id: string): Promise<Hebergement> {
-    const hebergement = await this.hebergements.findById(id)
+    const hebergement = await this.hebergements
+      .findById(id)
       .populate('owner', 'fullName slug profilePicture')
       .populate('type', 'name description')
       .populate({
@@ -282,9 +387,10 @@ class EquipmentService {
         populate: {
           path: 'author',
           model: 'User',
-          select: 'fullName slug profilePicture'
-        }
-      }).lean();
+          select: 'fullName slug profilePicture',
+        },
+      })
+      .lean();
     let avgRating = 0;
     if (hebergement.reviews && hebergement.reviews.length > 0) {
       avgRating = hebergement.reviews.reduce((sum, review) => {
@@ -295,12 +401,51 @@ class EquipmentService {
     hebergement.rating = avgRating + 0.001;
     return hebergement;
   }
+  public async getService(id: string): Promise<Service> {
+    const service = await this.services
+      .findById(id)
+      .populate('owner', 'fullName slug profilePicture')
+      .populate('type', 'name description')
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'author',
+          model: 'User',
+          select: 'fullName slug profilePicture',
+        },
+      })
+      .lean();
+    let avgRating = 0;
+    if (service.reviews && service.reviews.length > 0) {
+      avgRating = service.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= service.reviews.length;
+    }
+    service.rating = avgRating + 0.001;
+    return service;
+  }
+
+  public async addServiceReview(reviewData): Promise<Review> {
+    if (isEmptyObject(reviewData)) throw new HttpException(400, "Can't create empty review");
+    const service = await this.services.findById(reviewData.boat).lean();
+    if (!service) {
+      throw new HttpException(400, 'Invalid boat');
+    }
+    if (reviewData.author == service.owner._id.toString()) {
+      throw new HttpException(400, "Owner can't add review on own Service");
+    }
+    const review = new models.reviewModel(reviewData);
+    await review.save();
+    await this.services.updateOne({ _id: reviewData.boat }, { $addToSet: { reviews: review } });
+    return review;
+  }
 
   public async addBoatReview(reviewData): Promise<Review> {
     if (isEmptyObject(reviewData)) throw new HttpException(400, "Can't create empty review");
     const boat = await this.boats.findById(reviewData.boat).lean();
     if (!boat) {
-      throw new HttpException(400, "Invalid boat");
+      throw new HttpException(400, 'Invalid boat');
     }
     if (reviewData.author == boat.owner._id.toString()) {
       throw new HttpException(400, "Owner can't add review on own boat");
@@ -317,7 +462,7 @@ class EquipmentService {
     const hebergement = await this.hebergements.findById(reviewData.hebergement).lean();
 
     if (!hebergement) {
-      throw new HttpException(400, "Invalid hebergement");
+      throw new HttpException(400, 'Invalid hebergement');
     }
     if (reviewData.author == hebergement.owner._id.toString()) {
       throw new HttpException(400, "Owner can't add review on own hebergement");

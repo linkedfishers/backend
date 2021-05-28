@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { RequestWithFile, RequestWithUser } from '../interfaces/auth.interface';
-import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType } from '../interfaces/equipments.interface';
+import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType, Service, ServiceType } from '../interfaces/equipments.interface';
 import { Review } from '../interfaces/review.interface';
 import { User } from '../interfaces/users.interface';
 import EquipmentService from '../services/equipments.service';
@@ -36,6 +36,20 @@ class EquipmentController {
       next(error);
     }
   };
+  public createService = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const serviceData = req.body;
+      serviceData.owner = user._id;
+      if (req.file) {
+        serviceData.image = req.file.path.split('/').splice(1).join('/');
+      }
+      const service: Service = await this.equipmentService.createService(serviceData);
+      res.status(201).json({ data: service, message: 'Created service' });
+    } catch (error) {
+      next(error);
+    }
+  };
   public createHebergement = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user: User = req.user;
@@ -62,6 +76,21 @@ class EquipmentController {
       }
       const hebergement: Hebergement = await this.equipmentService.updateHebergement(hebergementData, hebergementId);
       res.status(201).json({ data: hebergement, message: 'Updated Hebergement' });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public updateService = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const serviceId: string = req.params.id;
+      const serviceData = req.body;
+      serviceData.owner = user._id;
+      if (req.file) {
+        serviceData.image = req.file.path.split('/').splice(1).join('/');
+      }
+      const service: Service = await this.equipmentService.updateHebergement(serviceData, serviceId);
+      res.status(201).json({ data: service, message: 'Updated Service' });
     } catch (error) {
       next(error);
     }
@@ -118,12 +147,33 @@ class EquipmentController {
     }
   };
 
+  public findServicesByUser = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const ownerId = req.params.id || req.user._id;
+      const services: Service[] = await this.equipmentService.findServicesByUser(ownerId);
+      res.status(200).json({ data: services });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public findEquipmentsByTypeAndUser = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const ownerId = req.params.ownerId;
       const typeId = req.params.typeId;
       const { equipments, type } = await this.equipmentService.findEquipmentsByTypeAndUser(typeId, ownerId);
       res.status(200).json({ data: { equipments, type } });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public findServicesByTypeAndUser = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const ownerId = req.params.ownerId;
+      const typeId = req.params.typeId;
+      const { services, type } = await this.equipmentService.findServicesByTypeAndUser(typeId, ownerId);
+      res.status(200).json({ data: { services, type } });
     } catch (error) {
       next(error);
     }
@@ -147,7 +197,14 @@ class EquipmentController {
       next(error);
     }
   };
-
+  public findServices = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const services: Service[] = await this.equipmentService.findAllService();
+      res.status(200).json({ data: services });
+    } catch (error) {
+      next(error);
+    }
+  };
   public findEquipmentTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const types: EquipmentType[] = await this.equipmentService.findEquipmentTypes();
@@ -169,6 +226,14 @@ class EquipmentController {
   public findHebergementTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const types: HebergementType[] = await this.equipmentService.findHebergementTypes();
+      res.status(200).json({ data: types });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public findServiceTypes = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const types: ServiceType[] = await this.equipmentService.findServiceType();
       res.status(200).json({ data: types });
     } catch (error) {
       next(error);
@@ -202,6 +267,15 @@ class EquipmentController {
       next(error);
     }
   };
+  public deleteService = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const service: Service = await this.equipmentService.deleteService(id);
+      res.status(200).json({ data: service });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public getEquipment = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -230,6 +304,15 @@ class EquipmentController {
       next(error);
     }
   };
+  public getService = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const service: Service = await this.equipmentService.getService(id);
+      res.status(200).json({ data: service });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public createBoatReview = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -237,6 +320,17 @@ class EquipmentController {
       const reviewData = req.body;
       reviewData.author = user._id;
       const review: Review = await this.equipmentService.addBoatReview(reviewData);
+      res.status(201).json({ data: review, message: 'Added review' });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public createServiceReview = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const reviewData = req.body;
+      reviewData.author = user._id;
+      const review: Review = await this.equipmentService.addServiceReview(reviewData);
       res.status(201).json({ data: review, message: 'Added review' });
     } catch (error) {
       next(error);
@@ -254,7 +348,6 @@ class EquipmentController {
       next(error);
     }
   };
-
 }
 
 export default EquipmentController;
