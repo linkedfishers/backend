@@ -37,7 +37,7 @@ export class Service {
   price: number;
   position: any;
   adress: string;
-  type: BoatType;
+  type: ServiceType;
   reviews: any[];
   rating: number;
 }

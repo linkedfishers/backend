@@ -67,21 +67,29 @@ class EquipmentService {
   }
 
   public async findAllHebergements(): Promise<Hebergement[]> {
-    const hebergements: Hebergement[] = await this.hebergements.find().populate('owner', 'fullName slug');
+    const hebergements: Hebergement[] = await this.hebergements.find()
+      .populate('owner', 'fullName slug')
+      .populate('type', 'name');
     return hebergements;
   }
   public async findAllService(): Promise<Service[]> {
-    const services: Service[] = await this.services.find().populate('owner', 'fullName slug');
+    const services: Service[] = await this.services.find()
+      .populate('owner', 'fullName slug')
+      .populate('type', 'name');
     return services;
   }
 
   public async findAllBoats(): Promise<Boat[]> {
-    const boats: Boat[] = await this.boats.find().populate('owner', 'fullName slug');
+    const boats: Boat[] = await this.boats.find()
+      .populate('owner', 'fullName slug')
+      .populate('type', 'name');
     return boats;
   }
 
   public async findAllEquipments(): Promise<Equipment[]> {
-    const equipments: Equipment[] = await this.equipments.find().populate('owner', 'fullName slug');
+    const equipments: Equipment[] = await this.equipments.find()
+      .populate('owner', 'fullName slug')
+      .populate('type', 'name');
     return equipments;
   }
 

@@ -15,7 +15,8 @@ class AuthService {
 
   public async signup(userData: CreateUserDto): Promise<string> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'All fields are required');
-
+    userData.birthDate = new Date(userData.birthDate);
+    userData.fullName = userData.firstName + ' ' + userData.lastName;
     const findUser: User = await this.users.findOne({ email: userData.email });
     if (findUser) throw new HttpException(409, `Email address ${userData.email} already exists`);
     const hashedPassword = await bcrypt.hash(userData.password, 10);

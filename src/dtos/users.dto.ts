@@ -15,7 +15,11 @@ export class CreateUserDto {
   @IsOptional()
   public firstName: string;
 
-  @IsDate()
+  @IsString()
+  @IsOptional()
+  public fullName: string;
+
+  // @IsDate()
   @IsOptional()
   public birthDate: Date;
 
