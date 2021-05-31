@@ -114,7 +114,6 @@ class AuthService {
 
   public async loginWithGoogle(userData: User): Promise<TokenData> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Missing credentials');
-    console.log(userData);
     let user: User = await this.users.findOne({ googleId: userData.googleId });
     if (!user) {
       const u = new this.users({ ...userData });
@@ -124,6 +123,11 @@ class AuthService {
         u.slug = u.slug + shortid.generate();
       }
       user = await u.save();
+    } else {
+      const userAlreadyExists = await this.users.exists({ email: userData.email });
+      if (userAlreadyExists) {
+        throw new HttpException(400, 'Email already exists!');
+      }
     }
     const tokenData = this.createToken(user);
     return tokenData;

@@ -75,10 +75,16 @@ class EquipmentService {
     return services;
   }
 
-  public async findAllBoatss(): Promise<Boat[]> {
+  public async findAllBoats(): Promise<Boat[]> {
     const boats: Boat[] = await this.boats.find().populate('owner', 'fullName slug');
     return boats;
   }
+
+  public async findAllEquipments(): Promise<Equipment[]> {
+    const equipments: Equipment[] = await this.equipments.find().populate('owner', 'fullName slug');
+    return equipments;
+  }
+
   public async findBoatsByUser(ownerId: string): Promise<Boat[]> {
     if (!isValidObjectId(ownerId)) {
       throw new HttpException(400, 'Invalid user id');
