@@ -34,7 +34,7 @@ class AuthService {
     try {
       await this.sendConfirmationEmail(u, url);
     } catch (err) {
-      if (isEmptyObject(userData)) throw new HttpException(500, err);
+      throw new HttpException(500, err);
     }
     const createUserData: User = await u.save();
     return 'Sent confirmation mail';
@@ -214,7 +214,7 @@ class AuthService {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
   }
 
-  private async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
+  public async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
     const smtpConfig = {
       host: 'ssl0.ovh.net',
       port: 465,

@@ -7,7 +7,6 @@ import {
   BoatType,
   HebergementType,
   Hebergement,
-  Reservation,
   Service,
   ServiceType,
 } from '../interfaces/equipments.interface';
@@ -24,7 +23,6 @@ class EquipmentService {
   public hebergements = models.hebergementtModel;
   public boats = models.boattModel;
   public services = models.serviceModel;
-  public reservations = models.reservationtModel;
 
   public async createBoat(boatData): Promise<Boat> {
     if (isEmptyObject(boatData)) throw new HttpException(400, "Can't create empty boat");

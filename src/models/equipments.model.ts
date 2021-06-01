@@ -6,7 +6,6 @@ import {
   EquipmentType,
   Hebergement,
   HebergementType,
-  Reservation,
   Service,
   ServiceType,
 } from '../interfaces/equipments.interface';
@@ -75,19 +74,9 @@ const reviewSchema = new mongoose.Schema({
   rating: Number,
 });
 
-const reservationSchema = new mongoose.Schema({
-  reservedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  ownedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  home: { type: mongoose.Schema.Types.ObjectId, ref: 'Hebergement', required: true },
-  dateStart: mongoose.Schema.Types.Date,
-  dateEnd: mongoose.Schema.Types.Date,
-  status: { type: mongoose.Schema.Types.String, default: 'pending' },
-});
-
 equipmentSchema.set('timestamps', true);
 hebergementSchema.set('timestamps', true);
 boatSchema.set('timestamps', true);
-reservationSchema.set('timestamps', true);
 reviewSchema.set('timestamps', true);
 serviceShema.set('timestamps', true);
 const serviceTypeModel = mongoose.model<ServiceType & mongoose.Document>('ServiceType', serviceTypeSchema);
@@ -97,7 +86,6 @@ const hebergementType = mongoose.model<HebergementType & mongoose.Document>('Heb
 const boatType = mongoose.model<BoatType & mongoose.Document>('BoatType', equipmentTypeSchema);
 const hebergementtModel = mongoose.model<Hebergement & mongoose.Document>('Hebergement', hebergementSchema);
 const boattModel = mongoose.model<Boat & mongoose.Document>('Boat', boatSchema);
-const reservationtModel = mongoose.model<Reservation & mongoose.Document>('Reservation', reservationSchema);
 const reviewModel = mongoose.model<Review & mongoose.Document>('Review', reviewSchema);
 const serviceModel = mongoose.model<Service & mongoose.Document>('Service', serviceShema);
 const models = {
@@ -105,7 +93,6 @@ const models = {
   equipmentTypetModel,
   hebergementtModel,
   boattModel,
-  reservationtModel,
   hebergementType,
   boatType,
   reviewModel,

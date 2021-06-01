@@ -85,11 +85,3 @@ export class Hebergement {
   reviews: any[];
   rating: number;
 }
-
-export class Reservation {
-  _id: string;
-  reservedBy: any;
-  home: any;
-  dateStart: Date;
-  dateEnd: Date;
-}
