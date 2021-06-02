@@ -12,11 +12,14 @@ export class Reservation {
     equipment: Equipment;
     service: Service;
     status: ReservationStatus;
+    totalPrice: number;
+    item: any;
 }
 
 export enum ReservationStatus {
     Pending = "PENDING",
     Confirmed = "CONFIRMED",
     Deleted = "DELETED",
-    Declined = "DECLINED"
+    Declined = "DECLINED",
+    Expired = "EXPIRED"
 }

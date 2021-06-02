@@ -20,6 +20,8 @@ class ReservationRoute implements Route {
         this.router.get(`${this.path}/home/:id`, authMiddleware, this.reservationController.findHomeReservations);
         this.router.get(`${this.path}/service/:id`, authMiddleware, this.reservationController.findServiceReservations);
         this.router.get(`${this.path}/my-pending/:category/:id`, authMiddleware, this.reservationController.findMyPendingReservations);
+        this.router.get(`${this.path}/owner-requests/`, authMiddleware, this.reservationController.findReservationRequestsByOwner);
+        this.router.put(`${this.path}/reservation/`, authMiddleware, this.reservationController.updateReservationRequest);
     }
 }
 

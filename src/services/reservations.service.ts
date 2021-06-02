@@ -10,6 +10,7 @@ import { User } from '../interfaces/users.interface';
 import userModel from '../models/users.model';
 import { Equipment, Hebergement, Service, Boat } from '../interfaces/equipments.interface';
 import AuthService from './auth.service';
+import moment from 'moment';
 
 class ReservationService {
     public reservations = reservationModel;
@@ -28,32 +29,33 @@ class ReservationService {
         let owner: User;
         let reservedBy: User = await userModel.findById(reservationData.reservedBy);
         let name: string;
+        let item;
         if (reservationData.home) {
             let hebergement: Hebergement = await this.hebergements
                 .findById(reservationData.home)
                 .populate('owner').lean();
-            owner = hebergement.owner;
-            name = hebergement.name;
+            item = hebergement;
         } else if (reservationData.boat) {
             let boat: Boat = await this.boats
                 .findById(reservationData.boat)
                 .populate('owner').lean();
-            owner = boat.owner;
-            name = boat.name;
+            item = boat;
         } else if (reservationData.equipment) {
             let equipment: Equipment = await this.equipments
                 .findById(reservationData.equipment)
                 .populate('owner').lean();
-            owner = equipment.owner;
-            name = equipment.name;
+            item = equipment;
         } else if (reservationData.service) {
             let service: Service = await this.services
                 .findById(reservationData.service)
                 .populate('owner').lean();
-            owner = service.owner;
-            name = service.name;
+            item = service;
         }
+        owner = item.owner;
+        name = item.name;
         reservation.ownedBy = owner;
+        reservation.item = item;
+        reservation.totalPrice = this.calculatePrice(reservation);
         reservation = await reservation.save();
         const notificationData = new Notification();
         notificationData.sender = reservedBy;
@@ -63,9 +65,10 @@ class ReservationService {
         notificationData.targetId = owner._id;
         const notification = new notificationModel(notificationData);
         await notification.save();
-        const url = `http://linkedfishers.com/my-reservations`;
-        // await this.sendReservationEmail(owner, url, `Someone made a reservation request for ${name}, click to view the details`, "Reservation request received");
-        // await this.sendReservationEmail(reservedBy, url, `You just made a reservation request for ${name}, check your requests`, "Reservation request submitted");
+        const ownerUrl = `http://linkedfishers.com/booking-requests`;
+        const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
+        // await this.sendReservationEmail(owner, ownerUrl, `Someone made a reservation request for ${name}, click to view the details`, "Reservation request received");
+        // await this.sendReservationEmail(reservedBy, bookerUrl, `You just made a reservation request for ${name}, check your requests`, "Reservation request submitted");
         return reservation;
     }
 
@@ -93,21 +96,38 @@ class ReservationService {
         }
         const reservations: Reservation[] = await this.reservations
             .find({ $and: [{ ownedBy: owner }, { status: ReservationStatus.Pending }] })
+            .populate('boat home equipment service', 'name description image')
             .sort('-createdAt');
         return reservations;
     }
 
-    public async findBoatReservations(boatId: string, status: ReservationStatus): Promise<{ reservations: Reservation[], item: any }> {
+    public async findBoatReservations(boatId: string, user: User): Promise<{ reservations: Reservation[], pendingReservations: Reservation[], item: any }> {
         if (!isValidObjectId(boatId)) {
             throw new HttpException(400, 'Invalid id');
         }
-        const boat = await this.boats.findById(boatId).populate('type','name').lean();
+        const boat = await this.boats.findById(boatId).populate('reviews', 'rating').populate('type', 'name').lean();
         const reservations: Reservation[] = await this.reservations
             .find({
-                $and: [{ boat: boat }, { status: status }]
+                $and: [{ boat: boat }, { status: ReservationStatus.Confirmed }]
             })
             .sort('-createdAt');
-        return { reservations, item: boat };
+        let pendingReservations: Reservation[] = [];
+        if (boat.owner._id as string == user._id.toString()) {
+            pendingReservations = await this.reservations
+                .find({
+                    $and: [{ boat: boat }, { status: ReservationStatus.Pending }]
+                })
+                .sort('-createdAt');
+        }
+        let avgRating = 0;
+        if (boat.reviews && boat.reviews.length > 0) {
+            avgRating = boat.reviews.reduce((sum, review) => {
+                return sum + review.rating;
+            }, 0);
+            avgRating /= boat.reviews.length;
+        }
+        boat.rating = avgRating + 0.001;
+        return { reservations, item: boat, pendingReservations };
     }
 
     public async findHomeReservations(homeId: string, status: string): Promise<Reservation[]> {
@@ -165,6 +185,40 @@ class ReservationService {
                 break;
         }
         return reservations;
+    }
+
+    public async updateReservation(user: User, reservationData): Promise<Reservation> {
+        const id = reservationData._id;
+        const status = reservationData.status;
+        let reservation = await this.reservations.findById(id);
+        if (reservation.ownedBy._id as string != user._id.toString()) {
+            throw new HttpException(401, "Can't update reservation");
+        }
+        reservation = await this.reservations.findByIdAndUpdate(id, { status: status }, { new: true }).populate('reservedBy');
+        if (reservation.status == ReservationStatus.Confirmed) {
+            console.log("aa");
+            const notificationData = new Notification();
+            notificationData.sender = user;
+            notificationData.receiver = reservation.reservedBy;
+            notificationData.type = 'reservation_accepted';
+            notificationData.content = 'Accepted your reservation request';
+            // notificationData.targetId = owner._id;
+            const notification = new notificationModel(notificationData);
+            await notification.save();
+            const ownerUrl = `http://linkedfishers.com/booking-requests`;
+            const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
+            //await this.sendReservationEmail(user, ownerUrl, `Your reservation request have been confirmed.`, "Reservation confirmed");
+            //await this.sendReservationEmail(reservation.reservedBy, bookerUrl, `You just confirmed a reservation request.`, "Reservation confirmed");
+
+        }
+        return reservation;
+    }
+
+    private calculatePrice(reservation: Reservation): number {
+        let start = moment(reservation.dateStart);
+        let end = moment(reservation.dateEnd);
+        let numberOfdays = end.diff(start, 'days');
+        return numberOfdays * reservation.item.price;
     }
 
     private async sendReservationEmail(user: User, url: string, content: string, subject: string): Promise<any> {

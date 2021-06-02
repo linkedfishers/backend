@@ -10,7 +10,8 @@ const reservationSchema = new mongoose.Schema({
     boat: { type: mongoose.Schema.Types.ObjectId, ref: 'Boat', required: false },
     equipment: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment', required: false },
     service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: false },
-    status: { type: String, enum: ['PENDING', 'CONFIRMED', 'DELETED', 'DECLINED'], default: 'PENDING' }
+    status: { type: String, enum: ['PENDING', 'CONFIRMED', 'DELETED', 'DECLINED'], default: 'PENDING' },
+    totalPrice: mongoose.Schema.Types.Number
 });
 
 reservationSchema.set('timestamps', true);

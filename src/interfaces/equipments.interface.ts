@@ -10,6 +10,7 @@ export class Equipment {
   isAvailable: boolean;
   reviews: any[];
   rating: number;
+  price: number;
 }
 export class EquipmentType {
   _id: string;

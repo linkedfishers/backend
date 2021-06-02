@@ -117,6 +117,10 @@ class AuthService {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Missing credentials');
     let user: User = await this.users.findOne({ googleId: userData.googleId });
     if (!user) {
+      const userAlreadyExists = await this.users.exists({ email: userData.email });
+      if (userAlreadyExists) {
+        throw new HttpException(400, 'There is already an account with this email address');
+      }
       const u = new this.users({ ...userData });
       u.slug = slugify(u.fullName);
       u.activated = true;
@@ -124,11 +128,6 @@ class AuthService {
         u.slug = u.slug + shortid.generate();
       }
       user = await u.save();
-    } else {
-      const userAlreadyExists = await this.users.exists({ email: userData.email });
-      if (userAlreadyExists) {
-        throw new HttpException(400, 'Email already exists!');
-      }
     }
     const tokenData = this.createToken(user);
     return tokenData;
