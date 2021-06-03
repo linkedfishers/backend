@@ -10,8 +10,7 @@ import { User } from '../interfaces/users.interface';
 import userModel from '../models/users.model';
 import { Equipment, Hebergement, Service, Boat } from '../interfaces/equipments.interface';
 import AuthService from './auth.service';
-import moment from 'moment';
-
+import { areIntervalsOverlapping, differenceInDays, isPast } from 'date-fns';
 class ReservationService {
     public reservations = reservationModel;
     public equipments = models.equipmentModel;
@@ -25,34 +24,61 @@ class ReservationService {
     public async createReservation(reservationData): Promise<Reservation> {
         if (isEmptyObject(reservationData)) throw new HttpException(400, "Can't create empty Reservation");
         let reservation = new this.reservations(reservationData);
+        if (isPast(reservation.dateStart) || isPast(reservation.dateEnd)) {
+            throw new HttpException(400, "Can't create reservation in the past");
+        }
+        console.log(reservation);
         reservation.status = ReservationStatus.Pending;
-        let owner: User;
         let reservedBy: User = await userModel.findById(reservationData.reservedBy);
-        let name: string;
+        let confirmedReservations: Reservation[];
         let item;
         if (reservationData.home) {
+
             let hebergement: Hebergement = await this.hebergements
                 .findById(reservationData.home)
                 .populate('owner').lean();
             item = hebergement;
+            confirmedReservations = await this.reservations.find({
+                $and: [{ home: hebergement }, { status: ReservationStatus.Confirmed }]
+            }).lean();
+
         } else if (reservationData.boat) {
             let boat: Boat = await this.boats
                 .findById(reservationData.boat)
                 .populate('owner').lean();
             item = boat;
+            confirmedReservations = await this.reservations.find({
+                $and: [{ boat: boat }, { status: ReservationStatus.Confirmed }]
+            }).lean();
+
         } else if (reservationData.equipment) {
             let equipment: Equipment = await this.equipments
                 .findById(reservationData.equipment)
                 .populate('owner').lean();
             item = equipment;
+            confirmedReservations = await this.reservations.find({
+                $and: [{ equipment: equipment }, { status: ReservationStatus.Confirmed }]
+            }).lean();
+
         } else if (reservationData.service) {
             let service: Service = await this.services
                 .findById(reservationData.service)
                 .populate('owner').lean();
             item = service;
+            confirmedReservations = await this.reservations.find({
+                $and: [{ service: service }, { status: ReservationStatus.Confirmed }]
+            }).lean();
         }
-        owner = item.owner;
-        name = item.name;
+        const unavailableDates = confirmedReservations.some(confirmedReservation => {
+            return areIntervalsOverlapping(
+                { start: new Date(confirmedReservation.dateStart), end: new Date(confirmedReservation.dateEnd) },
+                { start: new Date(reservation.dateStart), end: new Date(reservation.dateEnd) })
+        });
+        if (unavailableDates) {
+            throw new HttpException(400, "Those dates are unavailable");
+        }
+        let owner: User = item.owner;
+        let name = item.name;
         reservation.ownedBy = owner;
         reservation.item = item;
         reservation.totalPrice = this.calculatePrice(reservation);
@@ -67,7 +93,7 @@ class ReservationService {
         await notification.save();
         const ownerUrl = `http://linkedfishers.com/booking-requests`;
         const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
-        // await this.sendReservationEmail(owner, ownerUrl, `Someone made a reservation request for ${name}, click to view the details`, "Reservation request received");
+        await this.sendReservationEmail(owner, ownerUrl, `Someone made a reservation request for ${name}, click to view the details`, "Reservation request received");
         // await this.sendReservationEmail(reservedBy, bookerUrl, `You just made a reservation request for ${name}, check your requests`, "Reservation request submitted");
         return reservation;
     }
@@ -215,9 +241,7 @@ class ReservationService {
     }
 
     private calculatePrice(reservation: Reservation): number {
-        let start = moment(reservation.dateStart);
-        let end = moment(reservation.dateEnd);
-        let numberOfdays = end.diff(start, 'days');
+        let numberOfdays = differenceInDays(new Date(reservation.dateEnd), new Date(reservation.dateStart));
         return numberOfdays * reservation.item.price;
     }
 
