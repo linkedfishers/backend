@@ -122,8 +122,25 @@ class ReservationService {
         const reservations: Reservation[] = await this.reservations
             .find({ $and: [{ ownedBy: owner }, { status: ReservationStatus.Pending }] })
             .populate('boat home equipment service', 'name description image')
-            .populate('reservedBy','-_id firstname profilePicture rating reviews')
-            .sort('-createdAt');
+            .populate({
+                path: 'boat',
+                populate: {
+                    path: 'owner',
+                    model: 'User',
+                    select: 'firstName -_id',
+                },
+            })
+            .populate({
+                path: 'boat',
+                populate: {
+                    path: 'type',
+                    model: 'BoatType',
+                    select: 'name -_id',
+                },
+            })
+            .populate('reservedBy', '-_id firstname profilePicture rating reviews')
+            .sort('-createdAt')
+            .lean();
         return reservations;
     }
 
@@ -143,7 +160,7 @@ class ReservationService {
                 .find({
                     $and: [{ boat: boat }, { status: ReservationStatus.Pending }]
                 })
-                .populate('reservedBy','-_id firstName profilePicture rating')
+                .populate('reservedBy', '-_id firstName profilePicture rating')
                 .sort('-createdAt');
         }
         let avgRating = 0;
