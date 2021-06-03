@@ -1,3 +1,5 @@
+import { Review } from "./review.interface";
+
 export class User {
   _id: string;
   fullName: string;
@@ -33,6 +35,8 @@ export class User {
   confirmationToken: string;
   resetPasswordToken: string;
   resetPasswordExpires: Date;
+  reviews: Review[];
+  rating: number;
 }
 
 export class Report {

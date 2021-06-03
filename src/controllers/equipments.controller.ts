@@ -309,8 +309,9 @@ class EquipmentController {
   public getBoat = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = req.params.id;
-      const boat: Boat = await this.equipmentService.getBoat(id);
-      res.status(200).json({ data: boat });
+      const user = req.user;
+      const { boat, isOwner } = await this.equipmentService.getBoat(id, user);
+      res.status(200).json({ data: { boat, isOwner } });
     } catch (error) {
       next(error);
     }

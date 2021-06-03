@@ -373,10 +373,10 @@ class EquipmentService {
     return eq;
   }
 
-  public async getBoat(id: string): Promise<Boat> {
+  public async getBoat(id: string, currentUser: User): Promise<{ boat: Boat, isOwner: boolean }> {
     const boat = await this.boats
       .findById(id)
-      .populate('owner', 'fullName slug profilePicture')
+      .populate('owner', 'firstName profilePicture rating')
       .populate('type', 'name description')
       .populate({
         path: 'reviews',
@@ -387,6 +387,8 @@ class EquipmentService {
         },
       })
       .lean();
+    const isOwner = boat.owner._id.toString() === currentUser._id.toString()
+    delete boat.owner._id;
     let avgRating = 0;
     if (boat.reviews && boat.reviews.length > 0) {
       avgRating = boat.reviews.reduce((sum, review) => {
@@ -395,7 +397,7 @@ class EquipmentService {
       avgRating /= boat.reviews.length;
     }
     boat.rating = avgRating + 0.001;
-    return boat;
+    return { boat, isOwner };
   }
 
   public async getHebergement(id: string): Promise<Hebergement> {

@@ -27,7 +27,6 @@ class ReservationService {
         if (isPast(reservation.dateStart) || isPast(reservation.dateEnd)) {
             throw new HttpException(400, "Can't create reservation in the past");
         }
-        console.log(reservation);
         reservation.status = ReservationStatus.Pending;
         let reservedBy: User = await userModel.findById(reservationData.reservedBy);
         let confirmedReservations: Reservation[];
@@ -123,6 +122,7 @@ class ReservationService {
         const reservations: Reservation[] = await this.reservations
             .find({ $and: [{ ownedBy: owner }, { status: ReservationStatus.Pending }] })
             .populate('boat home equipment service', 'name description image')
+            .populate('reservedBy','-_id firstname profilePicture rating reviews')
             .sort('-createdAt');
         return reservations;
     }
@@ -143,6 +143,7 @@ class ReservationService {
                 .find({
                     $and: [{ boat: boat }, { status: ReservationStatus.Pending }]
                 })
+                .populate('reservedBy','-_id firstName profilePicture rating')
                 .sort('-createdAt');
         }
         let avgRating = 0;
@@ -222,7 +223,6 @@ class ReservationService {
         }
         reservation = await this.reservations.findByIdAndUpdate(id, { status: status }, { new: true }).populate('reservedBy');
         if (reservation.status == ReservationStatus.Confirmed) {
-            console.log("aa");
             const notificationData = new Notification();
             notificationData.sender = user;
             notificationData.receiver = reservation.reservedBy;
