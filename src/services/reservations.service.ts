@@ -12,258 +12,263 @@ import { Equipment, Hebergement, Service, Boat } from '../interfaces/equipments.
 import AuthService from './auth.service';
 import { areIntervalsOverlapping, differenceInDays, isPast } from 'date-fns';
 class ReservationService {
-    public reservations = reservationModel;
-    public equipments = models.equipmentModel;
-    public equipmentTypes = models.equipmentTypetModel;
-    public serviceTypes = models.serviceTypeModel;
-    public hebergements = models.hebergementtModel;
-    public boats = models.boattModel;
-    public services = models.serviceModel;
-    public authService = new AuthService();
+  public reservations = reservationModel;
+  public equipments = models.equipmentModel;
+  public equipmentTypes = models.equipmentTypetModel;
+  public serviceTypes = models.serviceTypeModel;
+  public hebergements = models.hebergementtModel;
+  public boats = models.boattModel;
+  public services = models.serviceModel;
+  public authService = new AuthService();
 
-    public async createReservation(reservationData): Promise<Reservation> {
-        if (isEmptyObject(reservationData)) throw new HttpException(400, "Can't create empty Reservation");
-        let reservation = new this.reservations(reservationData);
-        if (isPast(reservation.dateStart) || isPast(reservation.dateEnd)) {
-            throw new HttpException(400, "Can't create reservation in the past");
-        }
-        reservation.status = ReservationStatus.Pending;
-        let reservedBy: User = await userModel.findById(reservationData.reservedBy);
-        let confirmedReservations: Reservation[];
-        let item;
-        if (reservationData.home) {
+  public async createReservation(reservationData): Promise<Reservation> {
+    if (isEmptyObject(reservationData)) throw new HttpException(400, "Can't create empty Reservation");
+    let reservation = new this.reservations(reservationData);
+    if (isPast(reservation.dateStart) || isPast(reservation.dateEnd)) {
+      throw new HttpException(400, "Can't create reservation in the past");
+    }
+    reservation.status = ReservationStatus.Pending;
+    let reservedBy: User = await userModel.findById(reservationData.reservedBy);
+    let confirmedReservations: Reservation[];
+    let item;
+    if (reservationData.home) {
+      let hebergement: Hebergement = await this.hebergements.findById(reservationData.home).populate('owner').lean();
+      item = hebergement;
+      confirmedReservations = await this.reservations
+        .find({
+          $and: [{ home: hebergement }, { status: ReservationStatus.Confirmed }],
+        })
+        .lean();
+    } else if (reservationData.boat) {
+      let boat: Boat = await this.boats.findById(reservationData.boat).populate('owner').lean();
+      item = boat;
+      confirmedReservations = await this.reservations
+        .find({
+          $and: [{ boat: boat }, { status: ReservationStatus.Confirmed }],
+        })
+        .lean();
+    } else if (reservationData.equipment) {
+      let equipment: Equipment = await this.equipments.findById(reservationData.equipment).populate('owner').lean();
+      item = equipment;
+      confirmedReservations = await this.reservations
+        .find({
+          $and: [{ equipment: equipment }, { status: ReservationStatus.Confirmed }],
+        })
+        .lean();
+    } else if (reservationData.service) {
+      let service: Service = await this.services.findById(reservationData.service).populate('owner').lean();
+      item = service;
+      confirmedReservations = await this.reservations
+        .find({
+          $and: [{ service: service }, { status: ReservationStatus.Confirmed }],
+        })
+        .lean();
+    }
+    const unavailableDates = confirmedReservations.some(confirmedReservation => {
+      return areIntervalsOverlapping(
+        { start: new Date(confirmedReservation.dateStart), end: new Date(confirmedReservation.dateEnd) },
+        { start: new Date(reservation.dateStart), end: new Date(reservation.dateEnd) },
+      );
+    });
+    if (unavailableDates) {
+      throw new HttpException(400, 'Those dates are unavailable');
+    }
+    let owner: User = item.owner;
+    let name = item.name;
+    reservation.ownedBy = owner;
+    reservation.item = item;
+    reservation.totalPrice = this.calculatePrice(reservation);
+    reservation = await reservation.save();
+    const notificationData = new Notification();
+    notificationData.sender = reservedBy;
+    notificationData.receiver = owner;
+    notificationData.type = 'reservation_request';
+    notificationData.content = 'Made a reservation request';
+    notificationData.targetId = owner._id;
+    const notification = new notificationModel(notificationData);
+    await notification.save();
+    const ownerUrl = `http://linkedfishers.com/booking-requests`;
+    const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
+    await this.sendReservationEmail(
+      owner,
+      ownerUrl,
+      `Someone made a reservation request for ${name}, click to view the details`,
+      'Reservation request received',
+    );
+    await this.sendReservationEmail(
+      reservedBy,
+      bookerUrl,
+      `You just made a reservation request for ${name}, check your requests`,
+      'Reservation request submitted',
+    );
+    return reservation;
+  }
 
-            let hebergement: Hebergement = await this.hebergements
-                .findById(reservationData.home)
-                .populate('owner').lean();
-            item = hebergement;
-            confirmedReservations = await this.reservations.find({
-                $and: [{ home: hebergement }, { status: ReservationStatus.Confirmed }]
-            }).lean();
+  public async findReservationsByUser(id: string): Promise<Reservation[]> {
+    if (!isValidObjectId(id)) {
+      throw new HttpException(400, 'Invalid user id');
+    }
+    const user: User = await userModel.findById(id);
+    if (!user) {
+      return [];
+    }
+    const reservations: Reservation[] = await this.reservations.find({ reservedBy: user }).sort('-createdAt');
+    return reservations;
+  }
 
-        } else if (reservationData.boat) {
-            let boat: Boat = await this.boats
-                .findById(reservationData.boat)
-                .populate('owner').lean();
-            item = boat;
-            confirmedReservations = await this.reservations.find({
-                $and: [{ boat: boat }, { status: ReservationStatus.Confirmed }]
-            }).lean();
+  public async findReservationsRequestsByOwner(ownerId: string): Promise<Reservation[]> {
+    if (!isValidObjectId(ownerId)) {
+      throw new HttpException(400, 'Invalid user id');
+    }
+    const owner: User = await userModel.findById(ownerId);
+    if (!owner) {
+      return [];
+    }
+    const reservations: Reservation[] = await this.reservations
+      .find({ $and: [{ ownedBy: owner }, { status: ReservationStatus.Pending }] })
+      .populate('boat home equipment service', 'name description image')
+      .populate({
+        path: 'boat',
+        populate: {
+          path: 'owner',
+          model: 'User',
+          select: 'firstName -_id',
+        },
+      })
+      .populate({
+        path: 'boat',
+        populate: {
+          path: 'type',
+          model: 'BoatType',
+          select: 'name -_id',
+        },
+      })
+      .populate('reservedBy', '-_id firstname profilePicture rating reviews')
+      .sort('-createdAt')
+      .lean();
+    return reservations;
+  }
 
-        } else if (reservationData.equipment) {
-            let equipment: Equipment = await this.equipments
-                .findById(reservationData.equipment)
-                .populate('owner').lean();
-            item = equipment;
-            confirmedReservations = await this.reservations.find({
-                $and: [{ equipment: equipment }, { status: ReservationStatus.Confirmed }]
-            }).lean();
+  public async findBoatReservations(
+    boatId: string,
+    user: User,
+  ): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
+    if (!isValidObjectId(boatId)) {
+      throw new HttpException(400, 'Invalid id');
+    }
+    const boat = await this.boats.findById(boatId).populate('reviews', 'rating').populate('type', 'name').lean();
+    const reservations: Reservation[] = await this.reservations
+      .find({
+        $and: [{ boat: boat }, { status: ReservationStatus.Confirmed }],
+      })
+      .sort('-createdAt');
+    let pendingReservations: Reservation[] = [];
+    if ((boat.owner._id as string) == user._id.toString()) {
+      pendingReservations = await this.reservations
+        .find({
+          $and: [{ boat: boat }, { status: ReservationStatus.Pending }],
+        })
+        .populate('reservedBy', '-_id firstName profilePicture rating')
+        .sort('-createdAt');
+    }
+    let avgRating = 0;
+    if (boat.reviews && boat.reviews.length > 0) {
+      avgRating = boat.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= boat.reviews.length;
+    }
+    boat.rating = avgRating + 0.001;
+    return { reservations, item: boat, pendingReservations };
+  }
 
-        } else if (reservationData.service) {
-            let service: Service = await this.services
-                .findById(reservationData.service)
-                .populate('owner').lean();
-            item = service;
-            confirmedReservations = await this.reservations.find({
-                $and: [{ service: service }, { status: ReservationStatus.Confirmed }]
-            }).lean();
-        }
-        const unavailableDates = confirmedReservations.some(confirmedReservation => {
-            return areIntervalsOverlapping(
-                { start: new Date(confirmedReservation.dateStart), end: new Date(confirmedReservation.dateEnd) },
-                { start: new Date(reservation.dateStart), end: new Date(reservation.dateEnd) })
+  public async findHomeReservations(homeId: string, status: string): Promise<Reservation[]> {
+    if (!isValidObjectId(homeId)) {
+      throw new HttpException(400, 'Invalid id');
+    }
+    const hebergement = await this.hebergements.findById(homeId);
+    const reservations: Reservation[] = await this.reservations
+      .find({
+        $and: [{ hebergement: hebergement }, { status: ReservationStatus[status] }],
+      })
+      .sort('-createdAt');
+    return reservations;
+  }
+
+  public async findEquipmentReservations(equipmentId: string, status: string): Promise<Reservation[]> {
+    if (!isValidObjectId(equipmentId)) {
+      throw new HttpException(400, 'Invalid id');
+    }
+    const equipment = await this.equipments.findById(equipmentId);
+    const reservations: Reservation[] = await this.reservations
+      .find({
+        $and: [{ equipment: equipment }, { status: ReservationStatus[status] }],
+      })
+      .sort('-createdAt');
+    return reservations;
+  }
+
+  public async findServiceReservations(serviceId: string, status: string): Promise<Reservation[]> {
+    if (!isValidObjectId(serviceId)) {
+      throw new HttpException(400, 'Invalid id');
+    }
+    const service = await this.services.findById(serviceId);
+    const reservations: Reservation[] = await this.reservations
+      .find({
+        $and: [{ service: service }, { status: ReservationStatus[status] }],
+      })
+      .sort('-createdAt');
+    return reservations;
+  }
+
+  public async findMyPendingReservations(id: string, user, category: string): Promise<Reservation[]> {
+    let reservations: Reservation[];
+    switch (category) {
+      case 'boat':
+        const boat = { _id: id } as Boat;
+        reservations = await reservationModel.find({
+          $and: [{ boat: boat }, { status: ReservationStatus.Pending }, { reservedBy: user }],
         });
-        if (unavailableDates) {
-            throw new HttpException(400, "Those dates are unavailable");
-        }
-        let owner: User = item.owner;
-        let name = item.name;
-        reservation.ownedBy = owner;
-        reservation.item = item;
-        reservation.totalPrice = this.calculatePrice(reservation);
-        reservation = await reservation.save();
-        const notificationData = new Notification();
-        notificationData.sender = reservedBy;
-        notificationData.receiver = owner;
-        notificationData.type = 'reservation_request';
-        notificationData.content = 'Made a reservation request';
-        notificationData.targetId = owner._id;
-        const notification = new notificationModel(notificationData);
-        await notification.save();
-        const ownerUrl = `http://linkedfishers.com/booking-requests`;
-        const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
-        await this.sendReservationEmail(owner, ownerUrl, `Someone made a reservation request for ${name}, click to view the details`, "Reservation request received");
-        // await this.sendReservationEmail(reservedBy, bookerUrl, `You just made a reservation request for ${name}, check your requests`, "Reservation request submitted");
-        return reservation;
+        break;
+
+      default:
+        break;
     }
+    return reservations;
+  }
 
-    public async findReservationsByUser(id: string): Promise<Reservation[]> {
-        if (!isValidObjectId(id)) {
-            throw new HttpException(400, 'Invalid user id');
-        }
-        const user: User = await userModel.findById(id);
-        if (!user) {
-            return [];
-        }
-        const reservations: Reservation[] = await this.reservations
-            .find({ reservedBy: user })
-            .sort('-createdAt');
-        return reservations;
+  public async updateReservation(user: User, reservationData): Promise<Reservation> {
+    const id = reservationData._id;
+    const status = reservationData.status;
+    let reservation = await this.reservations.findById(id);
+    if ((reservation.ownedBy._id as string) != user._id.toString()) {
+      throw new HttpException(401, "Can't update reservation");
     }
-
-    public async findReservationsRequestsByOwner(ownerId: string): Promise<Reservation[]> {
-        if (!isValidObjectId(ownerId)) {
-            throw new HttpException(400, 'Invalid user id');
-        }
-        const owner: User = await userModel.findById(ownerId);
-        if (!owner) {
-            return [];
-        }
-        const reservations: Reservation[] = await this.reservations
-            .find({ $and: [{ ownedBy: owner }, { status: ReservationStatus.Pending }] })
-            .populate('boat home equipment service', 'name description image')
-            .populate({
-                path: 'boat',
-                populate: {
-                    path: 'owner',
-                    model: 'User',
-                    select: 'firstName -_id',
-                },
-            })
-            .populate({
-                path: 'boat',
-                populate: {
-                    path: 'type',
-                    model: 'BoatType',
-                    select: 'name -_id',
-                },
-            })
-            .populate('reservedBy', '-_id firstname profilePicture rating reviews')
-            .sort('-createdAt')
-            .lean();
-        return reservations;
+    reservation = await this.reservations.findByIdAndUpdate(id, { status: status }, { new: true }).populate('reservedBy');
+    if (reservation.status == ReservationStatus.Confirmed) {
+      const notificationData = new Notification();
+      notificationData.sender = user;
+      notificationData.receiver = reservation.reservedBy;
+      notificationData.type = 'reservation_accepted';
+      notificationData.content = 'Accepted your reservation request';
+      // notificationData.targetId = owner._id;
+      const notification = new notificationModel(notificationData);
+      await notification.save();
+      const ownerUrl = `http://linkedfishers.com/booking-requests`;
+      const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
+      await this.sendReservationEmail(user, ownerUrl, `Your reservation request have been confirmed.`, 'Reservation confirmed');
+      await this.sendReservationEmail(reservation.reservedBy, bookerUrl, `You just confirmed a reservation request.`, 'Reservation confirmed');
     }
+    return reservation;
+  }
 
-    public async findBoatReservations(boatId: string, user: User): Promise<{ reservations: Reservation[], pendingReservations: Reservation[], item: any }> {
-        if (!isValidObjectId(boatId)) {
-            throw new HttpException(400, 'Invalid id');
-        }
-        const boat = await this.boats.findById(boatId).populate('reviews', 'rating').populate('type', 'name').lean();
-        const reservations: Reservation[] = await this.reservations
-            .find({
-                $and: [{ boat: boat }, { status: ReservationStatus.Confirmed }]
-            })
-            .sort('-createdAt');
-        let pendingReservations: Reservation[] = [];
-        if (boat.owner._id as string == user._id.toString()) {
-            pendingReservations = await this.reservations
-                .find({
-                    $and: [{ boat: boat }, { status: ReservationStatus.Pending }]
-                })
-                .populate('reservedBy', '-_id firstName profilePicture rating')
-                .sort('-createdAt');
-        }
-        let avgRating = 0;
-        if (boat.reviews && boat.reviews.length > 0) {
-            avgRating = boat.reviews.reduce((sum, review) => {
-                return sum + review.rating;
-            }, 0);
-            avgRating /= boat.reviews.length;
-        }
-        boat.rating = avgRating + 0.001;
-        return { reservations, item: boat, pendingReservations };
-    }
+  private calculatePrice(reservation: Reservation): number {
+    let numberOfdays = differenceInDays(new Date(reservation.dateEnd), new Date(reservation.dateStart));
+    return numberOfdays * reservation.item.price;
+  }
 
-    public async findHomeReservations(homeId: string, status: string): Promise<Reservation[]> {
-        if (!isValidObjectId(homeId)) {
-            throw new HttpException(400, 'Invalid id');
-        }
-        const hebergement = await this.hebergements.findById(homeId);
-        const reservations: Reservation[] = await this.reservations
-            .find({
-                $and: [{ hebergement: hebergement }, { status: ReservationStatus[status] }]
-            })
-            .sort('-createdAt');
-        return reservations;
-    }
-
-    public async findEquipmentReservations(equipmentId: string, status: string): Promise<Reservation[]> {
-        if (!isValidObjectId(equipmentId)) {
-            throw new HttpException(400, 'Invalid id');
-        }
-        const equipment = await this.equipments.findById(equipmentId);
-        const reservations: Reservation[] = await this.reservations
-            .find({
-                $and: [{ equipment: equipment }, { status: ReservationStatus[status] }]
-            })
-            .sort('-createdAt');
-        return reservations;
-    }
-
-    public async findServiceReservations(serviceId: string, status: string): Promise<Reservation[]> {
-        if (!isValidObjectId(serviceId)) {
-            throw new HttpException(400, 'Invalid id');
-        }
-        const service = await this.services.findById(serviceId);
-        const reservations: Reservation[] = await this.reservations
-            .find({
-                $and: [{ service: service }, { status: ReservationStatus[status] }]
-            })
-            .sort('-createdAt');
-        return reservations;
-    }
-
-    public async findMyPendingReservations(id: string, user, category: string): Promise<Reservation[]> {
-        let reservations: Reservation[];
-        switch (category) {
-            case 'boat':
-                const boat = { _id: id } as Boat;
-                reservations = await reservationModel.find({
-                    $and: [{ boat: boat },
-                    { status: ReservationStatus.Pending },
-                    { reservedBy: user }]
-                })
-                break;
-
-            default:
-                break;
-        }
-        return reservations;
-    }
-
-    public async updateReservation(user: User, reservationData): Promise<Reservation> {
-        const id = reservationData._id;
-        const status = reservationData.status;
-        let reservation = await this.reservations.findById(id);
-        if (reservation.ownedBy._id as string != user._id.toString()) {
-            throw new HttpException(401, "Can't update reservation");
-        }
-        reservation = await this.reservations.findByIdAndUpdate(id, { status: status }, { new: true }).populate('reservedBy');
-        if (reservation.status == ReservationStatus.Confirmed) {
-            const notificationData = new Notification();
-            notificationData.sender = user;
-            notificationData.receiver = reservation.reservedBy;
-            notificationData.type = 'reservation_accepted';
-            notificationData.content = 'Accepted your reservation request';
-            // notificationData.targetId = owner._id;
-            const notification = new notificationModel(notificationData);
-            await notification.save();
-            const ownerUrl = `http://linkedfishers.com/booking-requests`;
-            const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
-            //await this.sendReservationEmail(user, ownerUrl, `Your reservation request have been confirmed.`, "Reservation confirmed");
-            //await this.sendReservationEmail(reservation.reservedBy, bookerUrl, `You just confirmed a reservation request.`, "Reservation confirmed");
-
-        }
-        return reservation;
-    }
-
-    private calculatePrice(reservation: Reservation): number {
-        let numberOfdays = differenceInDays(new Date(reservation.dateEnd), new Date(reservation.dateStart));
-        return numberOfdays * reservation.item.price;
-    }
-
-    private async sendReservationEmail(user: User, url: string, content: string, subject: string): Promise<any> {
-        const html = `
+  private async sendReservationEmail(user: User, url: string, content: string, subject: string): Promise<any> {
+    const html = `
         <center>
         <td>
         <table align="center" bgcolor="#FFFFFF" class="m_444611345908390707row" style="margin:0 auto">
@@ -272,14 +277,14 @@ class ReservationService {
                     <td class="m_444611345908390707spacer" colspan="2" height="30"
                         style="font-size:30px;line-height:30px;margin:0;padding:0">&nbsp;</td>
                 </tr>
-    
+
                 <tr>
                     <td class="m_444611345908390707spacer" colspan="2" height="30"
                         style="font-size:30px;line-height:30px;margin:0;padding:0">&nbsp;</td>
                 </tr>
             </tbody>
         </table>
-    
+
         <table align="center" bgcolor="#FFFFFF" class="m_444611345908390707row"
             style="word-break:break-all;border-spacing:0;margin:0 auto;border-top:1px solid #eeeeee">
             <tbody>
@@ -296,8 +301,8 @@ class ReservationService {
                                     <th class="m_444611345908390707sans-serif" style="padding:0;text-align:left">
                                         <div class="m_444611345908390707sans-serif"
                                             style="color:rgb(150,154,161);font-weight:400;line-height:30px;margin:0;padding:0">
-    
-    
+
+
                                             <div style="margin-bottom:15px;font-size:15px;color:#747487">Hello <a
                                                     href="mailto:${user.email}"
                                                     style="color:#747487;text-decoration:none"
@@ -335,17 +340,17 @@ class ReservationService {
                         </table>
                     </th>
                 </tr>
-    
+
             </tbody>
         </table>
-    
-    
+
+
     </td>
     </center>
-    
+
         `;
-        return this.authService.sendEmail(user.email, html, subject);
-    }
+    return this.authService.sendEmail(user.email, html, subject);
+  }
 }
 
 export default ReservationService;
