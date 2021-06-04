@@ -1,15 +1,6 @@
 import { isValidObjectId } from 'mongoose';
 import HttpException from '../exceptions/HttpException';
-import {
-  Boat,
-  Equipment,
-  EquipmentType,
-  BoatType,
-  HebergementType,
-  Hebergement,
-  Service,
-  ServiceType,
-} from '../interfaces/equipments.interface';
+import { Boat, Equipment, EquipmentType, BoatType, HebergementType, Hebergement, Service, ServiceType } from '../interfaces/equipments.interface';
 import { User } from '../interfaces/users.interface';
 import models from '../models/equipments.model';
 import userModel from '../models/users.model';
@@ -65,29 +56,21 @@ class EquipmentService {
   }
 
   public async findAllHebergements(): Promise<Hebergement[]> {
-    const hebergements: Hebergement[] = await this.hebergements.find()
-      .populate('owner', 'fullName slug')
-      .populate('type', 'name');
+    const hebergements: Hebergement[] = await this.hebergements.find().populate('owner', 'fullName slug').populate('type', 'name');
     return hebergements;
   }
   public async findAllService(): Promise<Service[]> {
-    const services: Service[] = await this.services.find()
-      .populate('owner', 'fullName slug')
-      .populate('type', 'name');
+    const services: Service[] = await this.services.find().populate('owner', 'fullName slug').populate('type', 'name');
     return services;
   }
 
   public async findAllBoats(): Promise<Boat[]> {
-    const boats: Boat[] = await this.boats.find()
-      .populate('owner', 'fullName slug')
-      .populate('type', 'name');
+    const boats: Boat[] = await this.boats.find().populate('owner', 'fullName slug').populate('type', 'name');
     return boats;
   }
 
   public async findAllEquipments(): Promise<Equipment[]> {
-    const equipments: Equipment[] = await this.equipments.find()
-      .populate('owner', 'fullName slug')
-      .populate('type', 'name');
+    const equipments: Equipment[] = await this.equipments.find().populate('owner', 'fullName slug').populate('type', 'name');
     return equipments;
   }
 
@@ -163,7 +146,8 @@ class EquipmentService {
   }
 
   public async addEquipmentType(equipmentType: EquipmentType): Promise<EquipmentType> {
-    if (!equipmentType.name || !equipmentType.icon) {
+    if (!equipmentType.name || !equipmentType.description) {
+      console.log(equipmentType);
       throw new HttpException(400, 'Missing Equipment type informations!');
     }
     const newType = new this.equipmentTypes(equipmentType);
@@ -171,7 +155,7 @@ class EquipmentService {
   }
 
   public async addBoatType(boatType: BoatType): Promise<BoatType> {
-    if (!boatType.name || !boatType.icon) {
+    if (!boatType.name || !boatType.description) {
       throw new HttpException(400, 'Missing Boat type informations!');
     }
     const newType = new models.boatType(boatType);
@@ -179,14 +163,14 @@ class EquipmentService {
   }
 
   public async addServiceType(serviceType: ServiceType): Promise<ServiceType> {
-    if (!serviceType.name || !serviceType.icon) {
+    if (!serviceType.name || !serviceType.description) {
       throw new HttpException(400, 'Missing Service type informations!');
     }
     const newType = new models.serviceTypeModel(serviceType);
     return await newType.save();
   }
   public async addHebergementType(hebergementType: HebergementType): Promise<HebergementType> {
-    if (!hebergementType.name || !hebergementType.icon) {
+    if (!hebergementType.name || !hebergementType.description) {
       throw new HttpException(400, 'Missing HebergementType type informations!');
     }
     const newType = new models.hebergementType(hebergementType);
@@ -216,7 +200,6 @@ class EquipmentService {
     }
     return type;
   }
-
 
   public async deleteServiceType(typeId: string): Promise<BoatType> {
     const type = await models.serviceTypeModel.findByIdAndDelete(typeId);
@@ -373,7 +356,7 @@ class EquipmentService {
     return eq;
   }
 
-  public async getBoat(id: string, currentUser: User): Promise<{ boat: Boat, isOwner: boolean }> {
+  public async getBoat(id: string, currentUser: User): Promise<{ boat: Boat; isOwner: boolean }> {
     const boat = await this.boats
       .findById(id)
       .populate('owner', 'firstName profilePicture rating')
@@ -387,7 +370,7 @@ class EquipmentService {
         },
       })
       .lean();
-    const isOwner = boat.owner._id.toString() === currentUser._id.toString()
+    const isOwner = boat.owner._id.toString() === currentUser._id.toString();
     delete boat.owner._id;
     let avgRating = 0;
     if (boat.reviews && boat.reviews.length > 0) {
