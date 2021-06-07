@@ -64,8 +64,8 @@ class ReservationController {
     public findHomeReservations = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = req.params.id;
-            const status = req.params.status;
-            const reservations: Reservation[] = await this.reservationService.findHomeReservations(id, status);
+            const user = req.user;
+            const { reservations, item, pendingReservations } = await this.reservationService.findHomeReservations(id, user);
             res.status(200).json({ data: reservations });
         } catch (error) {
             next(error);
@@ -75,8 +75,8 @@ class ReservationController {
     public findEquipmentReservations = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = req.params.id;
-            const status = req.params.status;
-            const reservations: Reservation[] = await this.reservationService.findEquipmentReservations(id, status);
+            const user = req.user;
+            const { reservations, item, pendingReservations } = await this.reservationService.findEquipmentReservations(id, user);
             res.status(200).json({ data: reservations });
         } catch (error) {
             next(error);
@@ -86,8 +86,8 @@ class ReservationController {
     public findServiceReservations = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = req.params.id;
-            const status = req.params.status;
-            const reservations: Reservation[] = await this.reservationService.findServiceReservations(id, status);
+            const user = req.user;
+            const { reservations, item, pendingReservations } = await this.reservationService.findServiceReservations(id, user);
             res.status(200).json({ data: reservations });
         } catch (error) {
             next(error);
