@@ -182,43 +182,94 @@ class ReservationService {
     return { reservations, item: boat, pendingReservations };
   }
 
-  public async findHomeReservations(homeId: string, status: string): Promise<Reservation[]> {
+  public async findHomeReservations(homeId: string, user: User): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
     if (!isValidObjectId(homeId)) {
       throw new HttpException(400, 'Invalid id');
     }
-    const hebergement = await this.hebergements.findById(homeId);
+    const home = await this.hebergements.findById(homeId).populate('reviews', 'rating').populate('type', 'name').lean();
     const reservations: Reservation[] = await this.reservations
       .find({
-        $and: [{ hebergement: hebergement }, { status: ReservationStatus[status] }],
+        $and: [{ home: home }, { status: ReservationStatus.Confirmed }],
       })
       .sort('-createdAt');
-    return reservations;
+    let pendingReservations: Reservation[] = [];
+    if ((home.owner._id as string) == user._id.toString()) {
+      pendingReservations = await this.reservations
+        .find({
+          $and: [{ home: home }, { status: ReservationStatus.Pending }],
+        })
+        .populate('reservedBy', '-_id firstName profilePicture rating')
+        .sort('-createdAt');
+    }
+    let avgRating = 0;
+    if (home.reviews && home.reviews.length > 0) {
+      avgRating = home.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= home.reviews.length;
+    }
+    home.rating = avgRating + 0.001;
+    return { reservations, item: home, pendingReservations };
   }
 
-  public async findEquipmentReservations(equipmentId: string, status: string): Promise<Reservation[]> {
+  public async findEquipmentReservations(equipmentId: string, user: User): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
     if (!isValidObjectId(equipmentId)) {
       throw new HttpException(400, 'Invalid id');
     }
-    const equipment = await this.equipments.findById(equipmentId);
+    const equipment = await this.equipments.findById(equipmentId).populate('reviews', 'rating').populate('type', 'name').lean();
     const reservations: Reservation[] = await this.reservations
       .find({
-        $and: [{ equipment: equipment }, { status: ReservationStatus[status] }],
+        $and: [{ equipment: equipment }, { status: ReservationStatus.Confirmed }],
       })
       .sort('-createdAt');
-    return reservations;
+    let pendingReservations: Reservation[] = [];
+    if ((equipment.owner._id as string) == user._id.toString()) {
+      pendingReservations = await this.reservations
+        .find({
+          $and: [{ equipment: equipment }, { status: ReservationStatus.Pending }],
+        })
+        .populate('reservedBy', '-_id firstName profilePicture rating')
+        .sort('-createdAt');
+    }
+    let avgRating = 0;
+    if (equipment.reviews && equipment.reviews.length > 0) {
+      avgRating = equipment.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= equipment.reviews.length;
+    }
+    equipment.rating = avgRating + 0.001;
+    return { reservations, item: equipment, pendingReservations };
   }
 
-  public async findServiceReservations(serviceId: string, status: string): Promise<Reservation[]> {
+  public async findServiceReservations(serviceId: string, user: User): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
     if (!isValidObjectId(serviceId)) {
       throw new HttpException(400, 'Invalid id');
     }
-    const service = await this.services.findById(serviceId);
+    const equipment = await this.equipments.findById(serviceId).populate('reviews', 'rating').populate('type', 'name').lean();
     const reservations: Reservation[] = await this.reservations
       .find({
-        $and: [{ service: service }, { status: ReservationStatus[status] }],
+        $and: [{ equipment: equipment }, { status: ReservationStatus.Confirmed }],
       })
       .sort('-createdAt');
-    return reservations;
+    let pendingReservations: Reservation[] = [];
+    if ((equipment.owner._id as string) == user._id.toString()) {
+      pendingReservations = await this.reservations
+        .find({
+          $and: [{ equipment: equipment }, { status: ReservationStatus.Pending }],
+        })
+        .populate('reservedBy', '-_id firstName profilePicture rating')
+        .sort('-createdAt');
+    }
+    let avgRating = 0;
+    if (equipment.reviews && equipment.reviews.length > 0) {
+      avgRating = equipment.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= equipment.reviews.length;
+    }
+    equipment.rating = avgRating + 0.001;
+    return { reservations, item: equipment, pendingReservations };
   }
 
   public async findMyPendingReservations(id: string, user, category: string): Promise<Reservation[]> {
