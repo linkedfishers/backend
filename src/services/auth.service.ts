@@ -23,7 +23,7 @@ class AuthService {
     const u = new this.users({ ...userData, password: hashedPassword });
     u.slug = slugify(u.fullName);
     u.activated = false;
-    if (this.users.exists({ slug: u.slug })) {
+    if (await this.users.exists({ slug: u.slug })) {
       u.slug = u.slug + shortid.generate();
     }
 
