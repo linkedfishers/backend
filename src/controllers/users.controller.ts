@@ -95,7 +95,7 @@ class UsersController {
       const reportData = req.body;
       reportData.author = req.user;
       const report: Report = await this.userService.createReport(req.body);
-      res.status(200).json({ data: { content: report.content } });
+      res.status(200).json({ data: { content: report.cause } });
     } catch (error) {
       next(error);
     }

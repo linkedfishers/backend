@@ -48,7 +48,6 @@ class UsersRoute implements Route {
     this.router.get(`${this.path}/search/:keyword`, this.usersController.search);
 
     this.router.post(`${this.path}/report`, authMiddleware, this.usersController.reportUser);
-    this.router.get(`${this.path}/reports`, authMiddleware, this.usersController.getReports);
   }
 }
 
