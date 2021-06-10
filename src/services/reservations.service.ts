@@ -318,6 +318,16 @@ class ReservationService {
     return numberOfdays * reservation.item.price;
   }
 
+  public async updateReservationsStatus() {
+    const today = new Date();
+    await this.reservations.updateMany(
+      { status: ReservationStatus.Pending, dateStart: { $lte: today } },
+      { $set: { status: ReservationStatus.Expired } });
+    await this.reservations.updateMany({ status: ReservationStatus.Confirmed, dateEnd: { $lte: today } }, {
+      $set: { status: ReservationStatus.Completed }
+    });
+  }
+
   private async sendReservationEmail(user: User, url: string, content: string, subject: string): Promise<any> {
     const html = `
         <center>

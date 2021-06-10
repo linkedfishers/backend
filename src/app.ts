@@ -9,6 +9,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import Routes from './interfaces/routes.interface';
 import errorMiddleware from './middlewares/error.middleware';
 import mongoose from 'mongoose';
+import Scheduler from './services/scheduler';
 
 class App {
   public app: express.Application;
@@ -19,13 +20,13 @@ class App {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
-
+    let scheduler = new Scheduler();
     this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeSwagger();
     this.initializeErrorHandling();
-
+    scheduler.updateReservationsJob();
     //Serve static files 
     this.app.use(express.static('uploads'));
   }
