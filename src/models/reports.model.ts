@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 import { Report } from '../interfaces/users.interface';
 
 const reportSchema = new mongoose.Schema({
-    content: String,
+    cause: String,
+    type:String,
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    status: String,
-    is_read: { type: Boolean, default: false },
+    target_id: String,
+    is_done: { type: Boolean, default: false },
 });
 
 reportSchema.set('timestamps', true);

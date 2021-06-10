@@ -1,3 +1,4 @@
+import { User } from './users.interface';
 export class Event {
     _id: string;
     description: string;
@@ -12,4 +13,5 @@ export class Event {
     interested: any[];
     tags: string[];
     image: string;
+    owner: User;
 }

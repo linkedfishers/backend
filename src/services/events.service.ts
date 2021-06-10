@@ -57,7 +57,7 @@ class EventService {
     }
 
     public async findEventById(eventId: string): Promise<Event> {
-        const event: Event = await eventModel.findById(eventId);
+        const event: Event = await eventModel.findById(eventId).populate('host','fullName profilePicture');
         return event;
     }
 

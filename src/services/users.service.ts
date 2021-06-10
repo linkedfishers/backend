@@ -4,8 +4,9 @@ import { Report, User } from '../interfaces/users.interface';
 import userModel from '../models/users.model';
 import reportModel from '../models/reports.model';
 import notificationModel from '../models/notifications.model';
-import { Notification } from '../interfaces/posts.interface';
-
+import { Notification, Post,Comment } from '../interfaces/posts.interface';
+import postModel from '../models/posts.model';
+import PostService from '../services/posts.services';
 class UserService {
   public users = userModel;
 
@@ -140,6 +141,20 @@ class UserService {
     const report = new reportModel(reportData);
     return await report.save();
   }
+  public async getReports(): Promise<Report[]> {
+    const reports = await reportModel.find();
+  return reports;
+  }
+  public async deleteUser(id: string): Promise<User> {
+    const user = await this.users.findByIdAndDelete(id);
+
+    return user;
+  }
+  // public async deletePost(id:string): Promise<Post> {
+  //   const post = await this.post.findByIdAndDelete(id);
+
+  //   return post;
+  // }
 }
 
 export default UserService;

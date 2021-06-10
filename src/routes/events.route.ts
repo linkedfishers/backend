@@ -46,10 +46,10 @@ class EventsRoute implements Route {
     this.router.get(`${this.path}/today/`, authMiddleware, this.eventController.findTodayEvents);
     this.router.get(`${this.path}/upcoming/`, authMiddleware, this.eventController.findUpComingEvents);
 
-    this.router.put(`${this.path}/going/eventId`, authMiddleware, this.eventController.addGoingToEvent);
-    this.router.put(`${this.path}/interested/eventId`, authMiddleware, this.eventController.addInterestedInEvent);
-    this.router.put(`${this.path}/remove-going/eventId`, authMiddleware, this.eventController.removeGoing);
-    this.router.put(`${this.path}/remove-interested/eventId`, authMiddleware, this.eventController.removeInterested);
+    this.router.put(`${this.path}/going/:eventId`, authMiddleware, this.eventController.addGoingToEvent);
+    this.router.put(`${this.path}/interested/:eventId`, authMiddleware, this.eventController.addInterestedInEvent);
+    this.router.put(`${this.path}/remove-going/:eventId`, authMiddleware, this.eventController.removeGoing);
+    this.router.put(`${this.path}/remove-interested/:eventId`, authMiddleware, this.eventController.removeInterested);
     //TODO : Add event comments...
     this.router.delete(`${this.path}/:id`, authMiddleware, this.eventController.deleteEvent);
     this.router.put(`${this.path}/:id`, authMiddleware, this.eventController.updateEvent);
