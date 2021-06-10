@@ -9,6 +9,7 @@ import PostsRoute from './routes/posts.route';
 import EventsRoute from './routes/events.route';
 import EquipmentRoute from './routes/equipments.route';
 import AdminRoute from './routes/admin.route';
+import ReservationRoute from './routes/reservations.route';
 
 validateEnv();
 const routes: Routes[] = [
@@ -19,6 +20,7 @@ const routes: Routes[] = [
     new EventsRoute(),
     new EquipmentRoute(),
     new AdminRoute(),
+    new ReservationRoute(),
 ]
 const app = new App(routes);
 

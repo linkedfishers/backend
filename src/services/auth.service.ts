@@ -15,14 +15,15 @@ class AuthService {
 
   public async signup(userData: CreateUserDto): Promise<string> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'All fields are required');
-
+    userData.birthDate = new Date(userData.birthDate);
+    userData.fullName = userData.firstName + ' ' + userData.lastName;
     const findUser: User = await this.users.findOne({ email: userData.email });
     if (findUser) throw new HttpException(409, `Email address ${userData.email} already exists`);
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const u = new this.users({ ...userData, password: hashedPassword });
     u.slug = slugify(u.fullName);
     u.activated = false;
-    if (this.users.exists({ slug: u.slug })) {
+    if (await this.users.exists({ slug: u.slug })) {
       u.slug = u.slug + shortid.generate();
     }
 
@@ -33,7 +34,7 @@ class AuthService {
     try {
       await this.sendConfirmationEmail(u, url);
     } catch (err) {
-      if (isEmptyObject(userData)) throw new HttpException(500, err);
+      throw new HttpException(500, err);
     }
     const createUserData: User = await u.save();
     return 'Sent confirmation mail';
@@ -114,9 +115,12 @@ class AuthService {
 
   public async loginWithGoogle(userData: User): Promise<TokenData> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Missing credentials');
-    console.log(userData)
     let user: User = await this.users.findOne({ googleId: userData.googleId });
     if (!user) {
+      const userAlreadyExists = await this.users.exists({ email: userData.email });
+      if (userAlreadyExists) {
+        throw new HttpException(400, 'There is already an account with this email address');
+      }
       const u = new this.users({ ...userData });
       u.slug = slugify(u.fullName);
       u.activated = true;
@@ -193,6 +197,8 @@ class AuthService {
       _id: user._id,
       profilePicture: user.profilePicture,
       fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       role: user.role,
       language: user.language,
       slug: user.slug,
@@ -207,7 +213,7 @@ class AuthService {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
   }
 
-  private async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
+  public async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
     const smtpConfig = {
       host: 'ssl0.ovh.net',
       port: 465,

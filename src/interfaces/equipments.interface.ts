@@ -8,14 +8,47 @@ export class Equipment {
   image: string;
   description: string;
   isAvailable: boolean;
+  reviews: any[];
+  rating: number;
+  price: number;
 }
 export class EquipmentType {
   _id: string;
   name: string;
   icon: string;
+  description: string;
   items: any[];
 }
 
+export class BoatType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
+  items: any[];
+}
+
+export class Service {
+  _id: string;
+  name: string;
+  owner: User;
+  image: string;
+  description: string;
+  isAvailable: boolean;
+  price: number;
+  position: any;
+  adress: string;
+  type: ServiceType;
+  reviews: any[];
+  rating: number;
+}
+export class ServiceType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
+  items: any[];
+}
 export class Boat {
   _id: string;
   name: string;
@@ -26,6 +59,17 @@ export class Boat {
   price: number;
   position: any;
   adress: string;
+  type: BoatType;
+  reviews: any[];
+  rating: number;
+}
+
+export class HebergementType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
+  items: any[];
 }
 
 export class Hebergement {
@@ -38,12 +82,7 @@ export class Hebergement {
   adress: string;
   price: number;
   position: any;
-}
-
-export class Reservation {
-  _id: string;
-  reservedBy: any;
-  home: any;
-  dateStart: Date;
-  dateEnd: Date;
+  type: HebergementType;
+  reviews: any[];
+  rating: number;
 }

@@ -7,6 +7,7 @@ import postModel from '../models/posts.model';
 import userModel from '../models/users.model';
 import notificationModel from '../models/notifications.model';
 import { isEmptyObject, isNullOrEmpty } from '../utils/util';
+import fs from 'fs';
 
 class PostService {
 
@@ -107,6 +108,15 @@ class PostService {
         const post: Post = await postModel.findOneAndDelete({
             _id: postId, author
         });
+        await userModel.findByIdAndUpdate(post.author._id, {
+            $pull: {
+                pictures: post.attachment
+            }
+        })
+        await commentModel.deleteMany({ post: post });
+        if (fs.existsSync('uploads/' + post.attachment)) {
+            fs.unlinkSync('uploads/' + post.attachment);
+        }
         return post;
     }
     public async updatePost(postData: Post, postId): Promise<Post> {
