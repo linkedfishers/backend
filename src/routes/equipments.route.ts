@@ -45,32 +45,17 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/boat/types`, authMiddleware, this.equipmentController.findBoatTypes);
     this.router.get(`${this.path}/hebergement/types`, authMiddleware, this.equipmentController.findHebergementTypes);
     this.router.get(`${this.path}/service/types`, authMiddleware, this.equipmentController.findServiceTypes);
-    this.router.get(
-      `${this.path}/type/:typeId/user/:ownerId`,
-      authMiddleware,
-      uploadMiddleware.single('file'),
-      this.equipmentController.findEquipmentsByTypeAndUser,
-    );
-    this.router.get(
-      `${this.path}/service/type/:typeId/user/:ownerId`,
-      authMiddleware,
-      uploadMiddleware.single('file'),
-      this.equipmentController.findServicesByTypeAndUser,
-    );
-    this.router.get(`${this.path}/service/user/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.findServicesByUser);
-    this.router.get(`${this.path}/user/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.findEquipmentsByUser);
-    this.router.get(`${this.path}/boats/user/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.findBoatsByUser);
-    this.router.get(
-      `${this.path}/hebergements/user/:id`,
-      authMiddleware,
-      uploadMiddleware.single('file'),
-      this.equipmentController.findHebergementsByUser,
-    );
+    this.router.get(`${this.path}/type/:typeId/user/:ownerId`, this.equipmentController.findEquipmentsByTypeAndUser);
+    this.router.get(`${this.path}/service/type/:typeId/user/:ownerId`, this.equipmentController.findServicesByTypeAndUser,);
+    this.router.get(`${this.path}/service/user/:id`, this.equipmentController.findServicesByUser);
+    this.router.get(`${this.path}/user/:id`, this.equipmentController.findEquipmentsByUser);
+    this.router.get(`${this.path}/boats/user/:id`, this.equipmentController.findBoatsByUser);
+    this.router.get(`${this.path}/hebergements/user/:id`, this.equipmentController.findHebergementsByUser);
 
-    this.router.get(`${this.path}/all`, authMiddleware, this.equipmentController.findAllEquipments);
-    this.router.get(`${this.path}/boats/all`, authMiddleware, this.equipmentController.findAllBoats);
-    this.router.get(`${this.path}/hebergements/all`, authMiddleware, this.equipmentController.findHebergements);
-    this.router.get(`${this.path}/service/all`, authMiddleware, this.equipmentController.findServices);
+    this.router.get(`${this.path}/all`, this.equipmentController.findAllEquipments);
+    this.router.get(`${this.path}/boats/all`, this.equipmentController.findAllBoats);
+    this.router.get(`${this.path}/hebergements/all`, this.equipmentController.findHebergements);
+    this.router.get(`${this.path}/service/all`, this.equipmentController.findServices);
 
     this.router.delete(`${this.path}/boat/:id`, authMiddleware, this.equipmentController.deleteBoat);
     this.router.delete(`${this.path}/equipment/:id`, authMiddleware, this.equipmentController.deleteEquipment);
@@ -82,10 +67,10 @@ class EquipmentRoute implements Route {
     this.router.put(`${this.path}/hebergement/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.updateHebergement);
     this.router.put(`${this.path}/service/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.updateService);
 
-    this.router.get(`${this.path}/boat/:id`, authMiddleware, this.equipmentController.getBoat);
-    this.router.get(`${this.path}/equipment/:id`, authMiddleware, this.equipmentController.getEquipment);
-    this.router.get(`${this.path}/hebergement/:id`, authMiddleware, this.equipmentController.getHebergement);
-    this.router.get(`${this.path}/service/:id`, authMiddleware, this.equipmentController.getService);
+    this.router.get(`${this.path}/boat/:id`, this.equipmentController.getBoat);
+    this.router.get(`${this.path}/equipment/:id`, this.equipmentController.getEquipment);
+    this.router.get(`${this.path}/hebergement/:id`, this.equipmentController.getHebergement);
+    this.router.get(`${this.path}/service/:id`, this.equipmentController.getService);
 
     //reviews
     this.router.post(`${this.path}/boat/review`, authMiddleware, this.equipmentController.createBoatReview);

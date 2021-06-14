@@ -44,18 +44,18 @@ class PostsRoute implements Route {
   private initializeRoutes() {
     //posts
     this.router.post(`${this.path}/new`, authMiddleware, uploadMiddleware.single('file'), this.postController.createPost);
-    this.router.get(`${this.path}/all`, authMiddleware, this.postController.findAllPosts);
-    this.router.get(`${this.path}/all/:skip/:limit`, authMiddleware, this.postController.findPosts);
+    this.router.get(`${this.path}/all`, this.postController.findAllPosts);
+    this.router.get(`${this.path}/all/:skip/:limit`, this.postController.findPosts);
     this.router.get(`${this.path}/following`, authMiddleware, this.postController.findFollowingPosts);
-    this.router.get(`${this.path}/post/:id`, authMiddleware, this.postController.findPostById);
-    this.router.get(`${this.path}/user-posts/:id`, authMiddleware, this.postController.findPostsByUser);
+    this.router.get(`${this.path}/post/:id`, this.postController.findPostById);
+    this.router.get(`${this.path}/user-posts/:id`, this.postController.findPostsByUser);
     this.router.get(`${this.path}/user-posts/`, authMiddleware, this.postController.findPostsByUser);
     this.router.delete(`${this.path}/post/:id`, authMiddleware, this.postController.deletePost);
     this.router.put(`${this.path}/react/:postId`, authMiddleware, this.postController.reactToPost);
     this.router.put(`${this.path}/post/:id`, authMiddleware, this.postController.updatePost);
     //comments
     this.router.post(`${this.path}/comment/new`, authMiddleware, this.postController.createComment);
-    this.router.get(`${this.path}/comments/:postId/:count`, authMiddleware, this.postController.findCommentsByPost);
+    this.router.get(`${this.path}/comments/:postId/:count`, this.postController.findCommentsByPost);
     this.router.delete(`${this.path}/comment/:id`, authMiddleware, this.postController.deleteComment);
     this.router.put(`${this.path}/comment/:id`, authMiddleware, this.postController.updateComment);
   }

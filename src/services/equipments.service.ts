@@ -370,7 +370,10 @@ class EquipmentService {
         },
       })
       .lean();
-    const isOwner = boat.owner._id.toString() === currentUser._id.toString();
+    let isOwner: boolean = false;
+    if (currentUser) {
+      isOwner = boat.owner._id.toString() === currentUser._id.toString();
+    }
     delete boat.owner._id;
     let avgRating = 0;
     if (boat.reviews && boat.reviews.length > 0) {

@@ -139,7 +139,6 @@ class EquipmentController {
 
   public findAllBoats = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const ownerId = req.params.id || req.user._id;
       const boats: Boat[] = await this.equipmentService.findAllBoats();
       res.status(200).json({ data: boats });
     } catch (error) {

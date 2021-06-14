@@ -37,7 +37,7 @@ class UsersRoute implements Route {
 
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.usersController.getUsers);
-    this.router.get(`${this.path}/user/:id`, authMiddleware, this.usersController.getUserById);
+    this.router.get(`${this.path}/user/:id`, this.usersController.getUserById);
     this.router.post(`${this.path}/user/profile-picture`, authMiddleware, upload.single('file'), this.usersController.updateProfilePicture);
     this.router.post(`${this.path}/user/cover-photo`, authMiddleware, upload.single('file'), this.usersController.updateCoverPhoto);
     this.router.put(`${this.path}/follow/:id`, authMiddleware, this.usersController.follow);
