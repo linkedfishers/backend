@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { Provider } from './provider.interface';
 import { User } from './users.interface';
 
 export interface DataStoredInToken {
@@ -21,16 +22,24 @@ export interface RequestWithUser extends Request {
   user: User;
 }
 
+export interface RequestWithProvider extends Request {
+  provider: Provider;
+}
+
 export interface FileUpload {
-  fieldname: string,
-  originalname: string,
-  encoding: string,
-  mimetype: string,
-  destination: string,
-  filename: string,
-  path: string,
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+}
+
+export interface RequestWithFileProduct extends RequestWithProvider {
+  file: FileUpload;
 }
 
 export interface RequestWithFile extends RequestWithUser {
-  file: FileUpload
+  file: FileUpload;
 }
