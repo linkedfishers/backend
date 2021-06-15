@@ -63,8 +63,8 @@ class ProductController {
     try {
       const id = req.params.id;
       const provider = req.provider;
-      const { isOwner } = await this.productService.getProduct(id, provider);
-      res.status(200).json({ data: { provider, isOwner } });
+      const product = await this.productService.getProduct(id);
+      res.status(200).json({ data: { product } });
     } catch (error) {
       next(error);
     }

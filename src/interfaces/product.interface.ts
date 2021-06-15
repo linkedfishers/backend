@@ -2,19 +2,19 @@ import { Provider } from './provider.interface';
 
 export class Product {
   _id: string;
-  productName: string;
+  name: string;
   price: number;
-  qqty: number;
+  quantity: number;
   images: string;
-  productDescription: string;
+  description: string;
   owner: Provider;
   type: Categorie;
 }
 
 export class Categorie {
   _id: string;
-  catName: string;
-  catDescription: string;
+  name: string;
+  description: string;
   icon: string;
 }
 

@@ -35,13 +35,6 @@ class ProductService {
     return products;
   }
 
-  public async createCategorie(categorieType: Categorie): Promise<Categorie> {
-    if (!categorieType.catName || !categorieType.catDescription) {
-      throw new HttpException(400, 'missing Field ');
-    }
-    const newCat = new marketmodel.categorieModel(categorieType);
-    return await newCat.save();
-  }
   public async deleteProduct(productId: string): Promise<Product> {
     const product = await this.products.findByIdAndDelete(productId);
     if (fs.existsSync('uploads/' + product.images)) {
@@ -59,12 +52,13 @@ class ProductService {
   }
 
   public async addCategorie(categorie: Categorie): Promise<Categorie> {
-    if (!categorie.catName || !categorie.catDescription) {
+    if (!categorie.name || !categorie.description) {
       throw new HttpException(400, 'All field must be added');
     }
     const newCategorie = new marketmodel.categorieModel(categorie);
     return newCategorie.save();
   }
+
   public async findCategorie(): Promise<Categorie[]> {
     const catType: Categorie[] = await this.categories.find();
     if (catType.length == 0) {
@@ -76,8 +70,8 @@ class ProductService {
   public async DefaultCategorie() {
     const cats = [
       { name: 'test1', description: 'mycat1' },
-      { name: 'test1', description: 'mycat1' },
-      { name: 'test1', description: 'mycat1' },
+      { name: 'test2', description: 'mycat2' },
+      { name: 'test3', description: 'mycat3' },
     ];
     for (let i = 0; i < cats.length; i++) {
       const cat = new this.categories(cats[i]);

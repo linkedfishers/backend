@@ -28,13 +28,16 @@ class ProductRoute implements Route {
   public path = '/products';
   public router = Router();
   public productController = new ProductController();
-  constructor() {}
-  private initializeRoute() {
+  constructor() {
+    this.initializeRoutes();
+  }
+
+  private initializeRoutes() {
     this.router.post(`${this.path}/product/new`, authProviderMiddleware, uploadMiddleware.single('file'), this.productController.createProduct);
-
-    this.router.get(`${this.path}/categories`, authProviderMiddleware, this.productController.findCategorie);
-
-    this.router.get(`${this.path}/product/:id`,authProviderMiddleware,this.productController.)
+    this.router.get(`${this.path}/categories`, this.productController.findCategorie);
+    this.router.get(`${this.path}/product/:id`, this.productController.getProduct)
   }
 
 }
+
+export default ProductRoute;
