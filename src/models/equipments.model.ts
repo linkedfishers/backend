@@ -66,6 +66,7 @@ const boatSchema = new mongoose.Schema({
   },
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'BoatType', required: true },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
+  details: {type: mongoose.Schema.Types.Mixed, required: false}
 });
 
 const reviewSchema = new mongoose.Schema({
