@@ -11,19 +11,21 @@ import EquipmentRoute from './routes/equipments.route';
 import AdminRoute from './routes/admin.route';
 import ReservationRoute from './routes/reservations.route';
 import ProductRoute from './routes/product.route';
+import ProviderRoute from './routes/provider.route';
 
 validateEnv();
 const routes: Routes[] = [
-    new IndexRoute(),
-    new UsersRoute(),
-    new AuthRoute(),
-    new PostsRoute(),
-    new EventsRoute(),
-    new EquipmentRoute(),
-    new AdminRoute(),
-    new ReservationRoute(),
-    new ProductRoute(),
-]
+  new IndexRoute(),
+  new UsersRoute(),
+  new AuthRoute(),
+  new PostsRoute(),
+  new EventsRoute(),
+  new EquipmentRoute(),
+  new AdminRoute(),
+  new ReservationRoute(),
+  new ProviderRoute(),
+  new ProductRoute(),
+];
 const app = new App(routes);
 
 app.listen();
