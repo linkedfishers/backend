@@ -11,6 +11,7 @@ export class Equipment {
   reviews: any[];
   rating: number;
   price: number;
+  details: any;
 }
 export class EquipmentType {
   _id: string;
@@ -41,6 +42,7 @@ export class Service {
   type: ServiceType;
   reviews: any[];
   rating: number;
+  details: any;
 }
 export class ServiceType {
   _id: string;
@@ -62,6 +64,7 @@ export class Boat {
   type: BoatType;
   reviews: any[];
   rating: number;
+  details: any;
 }
 
 export class HebergementType {
@@ -70,6 +73,7 @@ export class HebergementType {
   icon: string;
   description: string;
   items: any[];
+  details: any;
 }
 
 export class Hebergement {
@@ -85,4 +89,5 @@ export class Hebergement {
   type: HebergementType;
   reviews: any[];
   rating: number;
+  details: any;
 }

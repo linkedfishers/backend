@@ -28,3 +28,12 @@ export const randomString = (len: number, charSet?: string): string => {
   }
   return randomString;
 };
+
+export const parseJson = (jsonString: string): any => {
+  try {
+    return JSON.parse(jsonString);
+  }
+  catch (e) {
+    return {};
+  }
+}

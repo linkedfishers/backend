@@ -4,7 +4,7 @@ import { Boat, Equipment, EquipmentType, BoatType, HebergementType, Hebergement,
 import { User } from '../interfaces/users.interface';
 import models from '../models/equipments.model';
 import userModel from '../models/users.model';
-import { isEmptyObject } from '../utils/util';
+import { isEmptyObject, parseJson } from '../utils/util';
 import fs from 'fs';
 import { Review } from '../interfaces/review.interface';
 class EquipmentService {
@@ -17,6 +17,7 @@ class EquipmentService {
 
   public async createBoat(boatData): Promise<Boat> {
     if (isEmptyObject(boatData)) throw new HttpException(400, "Can't create empty boat");
+    boatData.details = parseJson(boatData.details);
     if (boatData.position) {
       boatData.position = {
         coordinates: [Number(boatData.lat), Number(boatData.lng)],
