@@ -73,7 +73,6 @@ export class HebergementType {
   icon: string;
   description: string;
   items: any[];
-  details: any;
 }
 
 export class Hebergement {

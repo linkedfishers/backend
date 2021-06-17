@@ -142,7 +142,7 @@ class EquipmentService {
     return await models.boatType.find();
   }
 
-  public async findHebergementTypes(): Promise<BoatType[]> {
+  public async findHebergementTypes(): Promise<HebergementType[]> {
     return await models.hebergementType.find();
   }
 
