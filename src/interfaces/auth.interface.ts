@@ -22,10 +22,6 @@ export interface RequestWithUser extends Request {
   user: User;
 }
 
-export interface RequestWithProvider extends Request {
-  provider: Provider;
-}
-
 export interface FileUpload {
   fieldname: string;
   originalname: string;
@@ -34,10 +30,6 @@ export interface FileUpload {
   destination: string;
   filename: string;
   path: string;
-}
-
-export interface RequestWithFileProduct extends RequestWithProvider {
-  file: FileUpload;
 }
 
 export interface RequestWithFile extends RequestWithUser {

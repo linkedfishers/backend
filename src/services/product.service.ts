@@ -7,6 +7,7 @@ import { isEmptyObject } from '../utils/util';
 import fs from 'fs';
 import { Provider } from '../interfaces/provider.interface';
 import providerModel from '../models/provider.model';
+import userModel from '../models/users.model';
 
 class ProductService {
   public products = marketmodel.productModel;
@@ -18,7 +19,7 @@ class ProductService {
     return await product.save();
   }
 
-  public async findAllProduct(): Promise<Product[]> {
+  public async findAllProducts(): Promise<Product[]> {
     const products: Product[] = await this.products.find().populate('owner', 'companyName slug').populate('type', 'name');
     return products;
   }
@@ -37,8 +38,8 @@ class ProductService {
 
   public async deleteProduct(productId: string): Promise<Product> {
     const product = await this.products.findByIdAndDelete(productId);
-    if (fs.existsSync('uploads/' + product.images)) {
-      fs.unlinkSync('uploads/' + product.images);
+    if (fs.existsSync('uploads/' + product.picture)) {
+      fs.unlinkSync('uploads/' + product.picture);
     }
     return product;
   }

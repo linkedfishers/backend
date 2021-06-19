@@ -9,7 +9,9 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   quantity: { type: Number, required: true, default: 1 },
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'Categorie', required: true },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'Provider', required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  picture: { type: String, required: false },
+  pictures: [{ type: String, required: false }]
 });
 
 const categorieSchema = new mongoose.Schema({

@@ -13,15 +13,6 @@ class ProviderController {
     }
   };
 
-  public search = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const k = req.params.keyword;
-      const data = await this.providerService.search(k);
-    } catch (error) {
-      next(error);
-    }
-  };
-
   public getProviderById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const providerId = req.params.id;

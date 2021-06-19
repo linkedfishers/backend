@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
+import { Provider } from '../interfaces/provider.interface';
 import { User } from '../interfaces/users.interface';
 
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: "Full name can't be empty",
   },
   firstName: {
     type: String,
@@ -59,17 +59,22 @@ const userSchema = new mongoose.Schema({
   confirmationToken: String,
   resetPasswordExpires: Date,
   country: String,
-  activated: Boolean,
+  activated: { type: Boolean, default: false },
   wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hebergement' }],
   googleId: {
     type: String,
     required: false,
   },
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }]
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
+  companyName: String,
+  companyEmail: String,
+  companyPhone: Number,
+  companyAdress: String,
+
 });
 
 userSchema.set('timestamps', true);
 
-const userModel = mongoose.model<User & mongoose.Document>('User', userSchema);
+const userModel = mongoose.model<User & Provider & mongoose.Document>('User', userSchema);
 
 export default userModel;

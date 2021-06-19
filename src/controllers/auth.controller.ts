@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserDto } from '../dtos/users.dto';
 import { RequestWithUser, TokenData } from '../interfaces/auth.interface';
+import { Provider } from '../interfaces/provider.interface';
 import { User } from '../interfaces/users.interface';
 import AuthService from '../services/auth.service';
 
@@ -23,6 +24,26 @@ class AuthController {
       const userData: CreateUserDto = req.body;
       const tokenData: TokenData = await this.authService.login(userData);
       res.status(200).json({ data: tokenData, message: 'logged in' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public providerlogIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const providerData = req.body;
+      const tokenData: TokenData = await this.authService.providerLogin(providerData);
+      res.status(200).json({ data: tokenData, message: 'logged in' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public providerSignup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const providerData = req.body;
+      const provider: Provider = await this.authService.providerSignup(providerData);
+      res.status(200).json({ data: provider, message: 'logged in' });
     } catch (error) {
       next(error);
     }

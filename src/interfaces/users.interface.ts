@@ -41,11 +41,11 @@ export class User {
 
 export class Report {
   _id: string;
-  type:string;
+  type: string;
   cause: string;
   author: User;
   createdAt: any;
   is_done: boolean;
   status: any;
-  target_id:string;
+  target_id: string;
 }

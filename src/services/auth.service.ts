@@ -4,6 +4,7 @@ import { CreateUserDto } from '../dtos/users.dto';
 import HttpException from '../exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '../interfaces/auth.interface';
 import { User } from '../interfaces/users.interface';
+import { Provider } from '../interfaces/provider.interface';
 import userModel from '../models/users.model';
 import { isEmptyObject, isNullOrEmpty, slugify, randomString } from '../utils/util';
 import shortid from 'shortid';
@@ -38,6 +39,23 @@ class AuthService {
     }
     const createUserData: User = await u.save();
     return 'Sent confirmation mail';
+  }
+
+  public async providerSignup(providerData): Promise<Provider> {
+    if (isEmptyObject(providerData)) throw new HttpException(400, 'All fields are required');
+    const exists = await userModel.exists({ companyEmail: providerData.email });
+    if (exists) {
+      if (isEmptyObject(providerData)) throw new HttpException(400, 'There is already a provider with this email address');
+    }
+    const hashedPassword = await bcrypt.hash(providerData.password, 10);
+    const provider = new userModel({ ...providerData, password: hashedPassword });
+    provider.slug = slugify(provider.companyName);
+
+    provider.role = 'provider';
+    if (await userModel.exists({ slug: provider.slug })) {
+      provider.slug = provider.slug + shortid.generate();
+    }
+    return await provider.save();
   }
 
   public async requestPasswordReset(email: string) {
@@ -133,6 +151,25 @@ class AuthService {
     return tokenData;
   }
 
+  public async providerLogin(providerData): Promise<TokenData> {
+    if (isEmptyObject(providerData)) throw new HttpException(400, 'Missing credentials');
+
+    const provider: Provider = await this.users.findOne({
+      $and:
+        [{ email: providerData.email }, { role: 'provider' }]
+    });
+    if (!provider) throw new HttpException(409, `No provider was found with email address: ${providerData.email}`);
+
+    const isPasswordMatching: boolean = await bcrypt.compare(providerData.password, provider.password);
+    if (!isPasswordMatching) throw new HttpException(409, 'Wrong password!');
+
+    if (!provider.activated) {
+      throw new HttpException(409, 'Provider account not verified');
+    }
+    const tokenData = this.createProviderToken(provider);
+    return tokenData;
+  }
+
   public async verifyActivationToken(token: string): Promise<User> {
     const user: User = await this.users.findOne({ confirmationToken: token });
     if (!user || user.activated) {
@@ -202,6 +239,21 @@ class AuthService {
       role: user.role,
       language: user.language,
       slug: user.slug,
+    };
+    const secret: string = process.env.JWT_SECRET;
+    const expiresIn: number = 60 * 60 * 60;
+
+    return { expiresIn, token: jwt.sign(dataStoredInToken, secret, { expiresIn }) };
+  }
+
+  public createProviderToken(provider: Provider): TokenData {
+    const dataStoredInToken = {
+      _id: provider._id,
+      profilePicture: provider.profilePicture,
+      companyName: provider.companyName,
+      role: provider.role,
+      language: provider.language,
+      slug: provider.slug,
     };
     const secret: string = process.env.JWT_SECRET;
     const expiresIn: number = 60 * 60 * 60;

@@ -5,7 +5,8 @@ export class Product {
   name: string;
   price: number;
   quantity: number;
-  images: string;
+  pictures: string[];
+  picture: string;
   description: string;
   owner: Provider;
   type: Categorie;

@@ -5,6 +5,7 @@ import multer from 'multer';
 import fs from 'fs';
 import shortid from 'shortid';
 import ProductController from '../controllers/product.controller';
+import authMiddleware from '../middlewares/auth.middleware';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -33,7 +34,8 @@ class ProductRoute implements Route {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}/product/new`, authProviderMiddleware, uploadMiddleware.single('file'), this.productController.createProduct);
+    this.router.get(`${this.path}/all`, this.productController.getAllProducts)
+    this.router.post(`${this.path}/product/new`, authMiddleware, uploadMiddleware.single('file'), this.productController.createProduct);
     this.router.get(`${this.path}/categories`, this.productController.findCategorie);
     this.router.get(`${this.path}/product/:id`, this.productController.getProduct)
   }

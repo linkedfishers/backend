@@ -35,8 +35,7 @@ class ProviderRoute implements Route {
 
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.providerController.getProviders);
-    this.router.get(`${this.path}/product/:id`, this.providerController.getProviderById);
-    this.router.get(`${this.path}/search/:keyword`, this.providerController.search);
+    this.router.get(`${this.path}/provider/:id`, this.providerController.getProviderById);
   }
 }
 
