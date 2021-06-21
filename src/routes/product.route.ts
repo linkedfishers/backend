@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import Route from '../interfaces/routes.interface';
-import authProviderMiddleware from '../middlewares/authProvide.middleware';
 import multer from 'multer';
 import fs from 'fs';
 import shortid from 'shortid';
