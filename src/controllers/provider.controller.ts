@@ -7,7 +7,8 @@ class ProviderController {
 
   public getProviders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const findAllProvidersData = await this.providerService.findAllProvider();
+      const providers = await this.providerService.findAllProvider();
+      res.status(200).json({ data: providers });
     } catch (error) {
       next(error);
     }

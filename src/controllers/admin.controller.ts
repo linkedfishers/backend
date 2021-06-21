@@ -22,6 +22,19 @@ class AdminController {
     }
   };
 
+  public getProviders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const skip = Number(req.params.skip) || 0;
+      const count = Number(req.params.count) || 5;
+      const data = await this.adminService.getProviders(count, skip);
+
+      res.status(200).json({ data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
   public getOverview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data = await this.adminService.getOverview();

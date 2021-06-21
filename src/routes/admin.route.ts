@@ -34,6 +34,7 @@ class AdminRoute implements Route {
 
   private initializeRoutes() {
     this.router.get(`${this.path}/users/:count/:skip`, adminMiddleware, this.adminController.getUsers);
+    this.router.get(`${this.path}/providers/`, adminMiddleware, this.adminController.getProviders);
     this.router.put(`${this.path}/users/:userId`, adminMiddleware, this.adminController.updateUserStatus);
     this.router.get(`${this.path}/reports/:id`, adminMiddleware, this.adminController.getReports);
     this.router.delete(`${this.path}/reports/:id`, adminMiddleware, this.adminController.deleteReport);

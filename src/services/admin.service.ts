@@ -1,6 +1,7 @@
 import { Report, User } from '../interfaces/users.interface';
 import userModel from '../models/users.model';
 import reportModel from '../models/reports.model';
+import { Provider } from '../interfaces/provider.interface';
 
 class AdminService {
   public users = userModel;
@@ -16,12 +17,13 @@ class AdminService {
           country: 1,
           createdAt: 1,
           activated: 1,
-
+          role: 1,
           email: 1,
           followers: { $size: '$followers' },
           following: { $size: '$following' },
         },
       },
+      { $match: { role: { $ne: 'provider' } } },
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: count },
@@ -43,6 +45,11 @@ class AdminService {
       },
     ]);
     return users;
+  }
+
+
+  public async getProviders(count: number, skip: number): Promise<Provider[]> {
+    return await this.users.find({ role: 'provider' });
   }
 
   public async findReports(userId: string): Promise<Report[]> {
