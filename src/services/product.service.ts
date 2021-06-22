@@ -6,7 +6,6 @@ import marketmodel from '../models/product.model';
 import { isEmptyObject } from '../utils/util';
 import fs from 'fs';
 import { Provider } from '../interfaces/provider.interface';
-import providerModel from '../models/provider.model';
 import userModel from '../models/users.model';
 
 class ProductService {
@@ -15,6 +14,10 @@ class ProductService {
 
   public async createProduct(productData): Promise<Product> {
     if (isEmptyObject(productData)) throw new HttpException(400, "can't create empty Product");
+    const provider: Provider = await userModel.findById(productData.owner);
+    if (provider.role != 'provider') {
+      throw new HttpException(400, "Only providers can add products!");
+    }
     const product = new this.products(productData);
     return await product.save();
   }
@@ -24,11 +27,11 @@ class ProductService {
     return products;
   }
 
-  public async findProductByProvider(ownerId: string): Promise<Product[]> {
+  public async findProductsByProvider(ownerId: string): Promise<Product[]> {
     if (!isValidObjectId(ownerId)) {
       throw new HttpException(400, 'Invalid user Id ');
     }
-    const owner: Provider = await providerModel.findById(ownerId);
+    const owner: Provider = await userModel.findById(ownerId);
     if (!owner) {
       return [];
     }
@@ -87,7 +90,7 @@ class ProductService {
     if (!categorie) {
       throw new HttpException(400, 'No Product type with this id!');
     }
-    const owner: Provider = await providerModel.findById(ownerId);
+    const owner: Provider = await userModel.findById(ownerId);
     if (!owner) {
       return { products: [], categorie };
     }

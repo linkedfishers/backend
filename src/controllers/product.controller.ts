@@ -33,10 +33,10 @@ class ProductController {
       next(error);
     }
   };
-  public findProductByUser = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+  public findProductsByProvider = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const ownerId = req.params.id || req.user._id;
-      const products: Product[] = await this.productService.findProductByProvider(ownerId);
+      const ownerId = req.params.id;
+      const products: Product[] = await this.productService.findProductsByProvider(ownerId);
       res.status(201).json({ data: products });
     } catch (error) {
       next(error);
