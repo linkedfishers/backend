@@ -50,7 +50,7 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(providerData.password, 10);
     const provider = new userModel({ ...providerData, password: hashedPassword });
     provider.slug = slugify(provider.companyName);
-
+    provider.profilePicture = "profilePictures/default-company.jpg"
     provider.role = 'provider';
     if (await userModel.exists({ slug: provider.slug })) {
       provider.slug = provider.slug + shortid.generate();

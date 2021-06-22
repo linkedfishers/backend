@@ -51,7 +51,10 @@ class ProductService {
   }
 
   public async getProduct(id: string): Promise<Product> {
-    const prod = await this.products.findById(id).populate('owner', 'fullName slug profilePicture').lean();
+    const prod: Product = await this.products.findById(id)
+      .populate('owner', 'companyName slug profilePicture')
+      .populate('type', 'name')
+      .lean();
     return prod;
   }
 
@@ -102,7 +105,7 @@ class ProductService {
   }
 
   public async getProducts(id: string, currentProvider: User): Promise<{ product: Product; isOwner: boolean }> {
-    const product = await this.products.findById(id).populate('owner', 'fullName profilePicture').populate('type', 'name description').lean();
+    const product = await this.products.findById(id).populate('owner', 'companyName profilePicture').populate('type', 'name description').lean();
     const isOwner = product.owner._id.toString() === currentProvider._id.toString();
     return { product, isOwner };
   }
