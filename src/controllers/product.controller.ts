@@ -80,6 +80,15 @@ class ProductController {
     }
   };
 
+  public deleteProduct = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const product: Product = await this.productService.deleteProduct(id);
+      res.status(200).json({ data: product });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default ProductController;
