@@ -35,7 +35,9 @@ class ProductService {
     if (!owner) {
       return [];
     }
-    const products: Product[] = await this.products.find({ owner: owner }).sort('-createdAt');
+    const products: Product[] = await this.products.find({ owner: owner })
+      .populate('type', 'name')
+      .sort('-createdAt');
     return products;
   }
 
@@ -68,9 +70,6 @@ class ProductService {
 
   public async findCategorie(): Promise<Categorie[]> {
     const catType: Categorie[] = await this.categories.find();
-    if (catType.length == 0) {
-      this.DefaultCategorie();
-    }
     return await this.categories.find();
   }
 

@@ -2,13 +2,16 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateUserDto } from '../dtos/users.dto';
 import { RequestWithFile, RequestWithUser, TokenData } from '../interfaces/auth.interface';
 import { EquipmentType, BoatType, HebergementType, ServiceType } from '../interfaces/equipments.interface';
+import { Categorie } from '../interfaces/product.interface';
 import { User } from '../interfaces/users.interface';
 import AdminService from '../services/admin.service';
 import EquipmentService from '../services/equipments.service';
+import ProductService from '../services/product.service';
 
 class AdminController {
   public adminService = new AdminService();
   public equipmentService = new EquipmentService();
+  public productService = new ProductService();
 
   public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -100,6 +103,19 @@ class AdminController {
       }
       const serviceType = await this.equipmentService.addServiceType(serviceData);
       res.status(200).json({ data: serviceType });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public addProductCategory = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const categoryData = req.body;
+      if (req.file) {
+        categoryData.icon = req.file.path.split('/').splice(1).join('/');
+      }
+      const category: Categorie = await this.productService.addCategorie(categoryData);
+      res.status(200).json({ data: category });
     } catch (error) {
       next(error);
     }
