@@ -14,4 +14,5 @@ export class Event {
     tags: string[];
     image: string;
     owner: User;
+    maximumCapacity: number;
 }

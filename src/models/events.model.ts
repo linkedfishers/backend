@@ -15,7 +15,8 @@ const eventShema = new mongoose.Schema({
     country: Object,
     tags: [{ type: String }],
     comments: mongoose.Schema.Types.Number,
-    image: String
+    image: String,
+    maximumCapacity: { type: Number, default: 0 }
 });
 
 eventShema.set('timestamps', true);

@@ -23,7 +23,11 @@ class EventService {
 
     public async addGoingToEvent(eventId, userId): Promise<Event> {
         if (!isValidObjectId(eventId)) throw new HttpException(400, "Invalid event");
-        const event = eventModel.findByIdAndUpdate(eventId,
+        let event : Event = await eventModel.findById(eventId);
+        if(event.maximumCapacity != 0 && event.maximumCapacity >= event.going.length){
+            throw new HttpException(400, "Event reached maximum capacity!");
+        }
+        event = await eventModel.findByIdAndUpdate(eventId,
             { $addToSet: { going: { _id: userId } } }, { new: true }
         );
         return event;
