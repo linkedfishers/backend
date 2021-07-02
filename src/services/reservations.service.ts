@@ -412,6 +412,8 @@ class ReservationService {
         `;
     return this.authService.sendEmail(user.email, html, subject);
   }
+
+  
 }
 
 export default ReservationService;

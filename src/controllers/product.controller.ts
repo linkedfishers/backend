@@ -79,6 +79,14 @@ class ProductController {
       next(error);
     }
   };
+  public getAllProductsWithLimit = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const products: Product[] = await this.productService.findAllProductsWithLimit();
+      res.status(200).json({ data: products });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public deleteProduct = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {

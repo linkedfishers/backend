@@ -16,7 +16,7 @@ class ProductService {
     if (isEmptyObject(productData)) throw new HttpException(400, "can't create empty Product");
     const provider: Provider = await userModel.findById(productData.owner);
     if (provider.role != 'provider') {
-      throw new HttpException(400, "Only providers can add products!");
+      throw new HttpException(400, 'Only providers can add products!');
     }
     const product = new this.products(productData);
     return await product.save();
@@ -24,6 +24,12 @@ class ProductService {
 
   public async findAllProducts(): Promise<Product[]> {
     const products: Product[] = await this.products.find().populate('owner', 'companyName slug').populate('type', 'name');
+    return products;
+  }
+
+  public async findAllProductsWithLimit(): Promise<Product[]> {
+    const perPage = 2;
+    const products: Product[] = await this.products.find({}).limit(perPage).populate('owner', 'companyName slug').populate('type', 'name');
     return products;
   }
 
@@ -35,9 +41,7 @@ class ProductService {
     if (!owner) {
       return [];
     }
-    const products: Product[] = await this.products.find({ owner: owner })
-      .populate('type', 'name')
-      .sort('-createdAt');
+    const products: Product[] = await this.products.find({ owner: owner }).populate('type', 'name').sort('-createdAt');
     return products;
   }
 
@@ -53,10 +57,7 @@ class ProductService {
   }
 
   public async getProduct(id: string): Promise<Product> {
-    const prod: Product = await this.products.findById(id)
-      .populate('owner', 'companyName slug profilePicture')
-      .populate('type', 'name')
-      .lean();
+    const prod: Product = await this.products.findById(id).populate('owner', 'companyName slug profilePicture').populate('type', 'name').lean();
     return prod;
   }
 
