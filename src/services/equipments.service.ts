@@ -46,7 +46,7 @@ class EquipmentService {
 
   public async createHebergement(hebergementData): Promise<Hebergement> {
     if (isEmptyObject(hebergementData)) throw new HttpException(400, "Can't create empty Hebergement");
-
+    hebergementData.details = parseJson(hebergementData.details);
     if (hebergementData.position) {
       hebergementData.position = {
         coordinates: [Number(hebergementData.lat), Number(hebergementData.lng)],

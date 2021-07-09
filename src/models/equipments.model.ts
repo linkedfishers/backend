@@ -1,14 +1,5 @@
 import mongoose from 'mongoose';
-import {
-  Boat,
-  BoatType,
-  Equipment,
-  EquipmentType,
-  Hebergement,
-  HebergementType,
-  Service,
-  ServiceType,
-} from '../interfaces/equipments.interface';
+import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType, Service, ServiceType } from '../interfaces/equipments.interface';
 import { Review } from '../interfaces/review.interface';
 
 const equipmentTypeSchema = new mongoose.Schema({
@@ -52,6 +43,7 @@ const hebergementSchema = new mongoose.Schema({
   },
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'HebergementType', required: true },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
+  details: { type: mongoose.Schema.Types.Mixed, required: false },
 });
 
 const boatSchema = new mongoose.Schema({
@@ -66,7 +58,7 @@ const boatSchema = new mongoose.Schema({
   },
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'BoatType', required: true },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
-  details: {type: mongoose.Schema.Types.Mixed, required: false}
+  details: { type: mongoose.Schema.Types.Mixed, required: false },
 });
 
 const reviewSchema = new mongoose.Schema({
