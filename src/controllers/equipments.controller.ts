@@ -368,6 +368,17 @@ class EquipmentController {
       next(error);
     }
   };
+  public createEquipmentReview = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user: User = req.user;
+      const reviewData = req.body;
+      reviewData.author = user._id;
+      const review: Review = await this.equipmentService.addEquipementReview(reviewData);
+      res.status(201).json({ data: review, message: 'Added review' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default EquipmentController;

@@ -45,7 +45,7 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/hebergement/types`, authMiddleware, this.equipmentController.findHebergementTypes);
     this.router.get(`${this.path}/service/types`, authMiddleware, this.equipmentController.findServiceTypes);
     this.router.get(`${this.path}/type/:typeId/user/:ownerId`, this.equipmentController.findEquipmentsByTypeAndUser);
-    this.router.get(`${this.path}/service/type/:typeId/user/:ownerId`, this.equipmentController.findServicesByTypeAndUser,);
+    this.router.get(`${this.path}/service/type/:typeId/user/:ownerId`, this.equipmentController.findServicesByTypeAndUser);
     this.router.get(`${this.path}/service/user/:id`, this.equipmentController.findServicesByUser);
     this.router.get(`${this.path}/user/:id`, this.equipmentController.findEquipmentsByUser);
     this.router.get(`${this.path}/boats/user/:id`, this.equipmentController.findBoatsByUser);
@@ -70,6 +70,7 @@ class EquipmentRoute implements Route {
     this.router.post(`${this.path}/boat/review`, authMiddleware, this.equipmentController.createBoatReview);
     this.router.post(`${this.path}/hebergement/review`, authMiddleware, this.equipmentController.createHebergementReview);
     this.router.post(`${this.path}/service/review`, authMiddleware, this.equipmentController.createServiceReview);
+    this.router.post(`${this.path}/equipment/review`, authMiddleware, this.equipmentController.createEquipmentReview);
   }
 }
 

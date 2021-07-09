@@ -354,7 +354,16 @@ class EquipmentService {
         },
       })
       .lean();
-    return eq;
+        let avgRating = 0;
+        if (eq.reviews && eq.reviews.length > 0) {
+          avgRating = eq.reviews.reduce((sum, review) => {
+            return sum + review.rating;
+          }, 0);
+          avgRating /= eq.reviews.length;
+        }
+        eq.rating = avgRating + 0.001;
+        return eq;
+   
   }
 
   public async getBoat(id: string, currentUser: User): Promise<{ boat: Boat; isOwner: boolean }> {
@@ -480,6 +489,22 @@ class EquipmentService {
     const review = new models.reviewModel(reviewData);
     await review.save();
     await this.hebergements.updateOne({ _id: reviewData.hebergement }, { $addToSet: { reviews: review } });
+    return review;
+  }
+  public async addEquipementReview(reviewData): Promise<Review> {
+    if (isEmptyObject(reviewData)) throw new HttpException(400, "Can't create empty review");
+
+    const equipment = await this.equipments.findById(reviewData.equipment).lean();
+
+    if (!equipment) {
+      throw new HttpException(400, 'Invalid equipment');
+    }
+    if (reviewData.author == equipment.owner._id.toString()) {
+      throw new HttpException(400, "Owner can't add review on own equipment");
+    }
+    const review = new models.reviewModel(reviewData);
+    await review.save();
+    await this.equipments.updateOne({ _id: reviewData.equipment }, { $addToSet: { reviews: review } });
     return review;
   }
 }

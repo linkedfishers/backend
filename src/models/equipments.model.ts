@@ -20,6 +20,11 @@ const equipmentSchema = new mongoose.Schema({
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: true },
   description: String,
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
+  price: Number,
+  position: {
+    coordinates: { type: [Number], index: '2dsphere' },
+  },
+  details: { type: mongoose.Schema.Types.Mixed, required: false },
 });
 
 const serviceShema = new mongoose.Schema({
@@ -29,6 +34,11 @@ const serviceShema = new mongoose.Schema({
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceType', required: true },
   description: String,
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
+  price: Number,
+  position: {
+    coordinates: { type: [Number], index: '2dsphere' },
+  },
+  details: { type: mongoose.Schema.Types.Mixed, required: false },
 });
 
 const hebergementSchema = new mongoose.Schema({
