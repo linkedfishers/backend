@@ -53,7 +53,7 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/all`, this.equipmentController.findAllEquipments);
     this.router.get(`${this.path}/boats/all`, this.equipmentController.findAllBoats);
     this.router.get(`${this.path}/hebergements/all`, this.equipmentController.findHebergements);
-    this.router.get(`${this.path}/service/all`, this.equipmentController.findServices);
+    this.router.get(`${this.path}/services/all`, this.equipmentController.findServices);
     this.router.delete(`${this.path}/boat/:id`, authMiddleware, this.equipmentController.deleteBoat);
     this.router.delete(`${this.path}/equipment/:id`, authMiddleware, this.equipmentController.deleteEquipment);
     this.router.delete(`${this.path}/hebergement/:id`, authMiddleware, this.equipmentController.deleteHebergement);
