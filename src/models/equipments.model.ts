@@ -19,6 +19,7 @@ const equipmentSchema = new mongoose.Schema({
   image: String,
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: true },
   description: String,
+  adress: String,
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
   price: Number,
   position: {
@@ -31,6 +32,7 @@ const serviceShema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: String,
+  adress: String,
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceType', required: true },
   description: String,
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],

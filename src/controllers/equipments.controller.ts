@@ -158,8 +158,8 @@ class EquipmentController {
 
   public findAllEquipments = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const ownerId = req.params.id || req.user._id;
-      const equipments: Equipment[] = await this.equipmentService.findAllEquipments();
+/*       const ownerId = req.params.id || req.user._id;
+ */      const equipments: Equipment[] = await this.equipmentService.findAllEquipments();
       res.status(200).json({ data: equipments });
     } catch (error) {
       next(error);
@@ -299,6 +299,7 @@ class EquipmentController {
   public getEquipment = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = req.params.id;
+      const user = req.user;
       const equipment: Equipment = await this.equipmentService.getEquipment(id);
       res.status(200).json({ data: equipment });
     } catch (error) {

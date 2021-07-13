@@ -8,10 +8,12 @@ export class Equipment {
   image: string;
   description: string;
   isAvailable: boolean;
+  position: any;
   reviews: any[];
   rating: number;
   price: number;
   details: any;
+  adress: string;
 }
 export class EquipmentType {
   _id: string;

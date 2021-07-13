@@ -40,6 +40,12 @@ class EquipmentService {
 
   public async createEquipment(equipmentData): Promise<Equipment> {
     if (isEmptyObject(equipmentData)) throw new HttpException(400, "Can't create empty Equipment");
+    equipmentData.details = parseJson(equipmentData.details);
+    if (equipmentData.position) {
+      equipmentData.position = {
+        coordinates: [Number(equipmentData.lat), Number(equipmentData.lng)],
+      };
+    }
     const equipment = new this.equipments(equipmentData);
     return await equipment.save();
   }
@@ -124,11 +130,12 @@ class EquipmentService {
   }
 
   public async findEquipmentTypes(): Promise<EquipmentType[]> {
-    const equipmentTypes: EquipmentType[] = await this.equipmentTypes.find();
+    /*   const equipmentTypes: EquipmentType[] = await this.equipmentTypes.find();
     if (equipmentTypes.length == 0) {
       this.addDefaultTypes();
-    }
-    return await this.equipmentTypes.find();
+    } */
+    /* return await this.equipmentTypes.find(); */
+    return await models.equipmentTypetModel.find();
   }
   public async findServiceType(): Promise<ServiceType[]> {
     const serviceTypes: ServiceType[] = await this.serviceTypes.find();
@@ -148,8 +155,8 @@ class EquipmentService {
 
   public async addEquipmentType(equipmentType: EquipmentType): Promise<EquipmentType> {
     if (!equipmentType.name || !equipmentType.description) {
-      console.log(equipmentType);
-      throw new HttpException(400, 'Missing Equipment type informations!');
+      /*       console.log(equipmentType);
+       */ throw new HttpException(400, 'Missing Equipment type informations!');
     }
     const newType = new this.equipmentTypes(equipmentType);
     return await newType.save();
@@ -326,7 +333,11 @@ class EquipmentService {
   }
 
   public async updateEquipment(equipmentData, equipmentId): Promise<Equipment> {
-    //TODO : delete old image if updated
+    if (equipmentData.position) {
+      equipmentData.position = {
+        coordinates: [Number(equipmentData.lat), equipmentData.lng],
+      };
+    }
     return await this.equipments.findByIdAndUpdate(equipmentId, equipmentData);
   }
 
@@ -354,16 +365,15 @@ class EquipmentService {
         },
       })
       .lean();
-        let avgRating = 0;
-        if (eq.reviews && eq.reviews.length > 0) {
-          avgRating = eq.reviews.reduce((sum, review) => {
-            return sum + review.rating;
-          }, 0);
-          avgRating /= eq.reviews.length;
-        }
-        eq.rating = avgRating + 0.001;
-        return eq;
-   
+    let avgRating = 0;
+    if (eq.reviews && eq.reviews.length > 0) {
+      avgRating = eq.reviews.reduce((sum, review) => {
+        return sum + review.rating;
+      }, 0);
+      avgRating /= eq.reviews.length;
+    }
+    eq.rating = avgRating + 0.001;
+    return eq;
   }
 
   public async getBoat(id: string, currentUser: User): Promise<{ boat: Boat; isOwner: boolean }> {
