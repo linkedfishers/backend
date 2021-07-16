@@ -11,6 +11,7 @@ class EquipmentService {
   public equipments = models.equipmentModel;
   public equipmentTypes = models.equipmentTypetModel;
   public serviceTypes = models.serviceTypeModel;
+  public boatTypes = models.boatType;
   public hebergements = models.hebergementtModel;
   public boats = models.boattModel;
   public services = models.serviceModel;
@@ -168,6 +169,10 @@ class EquipmentService {
     }
     const newType = new models.boatType(boatType);
     return await newType.save();
+  }
+
+  public async updateBoatType(boatData, id): Promise<BoatType> {
+    return await this.boatTypes.findByIdAndUpdate(id, boatData);
   }
 
   public async addServiceType(serviceType: ServiceType): Promise<ServiceType> {

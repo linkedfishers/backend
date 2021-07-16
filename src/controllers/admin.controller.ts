@@ -1,6 +1,8 @@
+import { nextDay } from 'date-fns';
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserDto } from '../dtos/users.dto';
 import { RequestWithFile, RequestWithUser, TokenData } from '../interfaces/auth.interface';
+import { Content } from '../interfaces/content.interface';
 import { EquipmentType, BoatType, HebergementType, ServiceType } from '../interfaces/equipments.interface';
 import { Categorie } from '../interfaces/product.interface';
 import { User } from '../interfaces/users.interface';
@@ -36,7 +38,6 @@ class AdminController {
       next(error);
     }
   };
-
 
   public getOverview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -144,6 +145,19 @@ class AdminController {
     }
   };
 
+  public updateBoatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId: string = req.params.id;
+      const boatTypeData = req.body;
+      if (req.file) {
+        boatTypeData.icon = req.file.path.split('/').splice(1).join('1');
+      }
+      const boatType: BoatType = await this.equipmentService.updateBoatType(boatTypeData, typeId);
+      res.status(200).json({ data: boatType, message: 'Updated Boat Type' });
+    } catch (error) {
+      next(error);
+    }
+  };
   public deleteBoatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const typeId: string = req.params.id;
@@ -184,6 +198,34 @@ class AdminController {
       next(error);
     }
   };
-}
 
+  public createContent = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const contentData = req.body;
+      const content: Content = await this.adminService.createContent(contentData);
+      res.status(201).json({ data: content, message: 'Content Created' });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public getContent = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const content = await this.adminService.getContent(id);
+      res.status(200).json({ data: { content } });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public updateContent = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const contentId = req.params.id;
+      const contentData = req.body;
+      const content: Content = await this.adminService.UpdateContent(contentData, contentId);
+      res.status(200).json({ data: content, message: 'Updated Content ' });
+    } catch (error) {
+      next(error);
+    }
+  };
+}
 export default AdminController;

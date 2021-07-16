@@ -2,10 +2,16 @@ import { Report, User } from '../interfaces/users.interface';
 import userModel from '../models/users.model';
 import reportModel from '../models/reports.model';
 import { Provider } from '../interfaces/provider.interface';
+import { Content } from '../interfaces/content.interface';
+import models from '../models/equipments.model';
+import contentModel from '../models/content.model';
+import { isEmptyObject } from '../utils/util';
+import HttpException from '../exceptions/HttpException';
 
 class AdminService {
   public users = userModel;
   public reports = reportModel;
+  public content = contentModel;
 
   public async findUsers(count: number, skip: number): Promise<User[]> {
     const users: User[] = await this.users.aggregate([
@@ -47,7 +53,6 @@ class AdminService {
     return users;
   }
 
-
   public async getProviders(count: number, skip: number): Promise<Provider[]> {
     return await this.users.find({ role: 'provider' });
   }
@@ -61,6 +66,10 @@ class AdminService {
   public async deleteReport(reportId: string): Promise<Report> {
     const report: Report = await this.reports.findByIdAndDelete(reportId);
     return report;
+  }
+  public async getContent(id: string): Promise<Content> {
+    const content: Content = await this.content.findById(id);
+    return content;
   }
 
   public async getOverview(): Promise<any> {
@@ -84,6 +93,15 @@ class AdminService {
   public async updateUserStatus(userId: string, activated: boolean): Promise<User> {
     const user: User = await this.users.findByIdAndUpdate(userId, { $set: { activated: activated } }, { new: true }).select('-__v -password');
     return user;
+  }
+  public async createContent(contentData): Promise<Content> {
+    if (isEmptyObject(contentData)) throw new HttpException(400, `Can't create Empty Content`);
+    const cont = new this.content(contentData);
+    return await cont.save();
+  }
+
+  public async UpdateContent(contentData, contentId): Promise<Content> {
+    return await this.content.findByIdAndUpdate(contentId, contentData);
   }
 }
 

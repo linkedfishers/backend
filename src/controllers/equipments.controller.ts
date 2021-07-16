@@ -96,6 +96,8 @@ class EquipmentController {
     }
   };
 
+
+
   public updateBoat = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user: User = req.user;
@@ -158,8 +160,8 @@ class EquipmentController {
 
   public findAllEquipments = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-/*       const ownerId = req.params.id || req.user._id;
- */      const equipments: Equipment[] = await this.equipmentService.findAllEquipments();
+      /*       const ownerId = req.params.id || req.user._id;
+       */ const equipments: Equipment[] = await this.equipmentService.findAllEquipments();
       res.status(200).json({ data: equipments });
     } catch (error) {
       next(error);
