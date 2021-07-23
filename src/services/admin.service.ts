@@ -96,6 +96,8 @@ class AdminService {
   }
   public async createContent(contentData): Promise<Content> {
     if (isEmptyObject(contentData)) throw new HttpException(400, `Can't create Empty Content`);
+    //to do add images serviuces
+
     const cont = new this.content(contentData);
     return await cont.save();
   }
@@ -103,6 +105,7 @@ class AdminService {
   public async UpdateContent(contentData, contentId): Promise<Content> {
     return await this.content.findByIdAndUpdate(contentId, contentData);
   }
+ 
 }
 
 export default AdminService;

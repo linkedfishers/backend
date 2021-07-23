@@ -201,13 +201,20 @@ class AdminController {
 
   public createContent = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const user: User = req.user;
       const contentData = req.body;
+      contentData.owner = user._id;
+      if (req.file) {
+        contentData.image = req.file.path.split('/').splice(1).join('/');
+      }
       const content: Content = await this.adminService.createContent(contentData);
       res.status(201).json({ data: content, message: 'Content Created' });
     } catch (error) {
       next(error);
     }
   };
+
+  //to do add controller images
   public getContent = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = req.params.id;
