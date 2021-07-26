@@ -50,7 +50,7 @@ class AdminRoute implements Route {
       uploadMiddleware.single('file'),
       this.adminController.addProductCategory,
     );
-    this.router.put(`${this.path}/boat/:id`, /* adminMiddleware */this.adminController.updateBoatType);
+    this.router.put(`${this.path}/boat/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateBoatType);
 
     this.router.delete(`${this.path}/equipment/:id`, adminMiddleware, this.adminController.deleteEquipmentType);
     this.router.delete(`${this.path}/boat/:id`, adminMiddleware, this.adminController.deleteBoatType);
@@ -59,9 +59,9 @@ class AdminRoute implements Route {
 
     //homePage add text
 
-    this.router.post(`${this.path}/content/addContent`,adminMiddleware, uploadMiddleware.single('file'), this.adminController.createContent);
+    this.router.post(`${this.path}/content/addContent`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.createContent);
     this.router.get(`${this.path}/content/:id`, this.adminController.getContent);
-    this.router.put(`${this.path}/content/:id`, adminMiddleware, this.adminController.updateContent);
+    this.router.put(`${this.path}/content/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateContent);
   }
 }
 
