@@ -105,7 +105,11 @@ class AdminService {
   public async UpdateContent(contentData, contentId): Promise<Content> {
     return await this.content.findByIdAndUpdate(contentId, contentData);
   }
- 
+   public async findAllContents(): Promise<Content[]> {
+    const contents: Content[] = await this.content.find().populate('owner', 'fullName slug');
+    return contents;
+  }
+
 }
 
 export default AdminService;

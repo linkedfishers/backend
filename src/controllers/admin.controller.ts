@@ -203,6 +203,7 @@ class AdminController {
     try {
       const user: User = req.user;
       const contentData = req.body;
+      console.log(req.body)
       contentData.owner = user._id;
       if (req.file) {
         contentData.image = req.file.path.split('/').splice(1).join('/');
@@ -230,6 +231,14 @@ class AdminController {
       const contentData = req.body;
       const content: Content = await this.adminService.UpdateContent(contentData, contentId);
       res.status(200).json({ data: content, message: 'Updated Content ' });
+    } catch (error) {
+      next(error);
+    }
+  };
+   public findAllContents = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const contents: Content[] = await this.adminService.findAllContents();
+      res.status(200).json({ data: contents });
     } catch (error) {
       next(error);
     }

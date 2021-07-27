@@ -5,7 +5,7 @@ export class Equipment {
   name: string;
   owner: User;
   type: EquipmentType;
-  image: string;
+  image: string;//Required in Model for all
   description: string;
   isAvailable: boolean;
   position: any;
