@@ -197,6 +197,15 @@ class EquipmentController {
       next(error);
     }
   };
+    public findServicesByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId = req.params.typeId;
+      const boats : Boat[]= await this.equipmentService.findBoatByType(typeId);
+      res.status(200).json({ data: boats });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public findHebergementsByUser = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
