@@ -46,7 +46,11 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/service/types`, authMiddleware, this.equipmentController.findServiceTypes);
     this.router.get(`${this.path}/type/:typeId/user/:ownerId`, this.equipmentController.findEquipmentsByTypeAndUser);
     this.router.get(`${this.path}/service/type/:typeId/user/:ownerId`, this.equipmentController.findServicesByTypeAndUser);
-    this.router.get(`${this.path}/boats/type/:typeId`, this.equipmentController.findServicesByType);
+
+    this.router.get(`${this.path}/boats/type/:typeId`, this.equipmentController.findBoatsByType);
+    this.router.get(`${this.path}/equipments/type/:typeId`, this.equipmentController.findEquipmentsByType);
+    this.router.get(`${this.path}/services/type/:typeId`, this.equipmentController.findServicessByType);
+    this.router.get(`${this.path}/hebrgements/type/:typeId`, this.equipmentController.findhebergementsByType);
 
     this.router.get(`${this.path}/service/user/:id`, this.equipmentController.findServicesByUser);
     this.router.get(`${this.path}/user/:id`, this.equipmentController.findEquipmentsByUser);

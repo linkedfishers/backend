@@ -197,11 +197,38 @@ class EquipmentController {
       next(error);
     }
   };
-    public findServicesByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    public findBoatsByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const typeId = req.params.typeId;
       const boats : Boat[]= await this.equipmentService.findBoatByType(typeId);
       res.status(200).json({ data: boats });
+    } catch (error) {
+      next(error);
+    }
+  };
+public findhebergementsByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId = req.params.typeId;
+      const hebergemets : Hebergement[]= await this.equipmentService.findHebergementByType(typeId);
+      res.status(200).json({ data: hebergemets });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public findServicessByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId = req.params.typeId;
+      const services : Service[]= await this.equipmentService.findServiceByType(typeId);
+      res.status(200).json({ data: services });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public findEquipmentsByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId = req.params.typeId;
+      const equipments : Equipment[]= await this.equipmentService.findEquipmentByType(typeId);
+      res.status(200).json({ data: equipments });
     } catch (error) {
       next(error);
     }

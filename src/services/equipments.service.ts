@@ -11,6 +11,7 @@ class EquipmentService {
   public equipments = models.equipmentModel;
   public equipmentTypes = models.equipmentTypetModel;
   public serviceTypes = models.serviceTypeModel;
+  public homeType = models.hebergementType;
   public boatTypes = models.boatType;
   public hebergements = models.hebergementtModel;
   public boats = models.boattModel;
@@ -279,6 +280,45 @@ return []
       type:type
     });
     return boats
+  }
+   public async findHebergementByType(typeId: string): Promise<Hebergement[]> {
+    if (!isValidObjectId(typeId)) {
+      throw new HttpException(400, 'Invalid id!');
+    }
+    const type: HebergementType = await this.homeType.findById(typeId);
+    if (!type) {
+return []
+    }
+    const hebergements: Hebergement[] = await this.boats.find({
+      type:type
+    });
+    return hebergements
+  }
+   public async findServiceByType(typeId: string): Promise<Service[]> {
+    if (!isValidObjectId(typeId)) {
+      throw new HttpException(400, 'Invalid id!');
+    }
+    const type: ServiceType = await this.serviceTypes.findById(typeId);
+    if (!type) {
+return []
+    }
+    const services: Service[] = await this.services.find({
+      type:type
+    });
+    return services
+  }
+   public async findEquipmentByType(typeId: string): Promise<Equipment[]> {
+    if (!isValidObjectId(typeId)) {
+      throw new HttpException(400, 'Invalid id!');
+    }
+    const type: EquipmentType = await this.equipmentTypes.findById(typeId);
+    if (!type) {
+return []
+    }
+    const equipments: Equipment[] = await this.equipments.find({
+      type:type
+    });
+    return equipments
   }
 
   public async findServicesByTypeAndUser(typeId: string, ownerId: string): Promise<{ services: Service[]; type: EquipmentType }> {
