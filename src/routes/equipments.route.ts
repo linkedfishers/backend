@@ -49,8 +49,8 @@ class EquipmentRoute implements Route {
 
     this.router.get(`${this.path}/boats/type/:typeId`, this.equipmentController.findBoatsByType);
     this.router.get(`${this.path}/equipments/type/:typeId`, this.equipmentController.findEquipmentsByType);
-    this.router.get(`${this.path}/services/type/:typeId`, this.equipmentController.findServicessByType);
-    this.router.get(`${this.path}/hebrgements/type/:typeId`, this.equipmentController.findhebergementsByType);
+    this.router.get(`${this.path}/freelancer/type/:typeId`, this.equipmentController.findServicessByType);
+    this.router.get(`${this.path}/hebergements/type/:typeId`, this.equipmentController.findhebergementsByType);
 
     this.router.get(`${this.path}/service/user/:id`, this.equipmentController.findServicesByUser);
     this.router.get(`${this.path}/user/:id`, this.equipmentController.findEquipmentsByUser);

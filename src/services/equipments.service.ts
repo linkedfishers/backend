@@ -289,7 +289,7 @@ return []
     if (!type) {
 return []
     }
-    const hebergements: Hebergement[] = await this.boats.find({
+    const hebergements: Hebergement[] = await this.hebergements.find({
       type:type
     });
     return hebergements
