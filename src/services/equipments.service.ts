@@ -7,6 +7,8 @@ import userModel from '../models/users.model';
 import { isEmptyObject, parseJson } from '../utils/util';
 import fs from 'fs';
 import { Review } from '../interfaces/review.interface';
+import { isValid } from 'date-fns';
+import { updateTypeAssertion } from 'typescript';
 class EquipmentService {
   public equipments = models.equipmentModel;
   public equipmentTypes = models.equipmentTypetModel;
@@ -294,6 +296,22 @@ return []
     });
     return hebergements
   }
+
+public async fidServiceByType(typeId:string) : Promise<Service[]>{
+  if(!isValidObjectId(typeId)){
+    throw new HttpException(400,'Invalid id!')
+  }
+  const type : ServiceType = await this.serviceTypes.findById(typeId)
+  if(!type){
+    return []
+  }
+  const services : Service[] = await this.services.find({
+    type:type
+  })
+  return services
+
+}
+
    public async findServiceByType(typeId: string): Promise<Service[]> {
     if (!isValidObjectId(typeId)) {
       throw new HttpException(400, 'Invalid id!');
