@@ -27,7 +27,7 @@ class App {
     this.initializeSwagger();
     this.initializeErrorHandling();
     scheduler.updateReservationsJob();
-    //Serve static files 
+    //Serve static files
     this.app.use(express.static('uploads'));
   }
 
@@ -45,7 +45,7 @@ class App {
     const { MONGO_HOST, MONGO_PORT, MONGO_DATABASE, MONGO_USERNAME, MONGO_PWD } = process.env;
     const options = { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true };
     //let connectionstring = `mongodb://${MONGO_USERNAME}:${MONGO_PWD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}?authSource=admin&readPreference=primary&ssl=false`;
-    let connectionstring = `mongodb+srv://linkedfisher:${MONGO_PWD}@cluster0.ke9zy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+    let connectionstring = /* `mongodb+srv://linkedfisher:${MONGO_PWD}@cluster0.ke9zy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority` */`mongodb+srv://linkedfisher:${MONGO_PWD}@cluster0.adg9t.mongodb.net/linkedfisherbase?retryWrites=true&w=majority`
     if (!this.env) {
       connectionstring = `mongodb://localhost:27017/${MONGO_DATABASE}?authSource=admin&readPreference=primary&ssl=false`;
     }
