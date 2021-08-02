@@ -59,7 +59,7 @@ class AdminRoute implements Route {
 
     //homePage add text
 
-    this.router.post(`${this.path}/content/addContent`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.createContent);
+    this.router.post(`${this.path}/content/addContent`,  uploadMiddleware.single('file'), this.adminController.createContent);
     this.router.get(`${this.path}/content/:id`, this.adminController.getContent);
     this.router.put(`${this.path}/content/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateContent);
       this.router.get(`${this.path}/content/all`)
