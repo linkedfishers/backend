@@ -10,6 +10,8 @@ import shortid from 'shortid';
 
 class ProviderService {
 
+
+
   public async findAllProvider(): Promise<Provider[]> {
     const providers: Provider[] = await userModel.find({ role: 'provider' });
     return providers;

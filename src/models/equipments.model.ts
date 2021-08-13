@@ -1,16 +1,37 @@
 import mongoose from 'mongoose';
-import { Boat, BoatType, Equipment, EquipmentType, Hebergement, HebergementType, Service, ServiceType } from '../interfaces/equipments.interface';
+import {
+  Boat,
+  BoatType,
+  Equipment,
+  EquipmentType,
+  Hebergement,
+  HebergementType,
+  Service,
+  ServiceType,
+  /* souCat, */
+} from '../interfaces/equipments.interface';
 import { Review } from '../interfaces/review.interface';
+
+const souCatShema = new mongoose.Schema({
+  name: { type: String, required: true },
+});
 
 const equipmentTypeSchema = new mongoose.Schema({
   name: { type: String, unique: true },
   description: { type: String, required: false },
   icon: { type: String },
+  /*   cat: { type: mongoose.Schema.Types.ObjectId, ref: 'souCat', required: false },
+
+ */
+  parentId: { type: String },
 });
+
 const serviceTypeSchema = new mongoose.Schema({
   name: { type: String, unique: true },
   description: { type: String, required: false },
   icon: { type: String },
+  /*   cat: { type: mongoose.Schema.Types.ObjectId, ref: 'souCat', required: false },
+   */
 });
 
 const equipmentSchema = new mongoose.Schema({
@@ -84,6 +105,7 @@ hebergementSchema.set('timestamps', true);
 boatSchema.set('timestamps', true);
 reviewSchema.set('timestamps', true);
 serviceShema.set('timestamps', true);
+souCatShema.set('timestamp', true);
 const serviceTypeModel = mongoose.model<ServiceType & mongoose.Document>('ServiceType', serviceTypeSchema);
 const equipmentModel = mongoose.model<Equipment & mongoose.Document>('Equipment', equipmentSchema);
 const equipmentTypetModel = mongoose.model<EquipmentType & mongoose.Document>('EquipmentType', equipmentTypeSchema);
@@ -93,12 +115,14 @@ const hebergementtModel = mongoose.model<Hebergement & mongoose.Document>('Heber
 const boattModel = mongoose.model<Boat & mongoose.Document>('Boat', boatSchema);
 const reviewModel = mongoose.model<Review & mongoose.Document>('Review', reviewSchema);
 const serviceModel = mongoose.model<Service & mongoose.Document>('Service', serviceShema);
+/* const sousCatModel = mongoose.model<souCat & mongoose.Document>('souCat', souCatShema); */
 const models = {
   equipmentModel,
   equipmentTypetModel,
   hebergementtModel,
   boattModel,
-  hebergementType,
+  /*   sousCatModel,
+   */ hebergementType,
   boatType,
   reviewModel,
   serviceModel,

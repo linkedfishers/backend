@@ -1,6 +1,16 @@
 import { isValidObjectId } from 'mongoose';
 import HttpException from '../exceptions/HttpException';
-import { Boat, Equipment, EquipmentType, BoatType, HebergementType, Hebergement, Service, ServiceType } from '../interfaces/equipments.interface';
+import {
+  Boat,
+  Equipment,
+  EquipmentType,
+  BoatType,
+  HebergementType,
+  Hebergement,
+  Service,
+  ServiceType,
+  /*   souCat, */
+} from '../interfaces/equipments.interface';
 import { User } from '../interfaces/users.interface';
 import models from '../models/equipments.model';
 import userModel from '../models/users.model';
@@ -9,6 +19,12 @@ import fs from 'fs';
 import { Review } from '../interfaces/review.interface';
 import { isValid } from 'date-fns';
 import { updateTypeAssertion } from 'typescript';
+import querystring from 'querystring';
+import { response } from 'express';
+var http = require('http');
+var https = require('https');
+let request = require('request');
+
 class EquipmentService {
   public equipments = models.equipmentModel;
   public equipmentTypes = models.equipmentTypetModel;
@@ -18,7 +34,8 @@ class EquipmentService {
   public hebergements = models.hebergementtModel;
   public boats = models.boattModel;
   public services = models.serviceModel;
-
+  /*   public souCat = models.sousCatModel;
+   */ public weather: any[];
   public async createBoat(boatData): Promise<Boat> {
     if (isEmptyObject(boatData)) throw new HttpException(400, "Can't create empty boat");
     boatData.details = parseJson(boatData.details);
@@ -66,6 +83,38 @@ class EquipmentService {
     return await hebergement.save();
   }
 
+  public async gelocalWeather(): Promise<any> {
+    const base = 'http://api.worldweatheronline.com/premium/v1/weather.ashx';
+    const options = {
+      q: 'tunis',
+      num_of_days: '1',
+      format: 'json',
+      key: 'cc7eaaba82a74deeac7151317210508',
+    };
+    const query = querystring.stringify(options);
+    var url = base + '?' + query;
+
+    const response = await http.get(url, (err, respon, body) => {
+      respon = JSON.parse(body);
+      console.log(this.weather);
+      /* console.log(this.weather.data.current_condition[0]); */
+
+      return respon;
+    });
+
+    /*   const response = await request(url, (res, err, body) => {
+      if (err) {
+        console.log('error', err);
+      } else {
+            console.log(res.body);
+
+         const weather = JSON.parse(body);
+         const data = weather.json();
+        return data;
+      }
+    }); */
+  }
+
   public async findAllHebergements(): Promise<Hebergement[]> {
     const hebergements: Hebergement[] = await this.hebergements.find().populate('owner', 'fullName slug').populate('type', 'name');
     return hebergements;
@@ -96,6 +145,10 @@ class EquipmentService {
     const boats: Boat[] = await this.boats.find({ owner: owner }).sort('-createdAt');
     return boats;
   }
+
+  /* public async getAlldata() : Promise<any>{
+  const
+} */
 
   public async findServicesByUser(ownerId: string): Promise<Service[]> {
     if (!isValidObjectId(ownerId)) {
@@ -157,6 +210,22 @@ class EquipmentService {
     return await models.hebergementType.find();
   }
 
+  /*   public async findSousCatType(): Promise<souCat[]> {
+    const sousCatType: souCat[] = await this.souCat.find();
+    if (sousCatType.length == 0) {
+      this.addDefaultTypesService();
+    }
+    return await this.souCat.find();
+  } */
+
+  /*  public async addsouCatType(sousCat: souCat): Promise<souCat> {
+    if (!souCat.name) {
+      throw new HttpException(400, 'Missing Sous Equipment type informations!');
+    }
+    const newSousCat = new this.souCat(sousCat);
+    return await newSousCat.save();
+  } */
+
   public async addEquipmentType(equipmentType: EquipmentType): Promise<EquipmentType> {
     if (!equipmentType.name || !equipmentType.description) {
       /*       console.log(equipmentType);
@@ -190,6 +259,7 @@ class EquipmentService {
       throw new HttpException(400, 'Missing HebergementType type informations!');
     }
     const newType = new models.hebergementType(hebergementType);
+    
     return await newType.save();
   }
 
@@ -270,73 +340,86 @@ class EquipmentService {
     return { equipments, type };
   }
 
+  /*   public async findtypeBySoustype(souscatId: string): Promise<BoatType[]> {
+    if (!isValidObjectId(souscatId)) {
+      throw new HttpException(400, 'Invalid Id ! ');
+    }
+    const souType: souCat = await this.souCat.findById(souscatId);
+    if (!souType) {
+      return [];
+    }
+    const type: BoatType[] = await this.boatTypes.find({
+      souType: souType,
+    });
+    return type;
+  } */
+
   public async findBoatByType(typeId: string): Promise<Boat[]> {
     if (!isValidObjectId(typeId)) {
       throw new HttpException(400, 'Invalid id!');
     }
     const type: BoatType = await this.boatTypes.findById(typeId);
     if (!type) {
-return []
+      return [];
     }
     const boats: Boat[] = await this.boats.find({
-      type:type
+      type: type,
     });
-    return boats
+    return boats;
   }
-   public async findHebergementByType(typeId: string): Promise<Hebergement[]> {
+  public async findHebergementByType(typeId: string): Promise<Hebergement[]> {
     if (!isValidObjectId(typeId)) {
       throw new HttpException(400, 'Invalid id!');
     }
     const type: HebergementType = await this.homeType.findById(typeId);
     if (!type) {
-return []
+      return [];
     }
     const hebergements: Hebergement[] = await this.hebergements.find({
-      type:type
+      type: type,
     });
-    return hebergements
+    return hebergements;
   }
 
-public async fidServiceByType(typeId:string) : Promise<Service[]>{
-  if(!isValidObjectId(typeId)){
-    throw new HttpException(400,'Invalid id!')
-  }
-  const type : ServiceType = await this.serviceTypes.findById(typeId)
-  if(!type){
-    return []
-  }
-  const services : Service[] = await this.services.find({
-    type:type
-  })
-  return services
-
-}
-
-   public async findServiceByType(typeId: string): Promise<Service[]> {
+  public async fidServiceByType(typeId: string): Promise<Service[]> {
     if (!isValidObjectId(typeId)) {
       throw new HttpException(400, 'Invalid id!');
     }
     const type: ServiceType = await this.serviceTypes.findById(typeId);
     if (!type) {
-return []
+      return [];
     }
     const services: Service[] = await this.services.find({
-      type:type
+      type: type,
     });
-    return services
+    return services;
   }
-   public async findEquipmentByType(typeId: string): Promise<Equipment[]> {
+
+  public async findServiceByType(typeId: string): Promise<Service[]> {
+    if (!isValidObjectId(typeId)) {
+      throw new HttpException(400, 'Invalid id!');
+    }
+    const type: ServiceType = await this.serviceTypes.findById(typeId);
+    if (!type) {
+      return [];
+    }
+    const services: Service[] = await this.services.find({
+      type: type,
+    });
+    return services;
+  }
+  public async findEquipmentByType(typeId: string): Promise<Equipment[]> {
     if (!isValidObjectId(typeId)) {
       throw new HttpException(400, 'Invalid id!');
     }
     const type: EquipmentType = await this.equipmentTypes.findById(typeId);
     if (!type) {
-return []
+      return [];
     }
     const equipments: Equipment[] = await this.equipments.find({
-      type:type
+      type: type,
     });
-    return equipments
+    return equipments;
   }
 
   public async findServicesByTypeAndUser(typeId: string, ownerId: string): Promise<{ services: Service[]; type: EquipmentType }> {

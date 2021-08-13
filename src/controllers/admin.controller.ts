@@ -71,6 +71,16 @@ class AdminController {
     }
   };
 
+  /*   public addSousCatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const catType = req.body;
+      const sousCat = await this.equipmentService.addsouCatType(catType);
+      res.status(200).json({ data: sousCat });
+    } catch (error) {
+      next(error);
+    }
+  }; */
+
   public addEquipmentType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const equipmentData = req.body;
@@ -128,6 +138,8 @@ class AdminController {
       if (req.file) {
         hebergementData.icon = req.file.path.split('/').splice(1).join('/');
       }
+
+
       const hebergementType = await this.equipmentService.addHebergementType(hebergementData);
       res.status(200).json({ data: hebergementType });
     } catch (error) {
@@ -203,7 +215,7 @@ class AdminController {
     try {
       const user: User = req.user;
       const contentData = req.body;
-      console.log(req.body)
+      console.log(req.body);
       contentData.owner = user._id;
       if (req.file) {
         contentData.image = req.file.path.split('/').splice(1).join('/');
@@ -235,7 +247,7 @@ class AdminController {
       next(error);
     }
   };
-   public findAllContents = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+  public findAllContents = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const contents: Content[] = await this.adminService.findAllContents();
       res.status(200).json({ data: contents });

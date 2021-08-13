@@ -33,17 +33,18 @@ class EquipmentRoute implements Route {
   constructor() {
     this.initializeRoutes();
   }
-
+//
   private initializeRoutes() {
+    this.router.get(`${this.path}/wetaher/all`, this.equipmentController.getweather);
     //events
     this.router.post(`${this.path}/boat/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createBoat);
     this.router.post(`${this.path}/equipment/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createEquipment);
     this.router.post(`${this.path}/hebergement/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createHebergement);
     this.router.post(`${this.path}/service/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createService);
-    this.router.get(`${this.path}/types`,  this.equipmentController.findEquipmentTypes);
-    this.router.get(`${this.path}/boat/types`,  this.equipmentController.findBoatTypes);
-    this.router.get(`${this.path}/hebergement/types`,  this.equipmentController.findHebergementTypes);
-    this.router.get(`${this.path}/service/types`,  this.equipmentController.findServiceTypes);
+    this.router.get(`${this.path}/types`, this.equipmentController.findEquipmentTypes);
+    this.router.get(`${this.path}/boat/types`, this.equipmentController.findBoatTypes);
+    this.router.get(`${this.path}/hebergement/types`, this.equipmentController.findHebergementTypes);
+    this.router.get(`${this.path}/service/types`, this.equipmentController.findServiceTypes);
     this.router.get(`${this.path}/type/:typeId/user/:ownerId`, this.equipmentController.findEquipmentsByTypeAndUser);
     this.router.get(`${this.path}/service/type/:typeId/user/:ownerId`, this.equipmentController.findServicesByTypeAndUser);
 
