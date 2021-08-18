@@ -119,6 +119,7 @@ class AdminController {
     }
   };
 
+
   public addProductCategory = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const categoryData = req.body;

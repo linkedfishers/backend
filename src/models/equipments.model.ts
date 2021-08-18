@@ -21,9 +21,8 @@ const equipmentTypeSchema = new mongoose.Schema({
   description: { type: String, required: false },
   icon: { type: String },
   /*   cat: { type: mongoose.Schema.Types.ObjectId, ref: 'souCat', required: false },
-
- */
-  parentId: { type: String },
+   */
+  parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: false },
 });
 
 const serviceTypeSchema = new mongoose.Schema({
@@ -82,7 +81,7 @@ const hebergementSchema = new mongoose.Schema({
 const boatSchema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: String,
+  image: [String],
   description: String,
   price: Number,
   adress: String,

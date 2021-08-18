@@ -68,7 +68,7 @@ export class Boat {
   _id: string;
   name: string;
   owner: User;
-  image: string;
+  image: string[];
   description: string;
   isAvailable: boolean;
   price: number;

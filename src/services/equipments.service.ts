@@ -235,6 +235,25 @@ class EquipmentService {
     return await newType.save();
   }
 
+  public async createCategorie(categories, parentId = null): Promise<any> {
+    const categorieList = [];
+    let category;
+    if (parentId == null) {
+      category = categories.filter(cat => cat.parentId == undefined);
+    } else {
+      category = categories.filter(cat => cat.parentId == parentId);
+    }
+    for (let cate of category) {
+      categorieList.push({
+        _id: cate._id,
+        name: cate.name,
+        icon: cate.icon,
+        childre: this.createCategorie(categories, cate._id),
+      });
+    }
+    return categorieList;
+  }
+
   public async addBoatType(boatType: BoatType): Promise<BoatType> {
     if (!boatType.name || !boatType.description) {
       throw new HttpException(400, 'Missing Boat type informations!');
@@ -259,7 +278,7 @@ class EquipmentService {
       throw new HttpException(400, 'Missing HebergementType type informations!');
     }
     const newType = new models.hebergementType(hebergementType);
-    
+
     return await newType.save();
   }
 
