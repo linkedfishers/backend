@@ -278,15 +278,15 @@ class EquipmentController {
     }
   };
 
-  public getweather = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<any> => {
+/*   public getweather = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<any> => {
     try {
       const data = await this.equipmentService.gelocalWeather();
-      
+
       res.status(200).json({ data: data });
     } catch (error) {
       next(error);
     }
-  };
+  }; */
 
   public findHebergementTypes = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
