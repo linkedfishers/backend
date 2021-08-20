@@ -21,8 +21,8 @@ import { isValid } from 'date-fns';
 import { updateTypeAssertion } from 'typescript';
 import querystring from 'querystring';
 import { response } from 'express';
-var http = require('http');
-var https = require('https');
+import http from 'http';
+import https from 'https'
 let request = require('request');
 
 class EquipmentService {
@@ -83,7 +83,7 @@ class EquipmentService {
     return await hebergement.save();
   }
 
-  public async gelocalWeather(): Promise<any> {
+ /*  public async gelocalWeather(): Promise<any> {
     const base = 'http://api.worldweatheronline.com/premium/v1/weather.ashx';
     const options = {
       q: 'tunis',
@@ -97,23 +97,11 @@ class EquipmentService {
     const response = await http.get(url, (err, respon, body) => {
       respon = JSON.parse(body);
       console.log(this.weather);
-      /* console.log(this.weather.data.current_condition[0]); */
 
       return respon;
     });
 
-    /*   const response = await request(url, (res, err, body) => {
-      if (err) {
-        console.log('error', err);
-      } else {
-            console.log(res.body);
-
-         const weather = JSON.parse(body);
-         const data = weather.json();
-        return data;
-      }
-    }); */
-  }
+  } */
 
   public async findAllHebergements(): Promise<Hebergement[]> {
     const hebergements: Hebergement[] = await this.hebergements.find().populate('owner', 'fullName slug').populate('type', 'name');
