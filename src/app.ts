@@ -33,7 +33,7 @@ class App {
   }
 
   public listen() {
-    /* http.createServer(this.app) */ this.app.listen(this.port, () => {
+    http.createServer(this.app).listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }

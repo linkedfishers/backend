@@ -13,7 +13,8 @@ class EquipmentController {
       const user: User = req.user;
       const boatData = req.body;
       boatData.owner = user._id;
-      if (Array.isArray(req.file) && req.file > 0) {
+      if (Array.isArray(req.file)) {
+        console.log(req.file);
         boatData.image = req.file.path.split('/').splice(1).join('/');
       }
       const boat: Boat = await this.equipmentService.createBoat(boatData);
