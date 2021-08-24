@@ -19,7 +19,7 @@ class App {
 
   constructor(routes: Routes[]) {
     this.app = express();
-    this.port = process.env.PORT || 443;
+    this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
     let scheduler = new Scheduler();
     this.connectToDatabase();
@@ -33,7 +33,7 @@ class App {
   }
 
   public listen() {
-    http.createServer(this.app).listen(this.port, () => {
+    /* http.createServer(this.app) */ this.app.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }
