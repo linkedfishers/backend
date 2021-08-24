@@ -10,7 +10,8 @@ import Routes from './interfaces/routes.interface';
 import errorMiddleware from './middlewares/error.middleware';
 import mongoose from 'mongoose';
 import Scheduler from './services/scheduler';
-
+import http from 'http';
+import https from 'https';
 class App {
   public app: express.Application;
   public port: string | number;
@@ -18,7 +19,7 @@ class App {
 
   constructor(routes: Routes[]) {
     this.app = express();
-    this.port = process.env.PORT || 3000;
+    this.port = process.env.PORT || 443;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
     let scheduler = new Scheduler();
     this.connectToDatabase();
@@ -32,7 +33,7 @@ class App {
   }
 
   public listen() {
-    this.app.listen(this.port, () => {
+    http.createServer(this.app).listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }
@@ -45,7 +46,7 @@ class App {
     const { MONGO_HOST, MONGO_PORT, MONGO_DATABASE, MONGO_USERNAME, MONGO_PWD } = process.env;
     const options = { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true };
     //let connectionstring = `mongodb://${MONGO_USERNAME}:${MONGO_PWD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}?authSource=admin&readPreference=primary&ssl=false`;
-    let connectionstring = `mongodb+srv://linkedfisher:${MONGO_PWD}@cluster0.ke9zy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority` 
+    let connectionstring = `mongodb+srv://linkedfisher:${MONGO_PWD}@cluster0.ke9zy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
     if (!this.env) {
       connectionstring = `mongodb://localhost:27017/${MONGO_DATABASE}?authSource=admin&readPreference=primary&ssl=false`;
     }
