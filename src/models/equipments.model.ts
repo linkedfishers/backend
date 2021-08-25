@@ -36,7 +36,7 @@ const serviceTypeSchema = new mongoose.Schema({
 const equipmentSchema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: [String],
+  image: [{type:String}],
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: true },
   description: String,
   adress: String,
@@ -51,7 +51,7 @@ const equipmentSchema = new mongoose.Schema({
 const serviceShema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: [String],
+  image: [{ type: String }],
   adress: String,
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceType', required: true },
   description: String,
@@ -66,7 +66,7 @@ const serviceShema = new mongoose.Schema({
 const hebergementSchema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: [String],
+  image: [{type:String}],
   adress: String,
   description: String,
   price: Number,
@@ -81,7 +81,7 @@ const hebergementSchema = new mongoose.Schema({
 const boatSchema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: [String],
+  image: [{type:String}],
   description: String,
   price: Number,
   adress: String,
