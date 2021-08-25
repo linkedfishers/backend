@@ -16,9 +16,11 @@ class EquipmentController {
       if (Array.isArray(req.file)) {
         boatData.image = req.file.map(file => {
           file.path.split('/').splice(1).join('/');
-          console.log(file);
         });
+
+        console.log(boatData.image);
       }
+       console.log(req.file);
       const boat: Boat = await this.equipmentService.createBoat(boatData);
       res.status(201).json({ data: boat, message: 'Created Boat' });
     } catch (error) {
