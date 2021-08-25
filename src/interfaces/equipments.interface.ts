@@ -10,7 +10,7 @@ export class Equipment {
   name: string;
   owner: User;
   type: EquipmentType;
-  image: string[]; //Required in Model for all
+  image: string; //Required in Model for all
   description: string;
   isAvailable: boolean;
   position: any;
@@ -44,7 +44,7 @@ export class Service {
   _id: string;
   name: string;
   owner: User;
-  image: string[];
+  image: string;
   description: string;
   isAvailable: boolean;
   price: number;
@@ -68,7 +68,7 @@ export class Boat {
   _id: string;
   name: string;
   owner: User;
-  image: string[];
+  image: string;
   description: string;
   isAvailable: boolean;
   price: number;
@@ -96,7 +96,7 @@ export class Hebergement {
   _id: string;
   name: string;
   owner: User;
-  image: string[];
+  image: string;
   description: string;
   isAvailable: boolean;
   adress: string;
