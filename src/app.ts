@@ -12,15 +12,19 @@ import mongoose from 'mongoose';
 import Scheduler from './services/scheduler';
 import http from 'http';
 import https from 'https';
+import fs from 'fs';
 class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
-
+  /* public privateKey = fs.readFileSync('/linkedfishers.com.key', 'utf8');
+  public certificate = fs.readFileSync('/linkedfishers.crt', 'utf8'); */
+ public  option = {/*  cert: this.certificate, key: this.privateKey */ };
   constructor(routes: Routes[]) {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
+
     let scheduler = new Scheduler();
     this.connectToDatabase();
     this.initializeMiddlewares();
@@ -33,11 +37,8 @@ class App {
   }
 
   public listen() {
-    /*   const option :{
-        key: ,
-        certirficate:
-      } */
-    http.createServer(this.app).listen(this.port, () => {
+    const server = http.createServer(this.app)
+    server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }

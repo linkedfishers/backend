@@ -66,7 +66,7 @@ const serviceShema = new mongoose.Schema({
 const hebergementSchema = new mongoose.Schema({
   name: String,
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: { type: String} ,
+  image: { type: String },
   adress: String,
   description: String,
   price: Number,
