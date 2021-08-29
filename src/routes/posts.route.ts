@@ -4,7 +4,7 @@ import Route from '../interfaces/routes.interface';
 import authMiddleware from '../middlewares/auth.middleware';
 import shortid from 'shortid';
 import multer from 'multer';
-import fs from 'fs'
+import fs from 'fs';
 
 // SET STORAGE
 const storage = multer.diskStorage({
@@ -12,11 +12,9 @@ const storage = multer.diskStorage({
     let path: string;
     if (file.mimetype.includes('image')) {
       path = 'uploads/posts/pictures';
-    }
-    else if (file.mimetype.includes('video')) {
+    } else if (file.mimetype.includes('video')) {
       path = 'uploads/posts/videos';
-    }
-    else {
+    } else {
       path = 'uploads/posts/other';
     }
     if (!fs.existsSync(path)) {
@@ -25,12 +23,11 @@ const storage = multer.diskStorage({
     cb(null, path);
   },
   filename: (req, file, cb) => {
-    let a = file.originalname.split('.')
-    cb(null, `${shortid.generate()}-${Date.now()}.${a[a.length - 1]}`)
-  }
-})
+    let a = file.originalname.split('.');
+    cb(null, `${shortid.generate()}-${Date.now()}.${a[a.length - 1]}`);
+  },
+});
 const uploadMiddleware = multer({ storage: storage });
-
 
 class PostsRoute implements Route {
   public path = '/posts';

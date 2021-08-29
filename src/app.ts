@@ -19,7 +19,9 @@ class App {
   public env: boolean;
   /* public privateKey = fs.readFileSync('/linkedfishers.com.key', 'utf8');
   public certificate = fs.readFileSync('/linkedfishers.crt', 'utf8'); */
- public  option = {/*  cert: this.certificate, key: this.privateKey */ };
+  public option = {
+    /*  cert: this.certificate, key: this.privateKey */
+  };
   constructor(routes: Routes[]) {
     this.app = express();
     this.port = process.env.PORT || 3000;
@@ -37,7 +39,7 @@ class App {
   }
 
   public listen() {
-    const server = http.createServer(this.app)
+    const server = http.createServer(this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
