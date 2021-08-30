@@ -22,7 +22,7 @@ import { updateTypeAssertion } from 'typescript';
 import querystring from 'querystring';
 import { response } from 'express';
 import http from 'http';
-import https from 'https'
+import https from 'https';
 let request = require('request');
 
 class EquipmentService {
@@ -83,7 +83,7 @@ class EquipmentService {
     return await hebergement.save();
   }
 
- /*  public async gelocalWeather(): Promise<any> {
+  /*  public async gelocalWeather(): Promise<any> {
     const base = 'http://api.worldweatheronline.com/premium/v1/weather.ashx';
     const options = {
       q: 'tunis',
