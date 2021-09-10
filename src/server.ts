@@ -12,6 +12,7 @@ import AdminRoute from './routes/admin.route';
 import ReservationRoute from './routes/reservations.route';
 import ProductRoute from './routes/product.route';
 import ProviderRoute from './routes/provider.route';
+import OrderRoute from './routes/order.route';
 
 validateEnv();
 const routes: Routes[] = [
@@ -25,7 +26,7 @@ const routes: Routes[] = [
   new ReservationRoute(),
   new ProviderRoute(),
   new ProductRoute(),
+  new OrderRoute(),
 ];
 const app = new App(routes);
-
-app.listen();
+app.listenn();

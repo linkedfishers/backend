@@ -13,20 +13,22 @@ import Scheduler from './services/scheduler';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
+import { nextDay } from 'date-fns';
 class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
-  /* public privateKey = fs.readFileSync('/linkedfishers.com.key', 'utf8');
-  public certificate = fs.readFileSync('/linkedfishers.crt', 'utf8'); */
-  public option = {
-    /*  cert: this.certificate, key: this.privateKey */
+  private Option = {
+    key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
+    cert: fs.readFileSync(__dirname + '/certificate.pem', { encoding: 'utf8' }),
   };
+
+  public option = {};
   constructor(routes: Routes[]) {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
-
+    this.app.set('secport', 3000);
     let scheduler = new Scheduler();
     this.connectToDatabase();
     this.initializeMiddlewares();
@@ -76,11 +78,24 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+  this.app.all('*', (req, res, next) => {
+      if (req.secure) {
+        return next();
+      } else {
+        res.redirect(307, 'https://' + req.hostname + ':' + this.app.get('secport') + req.url);
+      }
+    });
   }
 
   private initializeRoutes(routes: Routes[]) {
     routes.forEach(route => {
       this.app.use('/', route.router);
+    });
+  }
+ public listenn() {
+    const server = https.createServer(this.Option, this.app);
+    server.listen(this.app.get('secport'), () => {
+      console.log('Server Linstening on port ', this.app.get('secport'));
     });
   }
 

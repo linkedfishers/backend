@@ -1,6 +1,8 @@
+import { Product } from './product.interface';
 import { User } from './users.interface';
 
-export class Content {
+export class Order {
   _id: string;
-  
+  product: Product;
+  quantity: number;
 }

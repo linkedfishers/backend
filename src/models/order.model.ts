@@ -1,14 +1,13 @@
 import mongoose from 'mongoose';
-import { Content } from '../interfaces/content.interface';
+import { Order } from '../interfaces/order.interface';
 
-const contentShema = new mongoose.Schema({
-  image: String,
-  content: String,
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+const orderSchema = new mongoose.Schema({
+  product: { type: mongoose.Types.ObjectId, ref: 'Product' },
+  quantity: { type: Number, default: 1 },
 });
 
-contentShema.set('timestamps', true);
+orderSchema.set('timestamps', true);
 
-const contentModel = mongoose.model<Content & mongoose.Document>('Content', contentShema);
+const orderModel = mongoose.model<Order & mongoose.Document>('Order', orderSchema);
 
-export default contentModel;
+export default orderModel;
