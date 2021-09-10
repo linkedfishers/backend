@@ -19,7 +19,7 @@ class App {
   public env: boolean;
   private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
-    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.crt', { encoding: 'utf8' }),
+    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
   };
 
   public option = {};
