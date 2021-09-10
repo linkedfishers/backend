@@ -20,7 +20,7 @@ class App {
   public env: boolean;
   private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
-    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
+    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.crt', { encoding: 'utf8' }),
   };
 
   public option = {};
@@ -28,7 +28,7 @@ class App {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
-    this.app.set('secport', 443);
+    this.app.set('secport', 3000);
     let scheduler = new Scheduler();
     this.connectToDatabase();
     this.initializeMiddlewares();
