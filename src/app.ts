@@ -13,14 +13,13 @@ import Scheduler from './services/scheduler';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
-import { nextDay } from 'date-fns';
 class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
   private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
-    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.crt', { encoding: 'utf8' }),
+    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.csr', { encoding: 'utf8' }),
   };
 
   public option = {};
