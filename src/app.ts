@@ -19,8 +19,8 @@ class App {
   public port: string | number;
   public env: boolean;
   private Option = {
-    key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
-    cert: fs.readFileSync(__dirname + '/certificate.pem', { encoding: 'utf8' }),
+    key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
+    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
   };
 
   public option = {};
@@ -28,7 +28,7 @@ class App {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV === 'production' ? true : false;
-    this.app.set('secport', 3000);
+    this.app.set('secport', 443);
     let scheduler = new Scheduler();
     this.connectToDatabase();
     this.initializeMiddlewares();
@@ -78,7 +78,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-  this.app.all('*', (req, res, next) => {
+    this.app.all('*', (req, res, next) => {
       if (req.secure) {
         return next();
       } else {
@@ -92,7 +92,7 @@ class App {
       this.app.use('/', route.router);
     });
   }
- public listenn() {
+  public listenn() {
     const server = https.createServer(this.Option, this.app);
     server.listen(this.app.get('secport'), () => {
       console.log('Server Linstening on port ', this.app.get('secport'));
