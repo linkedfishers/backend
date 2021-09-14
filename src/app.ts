@@ -17,10 +17,7 @@ class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
-  private Option = {
-    key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
-    cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
-  };
+
 
   public option = {};
   constructor(routes: Routes[]) {
@@ -77,13 +74,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-    this.app.all('*', (req, res, next) => {
-      if (req.secure) {
-        return next();
-      } else {
-        res.redirect(307, 'https://' + req.hostname + ':' + this.app.get('secport') + req.url);
-      }
-    });
+ 
   }
 
   private initializeRoutes(routes: Routes[]) {
@@ -91,12 +82,7 @@ class App {
       this.app.use('/', route.router);
     });
   }
-  public listenn() {
-    const server = https.createServer(this.Option, this.app);
-    server.listen(this.app.get('secport'), () => {
-      console.log('Server Linstening on port ', this.app.get('secport'));
-    });
-  }
+
 
   private initializeSwagger() {
     const options = {
