@@ -47,7 +47,7 @@ class App {
   }
 
   public listenn() {
-    const server = http.createServer(this.option, this.app);
+    const server = https.createServer(this.Option, this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
