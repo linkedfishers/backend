@@ -105,6 +105,7 @@ boatSchema.set('timestamps', true);
 reviewSchema.set('timestamps', true);
 serviceShema.set('timestamps', true);
 souCatShema.set('timestamp', true);
+
 const serviceTypeModel = mongoose.model<ServiceType & mongoose.Document>('ServiceType', serviceTypeSchema);
 const equipmentModel = mongoose.model<Equipment & mongoose.Document>('Equipment', equipmentSchema);
 const equipmentTypetModel = mongoose.model<EquipmentType & mongoose.Document>('EquipmentType', equipmentTypeSchema);

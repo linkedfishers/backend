@@ -12,15 +12,16 @@ class EquipmentController {
     try {
       const user: User = req.user;
       const boatData = req.body;
+
       boatData.owner = user._id;
-    /*   if (Array.isArray(req.file)) {
+      /*   if (Array.isArray(req.file)) {
         boatData.image = req.file.map(file => {
           file.path.split('/').splice(1).join('/');
         }); */
-   if (req.file) {
-     boatData.image = req.file.path.split('/').splice(1).join('/');
-   }
-     /*    console.log(boatData.image);
+      if (req.file) {
+        boatData.image = req.file.path.split('/').splice(1).join('/');
+      }
+      /*    console.log(boatData.image);
       }
        console.log(req.file); */
       const boat: Boat = await this.equipmentService.createBoat(boatData);
@@ -47,7 +48,8 @@ class EquipmentController {
     try {
       const user: User = req.user;
       const serviceData = req.body;
-      serviceData.owner = user._id;
+     serviceData.owner = user._id;
+
       if (req.file) {
         serviceData.image = req.file.path.split('/').splice(1).join('/');
       }

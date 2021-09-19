@@ -17,7 +17,7 @@ class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
-  private Option = {
+ private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
     cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
   };
@@ -77,7 +77,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-    this.app.all('*', (req, res, next) => {
+   this.app.all('*', (req, res, next) => {
       if (req.secure) {
         return next();
       } else {
