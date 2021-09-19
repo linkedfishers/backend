@@ -91,12 +91,7 @@ class App {
       this.app.use('/', route.router);
     });
   }
-  public listenn() {
-    const server = https.createServer(this.Option, this.app);
-    server.listen(this.app.get('secport'), () => {
-      console.log('Server Linstening on port ', this.app.get('secport'));
-    });
-  }
+
 
   private initializeSwagger() {
     const options = {
