@@ -17,7 +17,7 @@ class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
- private Option = {
+  private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
     cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
   };
@@ -41,6 +41,13 @@ class App {
 
   public listen() {
     const server = http.createServer(this.app);
+    server.listen(this.port, () => {
+      console.log(`🚀 App listening on the port ${this.port}`);
+    });
+  }
+
+  public listenn() {
+    const server = http.createServer(this.option, this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
@@ -77,7 +84,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-   this.app.all('*', (req, res, next) => {
+    this.app.all('*', (req, res, next) => {
       if (req.secure) {
         return next();
       } else {
@@ -91,7 +98,6 @@ class App {
       this.app.use('/', route.router);
     });
   }
-
 
   private initializeSwagger() {
     const options = {
