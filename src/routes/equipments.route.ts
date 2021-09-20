@@ -40,7 +40,7 @@ class EquipmentRoute implements Route {
     this.router.post(`${this.path}/boat/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createBoat);
     this.router.post(`${this.path}/equipment/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createEquipment);
     this.router.post(`${this.path}/hebergement/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createHebergement);
-    this.router.post(`${this.path}/service/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createService);
+    this.router.post(`${this.path}/service/new`, /* authMiddleware,  */uploadMiddleware.single('file'), this.equipmentController.createService);
     this.router.get(`${this.path}/types`, this.equipmentController.findEquipmentTypes);
     this.router.get(`${this.path}/boat/types`, this.equipmentController.findBoatTypes);
     this.router.get(`${this.path}/hebergement/types`, this.equipmentController.findHebergementTypes);
