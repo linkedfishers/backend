@@ -34,4 +34,5 @@ export interface FileUpload {
 
 export interface RequestWithFile extends RequestWithUser {
   file: FileUpload;
+ /* files : FileUpload[] */
 }
