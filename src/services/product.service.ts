@@ -22,8 +22,13 @@ class ProductService {
     return await product.save();
   }
 
-  public async findAllProducts(): Promise<Product[]> {
-    const products: Product[] = await this.products.find().populate('owner', 'companyName slug').populate('type', 'name');
+  public async findAllProducts(limit, page): Promise<Product[]> {
+    const products: Product[] = await this.products
+      .find()
+      .limit(limit)
+      .skip(limit * page)
+      .populate('owner', 'companyName slug')
+      .populate('type', 'name');
     return products;
   }
 

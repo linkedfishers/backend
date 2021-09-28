@@ -73,7 +73,8 @@ class ProductController {
 
   public getAllProducts = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const products: Product[] = await this.productService.findAllProducts();
+      const {limit = 6, page = 1 } = req.query;
+      const products: Product[] = await this.productService.findAllProducts(limit, page);
       res.status(200).json({ data: products });
     } catch (error) {
       next(error);
