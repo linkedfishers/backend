@@ -36,7 +36,7 @@ class ProductRoute implements Route {
     /*     this.router.get(`${this.path}/all`, this.productController.getAllProducts);
      */
     this.router.get(`${this.path}/all`, this.productController.getAllProducts);
-    this.router.post(`${this.path}/product/new`, authMiddleware, uploadMiddleware.single('file'), this.productController.createProduct);
+    this.router.post(`${this.path}/product/new`, authMiddleware, uploadMiddleware.array('files'), this.productController.createProduct);
     this.router.get(`${this.path}/categories`, this.productController.findCategorie);
     this.router.get(`${this.path}/product/:id`, this.productController.getProduct);
     this.router.get(`${this.path}/provider/:id`, this.productController.findProductsByProvider);
