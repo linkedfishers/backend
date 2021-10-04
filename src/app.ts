@@ -39,14 +39,14 @@ class App {
     //Serve static files
     this.app.use(express.static('uploads'));
   }
-/*  public listen() {
+ public listen() {
     const server = http.createServer(this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
-  } */
+  }
 
- public listenn() {
+  public listenn() {
     const server = https.createServer(this.Option, this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
@@ -80,7 +80,7 @@ class App {
       this.app.use(logger('dev'));
       this.app.use(cors({ origin: true, credentials: true }));
     }
-    this.app.use(
+    /*     this.app.use(
       bodyParser.json({
         limit: '50mb',
       }),
@@ -92,11 +92,11 @@ class App {
         parameterLimit: 100000,
         extended: true,
       }),
-    );
+    ); */
     this.app.use(express.json({ limit: '50mb' }));
     this.app.use(express.urlencoded({ limit: '50mb' }));
     this.app.use(cookieParser());
- this.app.all('*', (req, res, next) => {
+   this.app.all('*', (req, res, next) => {
       if (req.secure) {
         return next();
       } else {
