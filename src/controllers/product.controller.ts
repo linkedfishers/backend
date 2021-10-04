@@ -15,8 +15,9 @@ class ProductController {
       const productData = req.body;
       productData.owner = provider._id;
       if (req.files) {
-        /*         productData.pictures = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        /*  productData.pictures = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
          */ productData.pictures = req.files.map(file => file.path.split('/').splice(1).join('/'));
+        console.log(productData.pictures);
       }
       const product: Product = await this.productService.createProduct(productData);
       res.status(201).json({ data: product, message: 'Created Product' });
