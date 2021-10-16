@@ -117,6 +117,11 @@ class EquipmentService {
     return boats;
   }
 
+  public async findSomeProduct(limit): Promise<Equipment[]> {
+    const equipments: Equipment[] = await this.equipments.find().limit(limit).populate('owner', 'companyName slug').populate('type', 'name');
+    return equipments;
+  }
+
   public async findAllEquipments(): Promise<Equipment[]> {
     const equipments: Equipment[] = await this.equipments.find().populate('owner', 'fullName slug').populate('type', 'name');
     return equipments;

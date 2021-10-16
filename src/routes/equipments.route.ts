@@ -37,10 +37,10 @@ class EquipmentRoute implements Route {
   private initializeRoutes() {
     /*     this.router.get(`${this.path}/wetaher/all`, this.equipmentController.getweather);
      */ //events
-    this.router.post(`${this.path}/boat/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createBoat);
+    this.router.post(`${this.path}/boat/new`, authMiddleware, uploadMiddleware.array('file'), this.equipmentController.createBoat);
     this.router.post(`${this.path}/equipment/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createEquipment);
     this.router.post(`${this.path}/hebergement/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createHebergement);
-    this.router.post(`${this.path}/service/new`, /* authMiddleware,  */uploadMiddleware.single('file'), this.equipmentController.createService);
+    this.router.post(`${this.path}/service/new`, /* authMiddleware,  */ uploadMiddleware.single('file'), this.equipmentController.createService);
     this.router.get(`${this.path}/types`, this.equipmentController.findEquipmentTypes);
     this.router.get(`${this.path}/boat/types`, this.equipmentController.findBoatTypes);
     this.router.get(`${this.path}/hebergement/types`, this.equipmentController.findHebergementTypes);
@@ -52,6 +52,8 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/equipments/type/:typeId`, this.equipmentController.findEquipmentsByType);
     this.router.get(`${this.path}/freelancer/type/:typeId`, this.equipmentController.findServicessByType);
     this.router.get(`${this.path}/hebergements/type/:typeId`, this.equipmentController.findhebergementsByType);
+
+    this.router.get(`${this.path}/limit`, this.equipmentController.getAllEuipmentsWithLimit);
 
     this.router.get(`${this.path}/service/user/:id`, this.equipmentController.findServicesByUser);
     this.router.get(`${this.path}/user/:id`, this.equipmentController.findEquipmentsByUser);

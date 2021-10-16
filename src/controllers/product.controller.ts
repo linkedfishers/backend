@@ -15,8 +15,8 @@ class ProductController {
       const productData = req.body;
       productData.owner = provider._id;
       if (req.files) {
-        //productData.pictures = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
-        productData.pictures = req.files.map(file => file.path.split('/').splice(1).join('/'));
+        productData.pictures = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        //productData.pictures = req.files.map(file => file.path.split('/').splice(1).join('/'));
         console.log(productData.pictures);
       }
       const product: Product = await this.productService.createProduct(productData);
@@ -74,7 +74,7 @@ class ProductController {
 
   public getAllProducts = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { limit = 6, page = 1 } = req.query;
+
       const products: Product[] = await this.productService.findAllProducts(/* limit, page */);
       res.status(200).json({ data: products });
     } catch (error) {
@@ -83,7 +83,8 @@ class ProductController {
   };
   public getAllProductsWithLimit = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const products: Product[] = await this.productService.findAllProductsWithLimit();
+      const { limit = 2 } = req.body;
+      const products: Product[] = await this.productService.findSomeProduct(limit);
       res.status(200).json({ data: products });
     } catch (error) {
       next(error);

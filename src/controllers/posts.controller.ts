@@ -137,7 +137,7 @@ class PostController {
       next(error);
     }
   }
-  
+
   public updateComment = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user: User = req.user;
@@ -152,3 +152,4 @@ class PostController {
 }
 
 export default PostController;
+      

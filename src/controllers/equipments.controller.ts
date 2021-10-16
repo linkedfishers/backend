@@ -12,15 +12,14 @@ class EquipmentController {
     try {
       const user: User = req.user;
       const boatData = req.body;
-
       boatData.owner = user._id;
-      /*   if (Array.isArray(req.file)) {
-        boatData.image = req.file.map(file => {
-          file.path.split('/').splice(1).join('/');
-        }); */
       if (req.file) {
         boatData.image = req.file.path.split('/').splice(1).join('/');
       }
+      if (req.files) {
+        boatData.pictures = req.files.map(file => file.path.split('/').splice(1).join('/'));
+      }
+
       /*    console.log(boatData.image);
       }
        console.log(req.file); */
@@ -48,7 +47,7 @@ class EquipmentController {
     try {
       const user: User = req.user;
       const serviceData = req.body;
-     serviceData.owner = user._id;
+      serviceData.owner = user._id;
 
       if (req.file) {
         serviceData.image = req.file.path.split('/').splice(1).join('/');
@@ -141,6 +140,16 @@ class EquipmentController {
       const ownerId = req.params.id || req.user._id;
       const boats: Boat[] = await this.equipmentService.findBoatsByUser(ownerId);
       res.status(200).json({ data: boats });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getAllEuipmentsWithLimit = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { limit = 8 } = req.body;
+      const equipments: Equipment[] = await this.equipmentService.findSomeProduct(limit);
+      res.status(200).json({ data: equipments });
     } catch (error) {
       next(error);
     }
@@ -356,7 +365,7 @@ class EquipmentController {
       const id = req.params.id;
       const user = req.user;
       const equipment: Equipment = await this.equipmentService.getEquipment(id);
-      res.status(200).json({ data: equipment });
+      res.status(200).json({ data: { equipment } });
     } catch (error) {
       next(error);
     }
