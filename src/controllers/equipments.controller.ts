@@ -16,9 +16,9 @@ class EquipmentController {
       if (req.file) {
         boatData.image = req.file.path.split('/').splice(1).join('/');
       }
-      if (req.files) {
+    /*   if (req.files) {
         boatData.pictures = req.files.map(file => file.path.split('/').splice(1).join('/'));
-      }
+      } */
 
       /*    console.log(boatData.image);
       }

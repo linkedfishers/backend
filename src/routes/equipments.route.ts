@@ -37,7 +37,7 @@ class EquipmentRoute implements Route {
   private initializeRoutes() {
     /*     this.router.get(`${this.path}/wetaher/all`, this.equipmentController.getweather);
      */ //events
-    this.router.post(`${this.path}/boat/new`, authMiddleware, uploadMiddleware.array('file'), this.equipmentController.createBoat);
+    this.router.post(`${this.path}/boat/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createBoat);
     this.router.post(`${this.path}/equipment/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createEquipment);
     this.router.post(`${this.path}/hebergement/new`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.createHebergement);
     this.router.post(`${this.path}/service/new`, /* authMiddleware,  */ uploadMiddleware.single('file'), this.equipmentController.createService);
