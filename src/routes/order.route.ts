@@ -1,18 +1,18 @@
 import { Router } from 'express';
-import OrderController from '../controllers/order.controller';
+import OrderInController from '../controllers/orderIn.controller';
 import Route from '../interfaces/routes.interface';
 
 class OrderRoute implements Route {
   public path = '/order';
   public router = Router();
-  public orderController = new OrderController();
+  public orderInController = new OrderInController();
   constructor() {
     this.initializeRoutes();
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}/all`, this.orderController.findAllOrders);
-    this.router.post(`${this.path}/new`, this.orderController.createOrder);
+/*     this.router.get(`${this.path}/all`, this.orderInController.);
+ */    this.router.post(`${this.path}/new`, this.orderInController.createOrderIn);
   }
 }
 
