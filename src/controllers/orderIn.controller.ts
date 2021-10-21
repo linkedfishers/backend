@@ -13,8 +13,13 @@ class OrderInController {
       const user: User = req.user;
       const orderData = req.body;
       orderData.user = user._id;
-      orderData.orderItems = req.body.orderItems
+      orderData.orderItems = req.body.orderItems.map(or => {
+     
 
+      });
+
+      /*       orderData.orderItems = req.body.orderItems
+       */
 
       if (orderData.orderItems && orderData.orderItems.length === 0) {
         res.status(401);
@@ -29,5 +34,4 @@ class OrderInController {
   };
 }
 
-
-export default OrderInController
+export default OrderInController;

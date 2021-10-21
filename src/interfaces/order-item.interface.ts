@@ -4,4 +4,6 @@ export class OrderItem {
   _id: string;
   quantity: number;
   product: Product;
+  price: number;
+  total: number;
 }

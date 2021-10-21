@@ -9,7 +9,6 @@ const orderInSchema = new mongoose.Schema({
   },
   orderItems: [
     {
-      name: { type: String, required: true },
       qty: { type: Number, required: true },
       product: {
         type: mongoose.Schema.Types.ObjectId,
