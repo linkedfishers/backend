@@ -63,9 +63,9 @@ class AuthController {
     try {
       const userData = req.body;
       const tokenData: TokenData = await this.authService.loginwithFacebook(userData);
-      res.status(200).json({data : tokenData, message : 'logged in with facebook '})
-    } catch (err) {
-      next(err);
+      res.status(200).json({ data: tokenData, message: 'logged in with facebook ' });
+    } catch (error) {
+      next(error);
     }
   };
 

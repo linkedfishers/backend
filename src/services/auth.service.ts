@@ -133,7 +133,10 @@ class AuthService {
 
   public async loginwithFacebook(userData: User): Promise<TokenData> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Miqsing credentials');
-    let user: User = await this.users.findOne({ facebookId: userData.facebook });
+
+    let user: User = await this.users.findOne({ facebook: userData.facebook });
+    console.log(user);
+
     if (!user) {
       const userAlreadyExists = await this.users.exists({ email: userData.email });
       if (userAlreadyExists) {
