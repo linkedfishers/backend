@@ -59,6 +59,16 @@ class AuthController {
     }
   };
 
+  public loginWithFacebook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userData = req.body;
+      const tokenData: TokenData = await this.authService.loginwithFacebook(userData);
+      res.status(200).json({data : tokenData, message : 'logged in with facebook '})
+    } catch (err) {
+      next(err);
+    }
+  };
+
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userData: User = req.user;
@@ -118,7 +128,6 @@ class AuthController {
     }
   };
 
-
   public verifyResetPasswordToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = req.params.token;
@@ -139,7 +148,6 @@ class AuthController {
       next(error);
     }
   };
-
 }
 
 export default AuthController;

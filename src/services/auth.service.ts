@@ -50,7 +50,7 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(providerData.password, 10);
     const provider = new userModel({ ...providerData, password: hashedPassword });
     provider.slug = slugify(provider.companyName);
-    provider.profilePicture = "profilePictures/default-company.jpg"
+    provider.profilePicture = 'profilePictures/default-company.jpg';
     provider.role = 'provider';
     if (await userModel.exists({ slug: provider.slug })) {
       provider.slug = provider.slug + shortid.generate();
@@ -131,6 +131,27 @@ class AuthService {
     return tokenData;
   }
 
+  public async loginwithFacebook(userData: User): Promise<TokenData> {
+    if (isEmptyObject(userData)) throw new HttpException(400, 'Miqsing credentials');
+    let user: User = await this.users.findOne({ facebookId: userData.facebook });
+    if (!user) {
+      const userAlreadyExists = await this.users.exists({ email: userData.email });
+      if (userAlreadyExists) {
+        throw new HttpException(400, 'There is already an account exist with this email ');
+      }
+
+      const u = new this.users({ ...userData });
+      u.slug = slugify(u.fullName);
+      u.activated = true;
+      if (this.users.exists({ slug: u.slug })) {
+        u.slug = u.slug + shortid.generate();
+      }
+      user = await u.save();
+    }
+    const tokenData = this.createToken(user);
+    return tokenData;
+  }
+
   public async loginWithGoogle(userData: User): Promise<TokenData> {
     if (isEmptyObject(userData)) throw new HttpException(400, 'Missing credentials');
     let user: User = await this.users.findOne({ googleId: userData.googleId });
@@ -155,8 +176,7 @@ class AuthService {
     if (isEmptyObject(providerData)) throw new HttpException(400, 'Missing credentials');
 
     const provider: Provider = await this.users.findOne({
-      $and:
-        [{ email: providerData.email }, { role: 'provider' }]
+      $and: [{ email: providerData.email }, { role: 'provider' }],
     });
     if (!provider) throw new HttpException(409, `No provider was found with email address: ${providerData.email}`);
 

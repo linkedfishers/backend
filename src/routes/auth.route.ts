@@ -25,12 +25,12 @@ class AuthRoute implements Route {
     this.router.post(`${this.path}/password-reset-request`, this.authController.requestPasswordReset);
     this.router.get(`${this.path}/verify-password-token/:token`, this.authController.verifyResetPasswordToken);
     this.router.post(`${this.path}/reset-password`, this.authController.resetPassword);
-    this.router.post(`${this.path}/google`, this.authController.logInWithGoogle)
-
+    this.router.post(`${this.path}/google`, this.authController.logInWithGoogle);
+    this.router.post(`${this.path}/facebook`, this.authController.loginWithFacebook);
+    
     //Provider routes
     this.router.post(`${this.path}/provider/signup`, this.authController.providerSignup);
     this.router.post(`${this.path}/provider/signin`, this.authController.providerlogIn);
-
   }
 }
 export default AuthRoute;
