@@ -5,7 +5,8 @@ import adminMiddleware from '../middlewares/admin.middleware';
 import multer from 'multer';
 import fs from 'fs';
 import authMiddleware from '../middlewares/auth.middleware';
-
+import ContentController from '../controllers/content.controller';
+import ContentService from '../services/content.service';
 // SET STORAGE
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -28,12 +29,14 @@ class AdminRoute implements Route {
   public path = '/admin';
   public router = Router();
   public adminController = new AdminController();
+  public contentController = new ContentController();
 
   constructor() {
     this.initializeRoutes();
   }
 
   private initializeRoutes() {
+    this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.contentController.createContent);
     this.router.get(`${this.path}/users/:count/:skip`, adminMiddleware, this.adminController.getUsers);
     this.router.get(`${this.path}/providers/`, adminMiddleware, this.adminController.getProviders);
     this.router.put(`${this.path}/users/:userId`, adminMiddleware, this.adminController.updateUserStatus);
@@ -64,8 +67,9 @@ class AdminRoute implements Route {
     this.router.put(`${this.path}/content/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateContent);
     this.router.get(`${this.path}/content/all`);
 
-/*     this.router.post(`${this.path}/boat/addSoutype`, this.adminController.addSousCatType);
- */  }
+    /*     this.router.post(`${this.path}/boat/addSoutype`, this.adminController.addSousCatType);
+     */
+  }
 }
 
 export default AdminRoute;

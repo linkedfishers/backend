@@ -17,12 +17,7 @@ import userModel from '../models/users.model';
 import { isEmptyObject, parseJson } from '../utils/util';
 import fs from 'fs';
 import { Review } from '../interfaces/review.interface';
-import { isValid } from 'date-fns';
-import { updateTypeAssertion } from 'typescript';
-import querystring from 'querystring';
-import { response } from 'express';
-import http from 'http';
-import https from 'https';
+
 let request = require('request');
 
 class EquipmentService {

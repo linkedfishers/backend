@@ -5,6 +5,7 @@ import multer from 'multer';
 import fs from 'fs';
 import shortid from 'shortid';
 import EquipmentController from '../controllers/equipments.controller';
+import ContentController from '../controllers/content.controller';
 
 // SET STORAGE
 const storage = multer.diskStorage({
@@ -29,7 +30,7 @@ class EquipmentRoute implements Route {
   public path = '/equipments';
   public router = Router();
   public equipmentController = new EquipmentController();
-
+  public contentController = new ContentController();
   constructor() {
     this.initializeRoutes();
   }
@@ -80,6 +81,7 @@ class EquipmentRoute implements Route {
     this.router.post(`${this.path}/hebergement/review`, authMiddleware, this.equipmentController.createHebergementReview);
     this.router.post(`${this.path}/service/review`, authMiddleware, this.equipmentController.createServiceReview);
     this.router.post(`${this.path}/equipment/review`, authMiddleware, this.equipmentController.createEquipmentReview);
+    this.router.get(`${this.path}/content/:id`, this.contentController.getContent);
   }
 }
 

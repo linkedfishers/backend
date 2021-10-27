@@ -11,8 +11,8 @@ class OrderRoute implements Route {
   }
 
   private initializeRoutes() {
-/*     this.router.get(`${this.path}/all`, this.orderInController.);
- */    this.router.post(`${this.path}/new`, this.orderInController.createOrderIn);
+    /*     this.router.get(`${this.path}/all`, this.orderInController.);
+     */ this.router.post(`${this.path}/new`, this.orderInController.createOrderIn);
   }
 }
 
