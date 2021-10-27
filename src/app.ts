@@ -13,7 +13,6 @@ import Scheduler from './services/scheduler';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
-import bodyParser from 'body-parser';
 class App {
   public app: express.Application;
   public port: string | number;

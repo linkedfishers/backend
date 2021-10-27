@@ -41,6 +41,7 @@ class ContentController {
         });
 
         const content: Content = await this.contentService.UpdateContent(contentData, contentId);
+        res.status(201).json({ data: content, message: 'Updated Images' });
       }
     } catch (error) {
       next(error);

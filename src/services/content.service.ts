@@ -3,7 +3,6 @@ import contentModel from '../models/content.model';
 import HttpException from '../exceptions/HttpException';
 import { Content } from '../interfaces/content.interface';
 import { isEmptyObject } from '../utils/util';
-import contentSecurityPolicy from 'helmet/dist/middlewares/content-security-policy';
 
 class ContentService {
   public contents = contentModel;
@@ -11,10 +10,11 @@ class ContentService {
   public async createContent(contentDat): Promise<Content> {
     if (isEmptyObject(contentDat)) throw new HttpException(400, 'Cant Create emtyContent ');
     const content = new this.contents(contentDat);
+    console.log(content);
     return await content.save();
   }
   public async findAllContent(): Promise<Content[]> {
-    const contents: Content[] = await this.contents.find();
+    const contents: Content[] = await this.contents.find().populate('images');
     return contents;
   }
 
@@ -25,9 +25,6 @@ class ContentService {
     const content: Content = await this.contents.findById(id);
     return content;
   }
-
-
-  
 }
 
 export default ContentService;

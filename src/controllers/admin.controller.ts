@@ -7,6 +7,7 @@ import { EquipmentType, BoatType, HebergementType, ServiceType } from '../interf
 import { Categorie } from '../interfaces/product.interface';
 import { User } from '../interfaces/users.interface';
 import AdminService from '../services/admin.service';
+import ContentService from '../services/content.service';
 import EquipmentService from '../services/equipments.service';
 import ProductService from '../services/product.service';
 
@@ -14,7 +15,7 @@ class AdminController {
   public adminService = new AdminService();
   public equipmentService = new EquipmentService();
   public productService = new ProductService();
-
+  public contentService = new ContentService();
   public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const skip = Number(req.params.skip) || 0;
@@ -119,7 +120,6 @@ class AdminController {
     }
   };
 
-
   public addProductCategory = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const categoryData = req.body;
@@ -139,7 +139,6 @@ class AdminController {
       if (req.file) {
         hebergementData.icon = req.file.path.split('/').splice(1).join('/');
       }
-
 
       const hebergementType = await this.equipmentService.addHebergementType(hebergementData);
       res.status(200).json({ data: hebergementType });
@@ -221,7 +220,7 @@ class AdminController {
       if (req.file) {
         contentData.image = req.file.path.split('/').splice(1).join('/');
       }
-      const content: Content = await this.adminService.createContent(contentData);
+      const content: Content = await this.contentService.createContent(contentData);
       res.status(201).json({ data: content, message: 'Content Created' });
     } catch (error) {
       next(error);

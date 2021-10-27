@@ -6,7 +6,6 @@ import multer from 'multer';
 import fs from 'fs';
 import authMiddleware from '../middlewares/auth.middleware';
 import ContentController from '../controllers/content.controller';
-import ContentService from '../services/content.service';
 // SET STORAGE
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -37,6 +36,7 @@ class AdminRoute implements Route {
 
   private initializeRoutes() {
     this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.contentController.createContent);
+    this.router.put(`${this.path}/content/:id`, uploadMiddleware.array('files'), this.contentController.UpdateContent);
     this.router.get(`${this.path}/users/:count/:skip`, adminMiddleware, this.adminController.getUsers);
     this.router.get(`${this.path}/providers/`, adminMiddleware, this.adminController.getProviders);
     this.router.put(`${this.path}/users/:userId`, adminMiddleware, this.adminController.updateUserStatus);
@@ -61,11 +61,11 @@ class AdminRoute implements Route {
     this.router.delete(`${this.path}/service/:id`, adminMiddleware, this.adminController.deleteServiceType);
 
     //homePage add text
-
-    this.router.post(`${this.path}/content/addContent`, uploadMiddleware.single('file'), this.adminController.createContent);
+    /*
+    this.router.post(`${this.path}/content/addContent`, uploadMiddleware.array('files'), this.adminController.createContent);
     this.router.get(`${this.path}/content/:id`, this.adminController.getContent);
     this.router.put(`${this.path}/content/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateContent);
-    this.router.get(`${this.path}/content/all`);
+    this.router.get(`${this.path}/content/all`); */
 
     /*     this.router.post(`${this.path}/boat/addSoutype`, this.adminController.addSousCatType);
      */

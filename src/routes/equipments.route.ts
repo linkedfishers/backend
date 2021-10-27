@@ -82,6 +82,7 @@ class EquipmentRoute implements Route {
     this.router.post(`${this.path}/service/review`, authMiddleware, this.equipmentController.createServiceReview);
     this.router.post(`${this.path}/equipment/review`, authMiddleware, this.equipmentController.createEquipmentReview);
     this.router.get(`${this.path}/content/:id`, this.contentController.getContent);
+    
   }
 }
 
