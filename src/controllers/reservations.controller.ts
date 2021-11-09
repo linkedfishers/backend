@@ -8,7 +8,8 @@ class ReservationController {
     public reservationService = new ReservationService();
 
     public createReservationRequest = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
-        try {
+
+      try {
             const user: User = req.user;
             const reservationData = req.body;
             reservationData.reservedBy = user._id;

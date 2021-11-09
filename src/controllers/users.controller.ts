@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDto } from '../dtos/users.dto';
 import { RequestWithFile, RequestWithUser } from '../interfaces/auth.interface';
 import { Notification } from '../interfaces/posts.interface';
 import { Report, User } from '../interfaces/users.interface';
@@ -81,6 +80,8 @@ class UsersController {
     }
   };
 
+
+
   public getNotifications = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const notifications: Notification[] = await this.userService.findNotifications(req.user);
@@ -89,6 +90,8 @@ class UsersController {
       next(error);
     }
   };
+
+
 
   public reportUser = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {

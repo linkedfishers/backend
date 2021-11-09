@@ -6,6 +6,7 @@ import multer from 'multer';
 import fs from 'fs';
 import authMiddleware from '../middlewares/auth.middleware';
 import ContentController from '../controllers/content.controller';
+import OrderController from '../controllers/order.controller';
 // SET STORAGE
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -29,12 +30,18 @@ class AdminRoute implements Route {
   public router = Router();
   public adminController = new AdminController();
   public contentController = new ContentController();
+  public orderController = new OrderController();
 
   constructor() {
     this.initializeRoutes();
   }
 
   private initializeRoutes() {
+    this.router.get(`${this.path}/order/all`, this.orderController.findAllOrder);
+    this.router.get(`${this.path}/order/:id`, this.orderController.getOrder);
+    this.router.put(`${this.path}/order/:id`, this.orderController.updateOrder);
+    this.router.get(`${this.path}/order/getTotal`, this.orderController.totalSales);
+
     this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.contentController.createContent);
     this.router.put(`${this.path}/content/:id`, uploadMiddleware.array('files'), this.contentController.UpdateContent);
     this.router.get(`${this.path}/users/:count/:skip`, adminMiddleware, this.adminController.getUsers);

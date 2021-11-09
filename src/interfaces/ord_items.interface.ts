@@ -1,9 +1,7 @@
 import { Product } from './product.interface';
 
-export class OrderItem {
+export class OrdrItems {
   _id: string;
   quantity: number;
   product: Product;
-  price: number;
-  total: number;
 }
