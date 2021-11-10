@@ -57,6 +57,20 @@ class OrderService {
     return await this.orders.findByIdAndUpdate(orderId, orderData);
   }
 
+/*   public async findOrderByUsers(userId: string): Promise<Order[]> {
+    if (isEmptyObject(userId)) {
+      throw new HttpException(400, `Can't find user order`);
+    }
+
+    const user: User = await userModel.findById(userId);
+    if (!user) {
+      return [];
+    }
+    const order: Orders[] = await this.orders.find({ owner: user }).sort('-createdAt');
+
+    return order;
+  } */
+
   public async findOrdersByUser(ownerId: string): Promise<Orders[]> {
     if (!isValidObjectId(ownerId)) {
       throw new HttpException(400, 'Invalid user id');

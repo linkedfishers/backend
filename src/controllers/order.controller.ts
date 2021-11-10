@@ -36,7 +36,6 @@ class OrderController {
       orderData.user = await req.body.user;
       orderData.orderItems = OtherOrderId;
       orderData.totalPrice = totalPrice;
-
       const order: Orders = await this.orderService.createOrder(orderData);
       res.status(201).json({ data: order, message: 'Order Created' });
     } catch (error) {
@@ -68,6 +67,9 @@ class OrderController {
       next(err);
     }
   };
+
+
+  
 
   public getOrder = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
