@@ -3,7 +3,7 @@ import { User } from './users.interface';
 
 export class Orders {
   _id: string;
-  orderItems: any[];
+  orderItems: OrdrItems[];
   shippingAddress1: string;
   shippingAddress2: string;
   city: string;
@@ -12,6 +12,6 @@ export class Orders {
   phone: string;
   status: string;
   totalPrice: number;
-  user: any;
+  user: User;
   dateOrdered: string;
 }
