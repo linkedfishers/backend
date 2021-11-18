@@ -1,3 +1,4 @@
+import { OrdrItems } from './ord_items.interface';
 import { User } from './users.interface';
 
 export class Orders {
@@ -11,6 +12,6 @@ export class Orders {
   phone: string;
   status: string;
   totalPrice: number;
-  user: User;
+  user: any;
   dateOrdered: string;
 }

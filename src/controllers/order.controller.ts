@@ -18,6 +18,8 @@ class OrderController {
         req.body.orderItems.map(async item => {
           const orderData = item;
           const newOrder: OrdrItems = await this.orderService.createOrderItem(orderData);
+          console.log(item);
+
           return newOrder._id;
         }),
       );
@@ -67,9 +69,6 @@ class OrderController {
       next(err);
     }
   };
-
-
-  
 
   public getOrder = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
