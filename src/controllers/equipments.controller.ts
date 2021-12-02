@@ -13,10 +13,16 @@ class EquipmentController {
       const user: User = req.user;
       const boatData = req.body;
       boatData.owner = user._id;
-      if (req.file) {
-        boatData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+       // boatData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+            boatData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
+
       }
-    /*   if (req.files) {
+
+      /*  if (req.file) {
+        boatData.image = req.file.path.split('/').splice(1).join('/');
+      } */
+      /*   if (req.files) {
         boatData.pictures = req.files.map(file => file.path.split('/').splice(1).join('/'));
       } */
 
@@ -34,9 +40,15 @@ class EquipmentController {
       const user: User = req.user;
       const equipmentData = req.body;
       equipmentData.owner = user._id;
-      if (req.file) {
-        equipmentData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        equipmentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        /*                 equipmentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
+         */
       }
+      /*      if (req.file) {
+                 equipmentData.image = req.file.path.split('/').splice(1).join('/');
+
+      } */
       const equipment: Equipment = await this.equipmentService.createEquipment(equipmentData);
       res.status(201).json({ data: equipment, message: 'Created equipment' });
     } catch (error) {
@@ -49,9 +61,14 @@ class EquipmentController {
       const serviceData = req.body;
       serviceData.owner = user._id;
 
-      if (req.file) {
-        serviceData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        serviceData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
       }
+
+      /*       if (req.file) {
+                serviceData.image = req.file.path.split('/').splice(1).join('/');
+
+      } */
       const service: Service = await this.equipmentService.createService(serviceData);
       res.status(201).json({ data: service, message: 'Created service' });
     } catch (error) {
@@ -63,9 +80,13 @@ class EquipmentController {
       const user: User = req.user;
       const equipmentData = req.body;
       equipmentData.owner = user._id;
-      if (req.file) {
-        equipmentData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        equipmentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
       }
+
+      /*       if (req.file) {
+        equipmentData.image = req.file.path.split('/').splice(1).join('/');
+      } */
       const hebergement: Hebergement = await this.equipmentService.createHebergement(equipmentData);
       res.status(201).json({ data: hebergement, message: 'Created Hebergement' });
     } catch (error) {
@@ -79,9 +100,12 @@ class EquipmentController {
       const hebergementId: string = req.params.id;
       const hebergementData = req.body;
       hebergementData.owner = user._id;
-      if (req.file) {
-        hebergementData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        hebergementData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
       }
+      /*  if (req.file) {
+        hebergementData.image = req.file.path.split('/').splice(1).join('/');
+      } */
       const hebergement: Hebergement = await this.equipmentService.updateHebergement(hebergementData, hebergementId);
       res.status(201).json({ data: hebergement, message: 'Updated Hebergement' });
     } catch (error) {
@@ -94,9 +118,12 @@ class EquipmentController {
       const serviceId: string = req.params.id;
       const serviceData = req.body;
       serviceData.owner = user._id;
-      if (req.file) {
-        serviceData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        serviceData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
       }
+      /*     if (req.file) {
+        serviceData.image = req.file.path.split('/').splice(1).join('/');
+      } */
       const service: Service = await this.equipmentService.updateHebergement(serviceData, serviceId);
       res.status(201).json({ data: service, message: 'Updated Service' });
     } catch (error) {
@@ -110,9 +137,12 @@ class EquipmentController {
       const boatData = req.body;
       const boatdId: string = req.params.id;
       boatData.owner = user._id;
-      if (req.file) {
-        boatData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        boatData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
       }
+      /*     if (req.file) {
+        boatData.image = req.file.path.split('/').splice(1).join('/');
+      } */
       const boat: Boat = await this.equipmentService.updateBoat(boatData, boatdId);
       res.status(201).json({ data: boat, message: 'Updated Boat' });
     } catch (error) {
@@ -125,9 +155,12 @@ class EquipmentController {
       const equipmentData = req.body;
       const eqId: string = req.params.id;
       equipmentData.owner = user._id;
-      if (req.file) {
-        equipmentData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        equipmentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
       }
+      /*   if (req.file) {
+        equipmentData.image = req.file.path.split('/').splice(1).join('/');
+      } */
       const equipment: Equipment = await this.equipmentService.updateEquipment(equipmentData, eqId);
       res.status(201).json({ data: equipment, message: 'Updated equipment' });
     } catch (error) {
