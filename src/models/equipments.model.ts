@@ -70,7 +70,6 @@ const hebergementSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String },
   images: [{ type: String }],
-
   adress: String,
   description: String,
   price: Number,

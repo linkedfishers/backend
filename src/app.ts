@@ -17,7 +17,7 @@ class App {
   public app: express.Application;
   public port: string | number;
   public env: boolean;
-  private Option = {
+   private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
     cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
   };
@@ -89,7 +89,7 @@ class App {
       } else {
         res.redirect(307, 'https://' + req.hostname + ':' + this.app.get('secport') + req.url);
       }
-    });
+    }); 
   }
 
   private initializeRoutes(routes: Routes[]) {
