@@ -102,7 +102,9 @@ class EquipmentController {
       const hebergementData = req.body;
       hebergementData.owner = user._id;
       if (req.files) {
-        hebergementData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        //hebergementData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+                hebergementData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
+
       }
       /*  if (req.file) {
         hebergementData.image = req.file.path.split('/').splice(1).join('/');
@@ -120,7 +122,9 @@ class EquipmentController {
       const serviceData = req.body;
       serviceData.owner = user._id;
       if (req.files) {
-        serviceData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        //serviceData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        serviceData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
+
       }
       /*     if (req.file) {
         serviceData.image = req.file.path.split('/').splice(1).join('/');

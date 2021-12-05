@@ -95,7 +95,6 @@ class AdminService {
     return user;
   }
   public async createContent(contentData): Promise<Content> {
-    if (isEmptyObject(contentData)) throw new HttpException(400, `Can't create Empty Content`);
 
     const cont = new this.content(contentData);
     return await cont.save();

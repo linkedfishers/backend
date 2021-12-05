@@ -170,6 +170,49 @@ class AdminController {
       next(error);
     }
   };
+
+  public updateHebergementType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId: string = req.params.id;
+      const hebergementData = req.body;
+      if (req.file) {
+        hebergementData.icon = req.file.path.split('/').splice(1).join('/');
+      }
+      const homeType: HebergementType = await this.equipmentService.updateHebergementType(hebergementData, typeId);
+      res.status(200).json({ data: homeType, message: 'Accomodation Type Updated' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public updateEquipmentType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId: string = req.params.id;
+      const equipmentsData = req.body;
+      if (req.file) {
+        equipmentsData.icon = req.file.path.split('/').splice(1).join('/');
+      }
+      const equiType: EquipmentType = await this.equipmentService.updateEquipmentsType(equipmentsData, typeId);
+      res.status(200).json({ data: equiType, mesage: 'Equipment Type Updated' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public updateServiceType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const typeId: string = req.params.id;
+      const servicesData = req.body;
+      if (req.file) {
+        servicesData.icon = req.file.path.split('/').splice(1).join('/');
+      }
+      const serviceType: EquipmentType = await this.equipmentService.updateEquipmentsType(servicesData, typeId);
+      res.status(200).json({ data: serviceType, mesage: 'Equipment Type Updated' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   public deleteBoatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const typeId: string = req.params.id;
@@ -217,8 +260,11 @@ class AdminController {
       const contentData = req.body;
       console.log(req.body);
       contentData.owner = user._id;
-      if (req.file) {
-        contentData.image = req.file.path.split('/').splice(1).join('/');
+      if (req.files) {
+        //contentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+                contentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
+
+
       }
       const content: Content = await this.contentService.createContent(contentData);
       res.status(201).json({ data: content, message: 'Content Created' });

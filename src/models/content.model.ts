@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Content } from '../interfaces/content.interface';
 
 const contentShema = new mongoose.Schema({
-images : [{type:String ,required : true}],
+images : [{type:String}],
 owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 

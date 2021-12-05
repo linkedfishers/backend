@@ -41,9 +41,9 @@ class AdminRoute implements Route {
     this.router.get(`${this.path}/order/:id`, this.orderController.getOrder);
     this.router.put(`${this.path}/order/:id`, this.orderController.updateOrder);
     this.router.get(`${this.path}/order/getTotal`, this.orderController.totalSales);
-
-    this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.contentController.createContent);
+    this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.adminController.createContent);
     this.router.put(`${this.path}/content/:id`, uploadMiddleware.array('files'), this.contentController.UpdateContent);
+    this.router.get(`${this.path}/contents/all`, this.adminController.findAllContents);
     this.router.get(`${this.path}/users/:count/:skip`, adminMiddleware, this.adminController.getUsers);
     this.router.get(`${this.path}/providers/`, adminMiddleware, this.adminController.getProviders);
     this.router.put(`${this.path}/users/:userId`, adminMiddleware, this.adminController.updateUserStatus);
@@ -60,8 +60,15 @@ class AdminRoute implements Route {
       uploadMiddleware.single('file'),
       this.adminController.addProductCategory,
     );
-    this.router.put(`${this.path}/boat/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateBoatType);
 
+    //Update Type Categries
+    this.router.put(`${this.path}/boat/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateBoatType);
+    this.router.put(`${this.path}/hebrgementType/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateHebergementType);
+    this.router.put(`${this.path}/equipmentType/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateEquipmentType);
+    this.router.put(`${this.path}/serviceType/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateServiceType);
+
+    // a verifier
+    this.router.get(`${this.path}/hebergementType/:id`), adminMiddleware;
     this.router.delete(`${this.path}/equipment/:id`, adminMiddleware, this.adminController.deleteEquipmentType);
     this.router.delete(`${this.path}/boat/:id`, adminMiddleware, this.adminController.deleteBoatType);
     this.router.delete(`${this.path}/hebergement/:id`, adminMiddleware, this.adminController.deleteHebergementType);

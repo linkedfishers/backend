@@ -15,6 +15,8 @@ class ContentService {
   }
   public async findAllContent(): Promise<Content[]> {
     const contents: Content[] = await this.contents.find().populate('images');
+    console.log(contents);
+
     return contents;
   }
 

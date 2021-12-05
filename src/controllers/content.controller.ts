@@ -24,6 +24,8 @@ class ContentController {
   public findAllContent = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const contents: Content[] = await this.contentService.findAllContent();
+      console.log('testhamzanasri');
+
       res.status(201).json({ data: contents });
     } catch (error) {
       next(error);

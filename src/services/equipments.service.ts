@@ -254,6 +254,18 @@ class EquipmentService {
     return await this.boatTypes.findByIdAndUpdate(id, boatData);
   }
 
+  public async updateHebergementType(HebergementData, id): Promise<HebergementType> {
+    return await this.homeType.findByIdAndUpdate(id, HebergementData);
+  }
+
+  public async updateEquipmentsType(equipmentData, id): Promise<EquipmentType> {
+    return this.equipmentTypes.findByIdAndUpdate(id, equipmentData);
+  }
+
+  public async updateServicesType(serviceData, id): Promise<EquipmentType> {
+    return this.equipmentTypes.findByIdAndUpdate(id, serviceData);
+  }
+
   public async addServiceType(serviceType: ServiceType): Promise<ServiceType> {
     if (!serviceType.name || !serviceType.description) {
       throw new HttpException(400, 'Missing Service type informations!');
