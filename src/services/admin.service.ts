@@ -7,6 +7,7 @@ import models from '../models/equipments.model';
 import contentModel from '../models/content.model';
 import { isEmptyObject } from '../utils/util';
 import HttpException from '../exceptions/HttpException';
+import fs from 'fs';
 
 class AdminService {
   public users = userModel;
@@ -95,19 +96,25 @@ class AdminService {
     return user;
   }
   public async createContent(contentData): Promise<Content> {
-
     const cont = new this.content(contentData);
     return await cont.save();
+  }
+
+  public async deleteContent(id: string): Promise<Content> {
+    const hebergement = await this.content.findByIdAndDelete(id);
+    if (fs.existsSync('uploads/' + hebergement.images)) {
+      fs.unlinkSync('uploads/' + hebergement.images);
+    }
+    return hebergement;
   }
 
   public async UpdateContent(contentData, contentId): Promise<Content> {
     return await this.content.findByIdAndUpdate(contentId, contentData);
   }
-   public async findAllContents(): Promise<Content[]> {
+  public async findAllContents(): Promise<Content[]> {
     const contents: Content[] = await this.content.find().populate('owner', 'fullName slug');
     return contents;
   }
-
 }
 
 export default AdminService;

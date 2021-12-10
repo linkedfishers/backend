@@ -261,13 +261,21 @@ class AdminController {
       console.log(req.body);
       contentData.owner = user._id;
       if (req.files) {
-        //contentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
-                contentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
-
-
+        contentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        //contentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
       const content: Content = await this.contentService.createContent(contentData);
       res.status(201).json({ data: content, message: 'Content Created' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public deleteContent = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const content: Content = await this.equipmentService.deleteHebergement(id);
+      res.status(200).json({ data: content });
     } catch (error) {
       next(error);
     }

@@ -42,6 +42,8 @@ class AdminRoute implements Route {
     this.router.put(`${this.path}/order/:id`, this.orderController.updateOrder);
     this.router.get(`${this.path}/order/getTotal`, this.orderController.totalSales);
     this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.adminController.createContent);
+    this.router.delete(`${this.path}/content/:id`,adminMiddleware,this.adminController.deleteContent)
+
     this.router.put(`${this.path}/content/:id`, uploadMiddleware.array('files'), this.contentController.UpdateContent);
     this.router.get(`${this.path}/contents/all`, this.adminController.findAllContents);
     this.router.get(`${this.path}/users/:count/:skip`, adminMiddleware, this.adminController.getUsers);

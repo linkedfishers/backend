@@ -14,4 +14,5 @@ export class Orders {
   totalPrice: number;
   user: any;
   dateOrdered: string;
+  token: string;
 }

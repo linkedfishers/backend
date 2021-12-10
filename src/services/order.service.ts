@@ -10,10 +10,12 @@ import orderModel from '../models/ordr.model';
 import userModel from '../models/users.model';
 import { isEmptyObject } from '../utils/util';
 import mongoose from 'mongoose';
+import { OrderPay } from '../interfaces/orderPay.interface';
 
 class OrderService {
   public orders = orderModel;
   public orderItem = orderItemModel;
+  public orderPay = OrderPay;
 
   public async createOrder(orderData): Promise<Orders> {
     if (isEmptyObject(orderData)) throw new HttpException(400, "Can't create empty Order");
@@ -33,6 +35,11 @@ class OrderService {
     const total = await this.orderItem.findById(id).populate('product', 'price');
     return total;
   }
+
+  /*   public async createSenbox(orderData): Promise<OrderPay> {
+    const orderPay = new this.orderPay(orderData);
+    return await orderPay.save();
+  } */
 
   public async findAllOrders(): Promise<Orders[]> {
     const orders: Orders[] = await this.orders.find().populate('user', 'fullName').sort({ dateOrdered: -1 });
@@ -57,7 +64,7 @@ class OrderService {
     return await this.orders.findByIdAndUpdate(orderId, orderData);
   }
 
-/*   public async findOrderByUsers(userId: string): Promise<Order[]> {
+  /*   public async findOrderByUsers(userId: string): Promise<Order[]> {
     if (isEmptyObject(userId)) {
       throw new HttpException(400, `Can't find user order`);
     }

@@ -47,6 +47,8 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  token: { type: String},
 });
 
 OrderSchema.set('timestamps', true);

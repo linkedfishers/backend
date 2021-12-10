@@ -5,6 +5,9 @@ import { Orders } from '../interfaces/ordr.interface';
 import { OrdrItems } from '../interfaces/ord_items.interface';
 import { User } from '../interfaces/users.interface';
 import OrderService from '../services/order.service';
+import fetch from 'node-fetch';
+import { token } from 'morgan';
+const https = require('https');
 
 class OrderController {
   public orderService = new OrderService();
@@ -32,18 +35,54 @@ class OrderController {
           return totalPrice;
         }),
       );
-      console.log(totalPrices);
       const totalPrice = totalPrices.reduce((a, b) => a + b, 0);
-      console.log(OtherOrderId);
+
       orderData.user = await req.body.user;
       orderData.orderItems = OtherOrderId;
       orderData.totalPrice = totalPrice;
-      const order: Orders = await this.orderService.createOrder(orderData);
-      res.status(201).json({ data: order, message: 'Order Created' });
+      const data: any = {
+        vendor: 2101,
+        amount: orderData.totalPrice,
+        note: 'test',
+      };
+      const tokenData = fetch('https://sandbox.paymee.tn/api/v1/payments/create', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: 'Token 54148a5067586aef941cb00ca702e84aef3caf56',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then(resp => {
+          return resp.json();
+        })
+        .then(json => {
+          console.log(json.data);
+          const tokenString = json.data.token;
+          console.log(tokenString);
+          if (!tokenString) {
+            return res.status(400).send({ message: 'invalid ' });
+          } else {
+            return tokenString;
+          }
+        })
+        .catch(err => console.log(err));
+
+      orderData.token = await tokenData;
+     const order: Orders = await this.orderService.createOrder(orderData);
+      if (order) {
+        res.status(201).json({ data: order, message: 'Order Created' });
+      } else {
+        console.log('error');
+      }
     } catch (error) {
       next(error);
     }
   };
+
+
+
   public findAllOrder = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const orders: Orders[] = await this.orderService.findAllOrders();
