@@ -8,7 +8,9 @@ import OrderService from '../services/order.service';
 import fetch from 'node-fetch';
 import { token } from 'morgan';
 const https = require('https');
-
+const { TOKEN_PAYMEE } = process.env;
+const API_PAYMEE = 'https://sandbox.paymee.tn/api/v1/payments/create';
+const testets: any = {};
 class OrderController {
   public orderService = new OrderService();
 
@@ -45,7 +47,7 @@ class OrderController {
         amount: orderData.totalPrice,
         note: 'test',
       };
-      const tokenData = fetch('https://sandbox.paymee.tn/api/v1/payments/create', {
+      const tokenData = fetch(API_PAYMEE, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -67,10 +69,12 @@ class OrderController {
             return tokenString;
           }
         })
+
         .catch(err => console.log(err));
 
       orderData.token = await tokenData;
-     const order: Orders = await this.orderService.createOrder(orderData);
+
+      const order: Orders = await this.orderService.createOrder(orderData);
       if (order) {
         res.status(201).json({ data: order, message: 'Order Created' });
       } else {
@@ -80,8 +84,6 @@ class OrderController {
       next(error);
     }
   };
-
-
 
   public findAllOrder = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {

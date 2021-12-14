@@ -261,8 +261,8 @@ class AdminController {
       console.log(req.body);
       contentData.owner = user._id;
       if (req.files) {
-        contentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
-        //contentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
+        //contentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        contentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
       const content: Content = await this.contentService.createContent(contentData);
       res.status(201).json({ data: content, message: 'Content Created' });
