@@ -31,7 +31,7 @@ class AuthService {
     u.confirmationToken = uuidv4() + randomString(60) + shortid.generate();
     u.activated = false;
 
-    const url = `http://linkedfishers.com/activate/${u.confirmationToken}`;
+    const url = `https://linkedfishers.com/activate/${u.confirmationToken}`;
     try {
       await this.sendConfirmationEmail(u, url);
     } catch (err) {
@@ -77,7 +77,7 @@ class AuthService {
       throw new HttpException(400, 'No user with this email');
     }
 
-    const url = `http://linkedfishers.com/reset-password/${resetPasswordToken}`;
+    const url = `https://linkedfishers.com/reset-password/${resetPasswordToken}`;
     this.sendPasswordResetEmail(user, url);
     return 'Sent Reset password mail';
   }
