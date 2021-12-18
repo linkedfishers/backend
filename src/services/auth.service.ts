@@ -38,7 +38,7 @@ class AuthService {
       throw new HttpException(500, err);
     }
     const createUserData: User = await u.save();
-    return 'Sent confirmation mail';
+    return ` Sent confirmation mail`;
   }
 
   public async providerSignup(providerData): Promise<Provider> {
@@ -290,32 +290,37 @@ class AuthService {
 
   public async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
     const smtpConfig = {
-      host: 'ssl0.ovh.net',
+      host: 'smtp.gmail.com',
       port: 465,
       secure: true, // use SSL
       requireTLS: true,
       auth: {
-        user: 'contact@linkedfishers.com',
-        pass: 'AzertY12345',
+        user: 'linkedfisherback@gmail.com',
+        pass: 'Linkedfisher123',
       },
       logger: true,
     };
 
     const transporter = nodemailer.createTransport(smtpConfig);
+
     const mailOptions = {
-      from: 'contact@linkedfishers.com',
+      from: 'hamzanasri16@pepisandbox.com',
       to: emailAdress,
       subject: subject,
       html: content,
     };
     return new Promise((resolve, reject) => {
       transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log('error is ' + error);
-          reject(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-          resolve(true);
+        try {
+          if (error) {
+            console.log('error is ' + error);
+            reject(error);
+          } else {
+            console.log('Email sent: ' + info.response);
+            resolve(true);
+          }
+        } catch (err) {
+          console.log(err);
         }
       });
     });
@@ -411,7 +416,7 @@ class AuthService {
 </center>
 
     `;
-    return this.sendEmail(user.email, html, 'Please activate your Linked Fishers account');
+    return this.sendEmail(user.email, html, 'Please activate your LinkedFishers account');
   }
 
   private async sendPasswordResetEmail(user: User, url: string): Promise<any> {

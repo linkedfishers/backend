@@ -87,8 +87,8 @@ class ReservationService {
     notificationData.targetId = owner._id;
     const notification = new notificationModel(notificationData);
     await notification.save();
-    const ownerUrl = `http://linkedfishers.com/booking-requests`;
-    const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
+    const ownerUrl = `https://linkedfishers.com/booking-requests`;
+    const bookerUrl = `https://linkedfishers.com/my-booking-requests`;
     await this.sendReservationEmail(
       owner,
       ownerUrl,
@@ -305,8 +305,8 @@ class ReservationService {
       // notificationData.targetId = owner._id;
       const notification = new notificationModel(notificationData);
       await notification.save();
-      const ownerUrl = `http://linkedfishers.com/booking-requests`;
-      const bookerUrl = `http://linkedfishers.com/my-booking-requests`;
+      const ownerUrl = `https://linkedfishers.com/booking-requests`;
+      const bookerUrl = `https://linkedfishers.com/my-booking-requests`;
       await this.sendReservationEmail(user, ownerUrl, `Your reservation request have been confirmed.`, 'Reservation confirmed');
       await this.sendReservationEmail(reservation.reservedBy, bookerUrl, `You just confirmed a reservation request.`, 'Reservation confirmed');
     }
