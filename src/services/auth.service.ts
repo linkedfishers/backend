@@ -10,6 +10,7 @@ import { isEmptyObject, isNullOrEmpty, slugify, randomString } from '../utils/ut
 import shortid from 'shortid';
 import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
 class AuthService {
   public users = userModel;
@@ -291,13 +292,18 @@ class AuthService {
   public async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
     const smtpConfig = {
       host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // use SSL
-      requireTLS: false,
-
+      port: 465,
+      secure: true, // use SSL
+      requireTLS: true,
       auth: {
         user: 'linkedfisherback@gmail.com',
         pass: 'Linkedfisher123',
+      },
+
+      key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
+      cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
+      tls: {
+        rejectUnauthorized: false,
       },
       logger: true,
     };
