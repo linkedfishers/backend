@@ -294,7 +294,7 @@ class AuthService {
       host: 'smtp.gmail.com',
       port: 465,
       secure: true, // use SSL
-      requireTLS: true,
+     /*  requireTLS: true, */
       auth: {
         user: 'linkedfisherback@gmail.com',
         pass: 'Linkedfisher123',
@@ -302,9 +302,9 @@ class AuthService {
 
       key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
       cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
-      tls: {
+    /*   tls: {
         rejectUnauthorized: false,
-      },
+      }, */
       logger: true,
     };
 
