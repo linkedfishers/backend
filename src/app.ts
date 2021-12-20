@@ -44,7 +44,6 @@ class App {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }
-
    public listenTwo() {
     const server = https.createServer(this.Option, this.app);
     server.listen(this.port, () => {
