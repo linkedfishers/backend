@@ -291,9 +291,10 @@ class AuthService {
   public async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
     const smtpConfig = {
       host: 'smtp.gmail.com',
-      port: 465,
-      secure: true, // use SSL
-      requireTLS: true,
+      port: 587,
+      secure: false, // use SSL
+      requireTLS: false,
+
       auth: {
         user: 'linkedfisherback@gmail.com',
         pass: 'Linkedfisher123',
@@ -302,9 +303,8 @@ class AuthService {
     };
 
     const transporter = nodemailer.createTransport(smtpConfig);
-
     const mailOptions = {
-      from: 'hamzanasri16@pepisandbox.com',
+      from: 'linkedfisherback@gmail.com',
       to: emailAdress,
       subject: subject,
       html: content,
