@@ -5,6 +5,7 @@ import authMiddleware from '../middlewares/auth.middleware';
 import shortid from 'shortid';
 import multer from 'multer';
 import fs from 'fs';
+import WeatherController from '../controllers/weather.controller';
 
 // SET STORAGE
 const storage = multer.diskStorage({
@@ -33,13 +34,18 @@ class PostsRoute implements Route {
   public path = '/posts';
   public router = Router();
   public postController = new PostController();
+  public weatherController = new WeatherController();
 
   constructor() {
     this.initializeRoutes();
   }
 
   private initializeRoutes() {
+    //wdeather
+    this.router.post(`${this.path}/weather/:city`, this.weatherController.getWetaherData);
+    this.router.post(`${this.path}/weather/forcast/:city`, this.weatherController.getForcastweather);
     //posts
+
     this.router.post(`${this.path}/new`, authMiddleware, uploadMiddleware.single('file'), this.postController.createPost);
     this.router.get(`${this.path}/all`, this.postController.findAllPosts);
     this.router.get(`${this.path}/all/:skip/:limit`, this.postController.findPosts);
