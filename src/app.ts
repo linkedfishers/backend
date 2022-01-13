@@ -44,7 +44,7 @@ class App {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
   }
-   public listenTwo() {
+  public listenTwo() {
     const server = https.createServer(this.Option, this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
@@ -82,7 +82,7 @@ class App {
     this.app.use(express.json({ limit: '50mb' }));
     this.app.use(express.urlencoded({ limit: '50mb' }));
     this.app.use(cookieParser());
-    this.app.all('*', (req, res, next) => {
+     this.app.all('*', (req, res, next) => {
       if (req.secure) {
         return next();
       } else {

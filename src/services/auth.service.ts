@@ -291,13 +291,15 @@ class AuthService {
 
   public async sendEmail(emailAdress: string, content: string, subject: string): Promise<any> {
     const smtpConfig = {
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // use SSL
+      host: 'mail.oxa.host',
+      port: 465,
+      secure: true,
+      key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
+      cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
       requireTLS: true,
       auth: {
-        user: 'hamzanasri16@gmail.com',
-        pass: 'Hamzanasri123',
+        user: 'direction@hookedup.tn',
+        pass: 'HoukedUp@2021',
       },
       /*
       key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
