@@ -312,7 +312,7 @@ class AuthService {
 
     const transporter = nodemailer.createTransport(smtpConfig);
     const mailOptions = {
-      from: 'linkedfisherback@gmail.com',
+      from: 'direction@hookedup.tn',
       to: emailAdress,
       subject: subject,
       html: content,
