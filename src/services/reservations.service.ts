@@ -182,7 +182,10 @@ class ReservationService {
     return { reservations, item: boat, pendingReservations };
   }
 
-  public async findHomeReservations(homeId: string, user: User): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
+  public async findHomeReservations(
+    homeId: string,
+    user: User,
+  ): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
     if (!isValidObjectId(homeId)) {
       throw new HttpException(400, 'Invalid id');
     }
@@ -212,7 +215,10 @@ class ReservationService {
     return { reservations, item: home, pendingReservations };
   }
 
-  public async findEquipmentReservations(equipmentId: string, user: User): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
+  public async findEquipmentReservations(
+    equipmentId: string,
+    user: User,
+  ): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
     if (!isValidObjectId(equipmentId)) {
       throw new HttpException(400, 'Invalid id');
     }
@@ -242,7 +248,10 @@ class ReservationService {
     return { reservations, item: equipment, pendingReservations };
   }
 
-  public async findServiceReservations(serviceId: string, user: User): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
+  public async findServiceReservations(
+    serviceId: string,
+    user: User,
+  ): Promise<{ reservations: Reservation[]; pendingReservations: Reservation[]; item: any }> {
     if (!isValidObjectId(serviceId)) {
       throw new HttpException(400, 'Invalid id');
     }
@@ -318,14 +327,79 @@ class ReservationService {
     return numberOfdays * reservation.item.price;
   }
 
+  public async findReservationDate(dE: Date, dS: Date): Promise<Reservation[]> {
+    
+    let boats = this.reservations.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              dateStart: {
+                $lt: dE,
+              },
+            },
+            {
+              dateEnd: {
+                $gt: dS,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: '1',
+          notAvailableBoats: {
+            $addToSet: '$boat',
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'boats',
+          let: {
+            ids: '$notAvailableBoats',
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $not: {
+                        $in: ['$_id', '$$ids'],
+                      },
+                    },
+                    {},
+                  ],
+                },
+              },
+            },
+          ],
+          as: 'availableBoats',
+        },
+      },
+      {
+        $project: {
+          availableBoats: 1,
+        },
+      },
+    ]);
+    return boats;
+  }
+
   public async updateReservationsStatus() {
     const today = new Date();
     await this.reservations.updateMany(
       { status: ReservationStatus.Pending, dateStart: { $lte: today } },
-      { $set: { status: ReservationStatus.Expired } });
-    await this.reservations.updateMany({ status: ReservationStatus.Confirmed, dateEnd: { $lte: today } }, {
-      $set: { status: ReservationStatus.Completed }
-    });
+      { $set: { status: ReservationStatus.Expired } },
+    );
+    await this.reservations.updateMany(
+      { status: ReservationStatus.Confirmed, dateEnd: { $lte: today } },
+      {
+        $set: { status: ReservationStatus.Completed },
+      },
+    );
   }
 
   private async sendReservationEmail(user: User, url: string, content: string, subject: string): Promise<any> {
@@ -413,7 +487,9 @@ class ReservationService {
     return this.authService.sendEmail(user.email, html, subject);
   }
 
-  
+  public async getAllReservation(): Promise<Reservation[]> {
+    return [];
+  }
 }
 
 export default ReservationService;

@@ -44,6 +44,7 @@ export class BoatType {
 export class Service {
   _id: string;
   name: string;
+  country: string;
   owner: User;
   image: string;
   images: string[];
@@ -69,6 +70,7 @@ export class ServiceType {
 export class Boat {
   _id: string;
   name: string;
+  country: string;
   owner: User;
   image: string;
   images: string[];
@@ -98,6 +100,7 @@ export class HebergementType {
 export class Hebergement {
   _id: string;
   name: string;
+  country: string;
   owner: User;
   image: string;
   images: string[];

@@ -138,6 +138,11 @@ class EquipmentService {
   const
 } */
 
+  public async findBoatsbyLocation(location: String): Promise<Boat[]> {
+    const boats: Boat[] = await this.boats.find({ adresse: location }).sort('-createdAt');
+    return boats;
+  }
+
   public async findServicesByUser(ownerId: string): Promise<Service[]> {
     if (!isValidObjectId(ownerId)) {
       throw new HttpException(400, 'Invalid user id');

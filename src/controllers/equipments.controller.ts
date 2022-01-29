@@ -15,8 +15,7 @@ class EquipmentController {
       boatData.owner = user._id;
       if (req.files) {
         //boatData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
-                    boatData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
-
+        boatData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
 
       /*  if (req.file) {
@@ -103,8 +102,7 @@ class EquipmentController {
       hebergementData.owner = user._id;
       if (req.files) {
         //hebergementData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
-                hebergementData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
-
+        hebergementData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
       /*  if (req.file) {
         hebergementData.image = req.file.path.split('/').splice(1).join('/');
@@ -124,7 +122,6 @@ class EquipmentController {
       if (req.files) {
         //serviceData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
         serviceData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
-
       }
       /*     if (req.file) {
         serviceData.image = req.file.path.split('/').splice(1).join('/');
@@ -188,6 +185,16 @@ class EquipmentController {
       const { limit = 8 } = req.body;
       const equipments: Equipment[] = await this.equipmentService.findSomeProduct(limit);
       res.status(200).json({ data: equipments });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public findBoatWithCountry = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const location = req.params.location;
+      const data = await this.equipmentService.findBoatsbyLocation(location);
+      res.status(200).json({ data });
     } catch (error) {
       next(error);
     }
