@@ -260,6 +260,26 @@ class EquipmentController {
       next(error);
     }
   };
+
+  public findBoatByCountry = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const country = req.params.country;
+      const boats: Boat[] = await this.equipmentService.findBoatByCountry(country);
+      res.status(200).json({ data: boats });
+    } catch (error) {
+      next(error);
+    }
+  };
+  public findHebergementByCountry = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const country = req.params.country;
+      const hebergements: Hebergement[] = await this.equipmentService.findHebergementByCountry(country);
+      res.status(200).json({ data: hebergements });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public findBoatsByType = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const typeId = req.params.typeId;

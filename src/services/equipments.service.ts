@@ -446,6 +446,15 @@ class EquipmentService {
     return equipments;
   }
 
+  public async findBoatByCountry(country: string): Promise<Boat[]> {
+    const boats: Boat[] = await this.boats.find({ country: country });
+    return boats;
+  }
+  public async findHebergementByCountry(country: string): Promise<Hebergement[]> {
+    const hebergements: Hebergement[] = await this.boats.find({ country: country });
+    return hebergements;
+  }
+
   public async findServicesByTypeAndUser(typeId: string, ownerId: string): Promise<{ services: Service[]; type: EquipmentType }> {
     if (!isValidObjectId(ownerId) || !isValidObjectId(typeId)) {
       throw new HttpException(400, 'Invalid id!');

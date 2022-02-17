@@ -59,7 +59,7 @@ class OrderRoute implements Route {
     this.router.get(`${this.path}/hebergements/type/:typeId`, this.equipmentController.findhebergementsByType);
 
     this.router.get(`${this.path}/limit`, this.equipmentController.getAllEuipmentsWithLimit);
-
+    
     this.router.get(`${this.path}/service/user/:id`, this.equipmentController.findServicesByUser);
     this.router.get(`${this.path}/user/:id`, this.equipmentController.findEquipmentsByUser);
     this.router.get(`${this.path}/boats/user/:id`, this.equipmentController.findBoatsByUser);

@@ -94,7 +94,7 @@ export class HebergementType {
   /*   cat: souCat;
 
  */
-  parentId: string;
+
 }
 
 export class Hebergement {
