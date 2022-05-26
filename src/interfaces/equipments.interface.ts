@@ -20,6 +20,7 @@ export class Equipment {
   price: number;
   details: any;
   adress: string;
+  country: string;
 }
 export class EquipmentType {
   _id: string;
@@ -31,15 +32,7 @@ export class EquipmentType {
    */
 }
 
-export class BoatType {
-  _id: string;
-  name: string;
-  icon: string;
-  description: string;
-  items: any[];
-  /*   cat: souCat;
-   */
-}
+
 
 export class Service {
   _id: string;
@@ -83,6 +76,15 @@ export class Boat {
   reviews: any[];
   rating: number;
   details: any;
+}
+export class BoatType {
+  _id: string;
+  name: string;
+  icon: string;
+  description: string;
+  items: any[];
+  /*   cat: souCat;
+   */
 }
 
 export class HebergementType {

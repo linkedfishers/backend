@@ -10,7 +10,7 @@ import { User } from '../interfaces/users.interface';
 import userModel from '../models/users.model';
 import { Equipment, Hebergement, Service, Boat } from '../interfaces/equipments.interface';
 import AuthService from './auth.service';
-import { areIntervalsOverlapping, differenceInDays, isPast } from 'date-fns';
+import { areIntervalsOverlapping, differenceInDays, isPast,differenceInHours } from 'date-fns';
 class ReservationService {
   public reservations = reservationModel;
   public equipments = models.equipmentModel;
@@ -323,7 +323,7 @@ class ReservationService {
   }
 
   private calculatePrice(reservation: Reservation): number {
-    let numberOfdays = differenceInDays(new Date(reservation.dateEnd), new Date(reservation.dateStart));
+    let numberOfdays = differenceInHours(new Date(reservation.dateEnd), new Date(reservation.dateStart));
     return numberOfdays * reservation.item.price;
   }
 

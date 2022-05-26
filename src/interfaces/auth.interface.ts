@@ -16,7 +16,8 @@ export interface DataStoredInToken {
 export interface TokenData {
   token: string;
   expiresIn: number;
-}//commentaire 
+}
+//commentaire 
 
 export interface RequestWithUser extends Request {
   user: User;

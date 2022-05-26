@@ -220,7 +220,7 @@ class EquipmentService {
   } */
 
   public async addEquipmentType(equipmentType: EquipmentType): Promise<EquipmentType> {
-    if (!equipmentType.name || !equipmentType.description) {
+    if (!equipmentType.name || !equipmentType.description ) {
       /*       console.log(equipmentType);
        */ throw new HttpException(400, 'Missing Equipment type informations!');
     }
