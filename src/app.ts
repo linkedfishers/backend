@@ -18,11 +18,11 @@ class App {
   public port: string | number;
   public env: boolean;
   //Options to our ssl cert
- /*  private Option = {
+  private Option = {
     key: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.key', { encoding: 'utf8' }),
     cert: fs.readFileSync('/etc/ssl/private/www.linkedfishers.com.pem', { encoding: 'utf8' }),
   };
- */
+
   public option = {};
   constructor(routes: Routes[]) {
     this.app = express();
@@ -39,18 +39,18 @@ class App {
     //Serve static files
     this.app.use(express.static('uploads'));
   }
-   public listen() {
+/*    public listen() {
     const server = http.createServer(this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
-  }
- /*  public listenTwo() {
+  } */
+  public listenTwo() {
     const server = https.createServer(this.Option, this.app);
     server.listen(this.port, () => {
       console.log(`🚀 App listening on the port ${this.port}`);
     });
-  } */
+  }
 
   public getServer() {
     return this.app;
