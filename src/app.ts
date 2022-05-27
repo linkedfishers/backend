@@ -83,13 +83,13 @@ class App {
     this.app.use(express.json({ limit: '50mb' }));
     this.app.use(express.urlencoded({ limit: '50mb' }));
     this.app.use(cookieParser());
-   /*  this.app.all('*', (req, res, next) => {
+    this.app.all('*', (req, res, next) => {
       if (req.secure) {
         return next();
       } else {
         res.redirect(307, 'https://' + req.hostname + ':' + this.app.get('secport') + req.url);
       }
-    }); */
+    });
   }
 
   private initializeRoutes(routes: Routes[]) {
