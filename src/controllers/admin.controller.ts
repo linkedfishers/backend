@@ -162,7 +162,7 @@ class AdminController {
       const typeId: string = req.params.id;
       const boatTypeData = req.body;
       if (req.file) {
-        boatTypeData.icon = req.file.path.split('/').splice(1).join('1');
+        boatTypeData.icon = req.file.path.split('/').splice(1).join('/');
       }
       const boatType: BoatType = await this.equipmentService.updateBoatType(boatTypeData, typeId);
       res.status(200).json({ data: boatType, message: 'Updated Boat Type' });

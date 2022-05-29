@@ -40,7 +40,7 @@ class EquipmentController {
       const equipmentData = req.body;
       equipmentData.owner = user._id;
       if (req.files) {
-        equipmentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        equipmentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
         /*                 equipmentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
          */
       }
@@ -61,7 +61,7 @@ class EquipmentController {
       serviceData.owner = user._id;
 
       if (req.files) {
-        serviceData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        serviceData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
 
       /*       if (req.file) {
@@ -140,7 +140,7 @@ class EquipmentController {
       const boatdId: string = req.params.id;
       boatData.owner = user._id;
       if (req.files) {
-        boatData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        boatData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
       /*     if (req.file) {
         boatData.image = req.file.path.split('/').splice(1).join('/');
@@ -158,7 +158,7 @@ class EquipmentController {
       const eqId: string = req.params.id;
       equipmentData.owner = user._id;
       if (req.files) {
-        equipmentData.images = req.files.map(file => file.path.split('\\').splice(1).join('\\'));
+        equipmentData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
       /*   if (req.file) {
         equipmentData.image = req.file.path.split('/').splice(1).join('/');
