@@ -1,9 +1,4 @@
 import { User } from './users.interface';
-/*
-export class souCat {
-  _id: string;
-  name: string;
-} */
 
 export class Equipment {
   _id: string;
@@ -28,11 +23,7 @@ export class EquipmentType {
   icon: string;
   description: string;
   items: any[];
-  /*   cat: souCat;
-   */
 }
-
-
 
 export class Service {
   _id: string;
@@ -57,8 +48,6 @@ export class ServiceType {
   icon: string;
   description: string;
   items: any[];
-  /*   cat: souCat;
-   */
 }
 export class Boat {
   _id: string;
@@ -83,8 +72,6 @@ export class BoatType {
   icon: string;
   description: string;
   items: any[];
-  /*   cat: souCat;
-   */
 }
 
 export class HebergementType {
@@ -93,10 +80,6 @@ export class HebergementType {
   icon: string;
   description: string;
   items: any[];
-  /*   cat: souCat;
-
- */
-
 }
 
 export class Hebergement {

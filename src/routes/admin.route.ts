@@ -42,7 +42,7 @@ class AdminRoute implements Route {
     this.router.put(`${this.path}/order/:id`, this.orderController.updateOrder);
     this.router.get(`${this.path}/order/getTotal`, this.orderController.totalSales);
     this.router.post(`${this.path}/content/new`, adminMiddleware, uploadMiddleware.array('files'), this.adminController.createContent);
-    this.router.delete(`${this.path}/content/:id`,adminMiddleware,this.adminController.deleteContent)
+    this.router.delete(`${this.path}/content/:id`, adminMiddleware, this.adminController.deleteContent);
 
     this.router.put(`${this.path}/content/:id`, uploadMiddleware.array('files'), this.contentController.UpdateContent);
     this.router.get(`${this.path}/contents/all`, this.adminController.findAllContents);
@@ -52,14 +52,14 @@ class AdminRoute implements Route {
     this.router.get(`${this.path}/reports/:id`, adminMiddleware, this.adminController.getReports);
     this.router.delete(`${this.path}/reports/:id`, adminMiddleware, this.adminController.deleteReport);
     this.router.get(`${this.path}/overview`, adminMiddleware, this.adminController.getOverview);
-    this.router.post(`${this.path}/equipment/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addEquipmentType);
-    this.router.post(`${this.path}/boat/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addBoatType);
-    this.router.post(`${this.path}/hebergement/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addHebergementType);
-    this.router.post(`${this.path}/service/addType`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.addServiceType);
+    this.router.post(`${this.path}/equipment/addType`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.addEquipmentType);
+    this.router.post(`${this.path}/boat/addType`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.addBoatType);
+    this.router.post(`${this.path}/hebergement/addType`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.addHebergementType);
+    this.router.post(`${this.path}/service/addType`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.addServiceType);
     this.router.post(
       `${this.path}/productCategory/addType`,
       adminMiddleware,
-      uploadMiddleware.single('file'),
+      uploadMiddleware.single('files'),
       this.adminController.addProductCategory,
     );
 

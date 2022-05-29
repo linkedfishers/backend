@@ -43,7 +43,7 @@ class EquipmentService {
     return await boat.save();
   }
 
-  public async createService(serviceData): Promise<Boat> {
+  public async createService(serviceData): Promise<Service> {
     if (isEmptyObject(serviceData)) throw new HttpException(400, "Can't create empty boat");
     if (serviceData.position) {
       serviceData.position = {
@@ -220,7 +220,7 @@ class EquipmentService {
   } */
 
   public async addEquipmentType(equipmentType: EquipmentType): Promise<EquipmentType> {
-    if (!equipmentType.name || !equipmentType.description ) {
+    if (!equipmentType.name || !equipmentType.description) {
       /*       console.log(equipmentType);
        */ throw new HttpException(400, 'Missing Equipment type informations!');
     }
@@ -248,7 +248,7 @@ class EquipmentService {
   }
 
   public async addBoatType(boatType: BoatType): Promise<BoatType> {
-    if (!boatType.name || !boatType.description) {
+    if (!boatType.name) {
       throw new HttpException(400, 'Missing Boat type informations!');
     }
     const newType = new models.boatType(boatType);
@@ -303,7 +303,7 @@ class EquipmentService {
     return type;
   }
 
-  public async deleteHebergementType(typeId: string): Promise<BoatType> {
+  public async deleteHebergementType(typeId: string): Promise<HebergementType> {
     const type = await models.hebergementType.findByIdAndDelete(typeId);
     if (fs.existsSync('uploads/' + type.icon)) {
       fs.unlinkSync('uploads/' + type.icon);
@@ -311,7 +311,7 @@ class EquipmentService {
     return type;
   }
 
-  public async deleteServiceType(typeId: string): Promise<BoatType> {
+  public async deleteServiceType(typeId: string): Promise<ServiceType> {
     const type = await models.serviceTypeModel.findByIdAndDelete(typeId);
     if (fs.existsSync('uploads/' + type.icon)) {
       fs.unlinkSync('uploads/' + type.icon);

@@ -11,7 +11,7 @@ import {
   /* souCat, */
 } from '../interfaces/equipments.interface';
 import { Review } from '../interfaces/review.interface';
-
+//@ts-ignore
 const souCatShema = new mongoose.Schema({
   name: { type: String, required: true },
 });
@@ -20,17 +20,24 @@ const equipmentTypeSchema = new mongoose.Schema({
   name: { type: String, unique: true },
   description: { type: String, required: false },
   icon: { type: String },
-  /*   cat: { type: mongoose.Schema.Types.ObjectId, ref: 'souCat', required: false },
-   */
-  parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: false },
+});
+
+const boatTypeSchema = new mongoose.Schema({
+  name: { type: String, unique: true },
+  description: { type: String, required: false },
+  icon: { type: String },
+});
+
+const hebergementTypeSchema = new mongoose.Schema({
+  name: { type: String, unique: true },
+  description: { type: String, required: false },
+  icon: { type: String },
 });
 
 const serviceTypeSchema = new mongoose.Schema({
   name: { type: String, unique: true },
   description: { type: String, required: false },
   icon: { type: String },
-  /*   cat: { type: mongoose.Schema.Types.ObjectId, ref: 'souCat', required: false },
-   */
 });
 
 const equipmentSchema = new mongoose.Schema({
@@ -41,7 +48,7 @@ const equipmentSchema = new mongoose.Schema({
   type: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentType', required: true },
   description: String,
   adress: String,
-  country:{type:String,required:true},
+  country: { type: String, required: true },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
   price: Number,
   position: {
@@ -108,30 +115,31 @@ const reviewSchema = new mongoose.Schema({
   rating: Number,
 });
 
+equipmentTypeSchema.set('timestamps', true);
+boatTypeSchema.set('timestamps', true);
+serviceTypeSchema.set('timestamps', true);
 equipmentSchema.set('timestamps', true);
 hebergementSchema.set('timestamps', true);
 boatSchema.set('timestamps', true);
 reviewSchema.set('timestamps', true);
 serviceShema.set('timestamps', true);
-souCatShema.set('timestamp', true);
 
 const serviceTypeModel = mongoose.model<ServiceType & mongoose.Document>('ServiceType', serviceTypeSchema);
+//@ts-ignore
 const equipmentModel = mongoose.model<Equipment & mongoose.Document>('Equipment', equipmentSchema);
 const equipmentTypetModel = mongoose.model<EquipmentType & mongoose.Document>('EquipmentType', equipmentTypeSchema);
-const hebergementType = mongoose.model<HebergementType & mongoose.Document>('HebergementType', equipmentTypeSchema);
-const boatType = mongoose.model<BoatType & mongoose.Document>('BoatType', equipmentTypeSchema);
+const hebergementType = mongoose.model<HebergementType & mongoose.Document>('HebergementType', hebergementTypeSchema);
+const boatType = mongoose.model<BoatType & mongoose.Document>('BoatType', boatTypeSchema);
 const hebergementtModel = mongoose.model<Hebergement & mongoose.Document>('Hebergement', hebergementSchema);
 const boattModel = mongoose.model<Boat & mongoose.Document>('Boat', boatSchema);
 const reviewModel = mongoose.model<Review & mongoose.Document>('Review', reviewSchema);
 const serviceModel = mongoose.model<Service & mongoose.Document>('Service', serviceShema);
-/* const sousCatModel = mongoose.model<souCat & mongoose.Document>('souCat', souCatShema); */
 const models = {
   equipmentModel,
   equipmentTypetModel,
   hebergementtModel,
   boattModel,
-  /*   sousCatModel,
-   */ hebergementType,
+  hebergementType,
   boatType,
   reviewModel,
   serviceModel,
