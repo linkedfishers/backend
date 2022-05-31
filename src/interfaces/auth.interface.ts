@@ -13,6 +13,7 @@ export interface DataStoredInToken {
   slug: string;
 }
 
+//commentaire
 export interface TokenData {
   token: string;
   expiresIn: number;
