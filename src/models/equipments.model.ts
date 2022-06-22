@@ -76,7 +76,7 @@ const serviceShema = new mongoose.Schema({
 
 const hebergementSchema = new mongoose.Schema({
   name: String,
-  country: { type: String, required: true },
+  country: { type: String},
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String },
   images: [{ type: String }],
