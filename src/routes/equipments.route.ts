@@ -75,9 +75,9 @@ class EquipmentRoute implements Route {
     this.router.delete(`${this.path}/hebergement/:id`, authMiddleware, this.equipmentController.deleteHebergement);
     this.router.delete(`${this.path}/service/:id`, authMiddleware, this.equipmentController.deleteService);
     this.router.put(`${this.path}/boat/:id`, authMiddleware, uploadMiddleware.array('files'), this.equipmentController.updateBoat);
-    this.router.put(`${this.path}/equipment/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.updateEquipment);
-    this.router.put(`${this.path}/hebergement/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.updateHebergement);
-    this.router.put(`${this.path}/service/:id`, authMiddleware, uploadMiddleware.single('file'), this.equipmentController.updateService);
+    this.router.put(`${this.path}/equipment/:id`, authMiddleware, uploadMiddleware.array('files'), this.equipmentController.updateEquipment);
+    this.router.put(`${this.path}/hebergement/:id`, authMiddleware, uploadMiddleware.array('files'), this.equipmentController.updateHebergement);
+    this.router.put(`${this.path}/service/:id`, authMiddleware, uploadMiddleware, uploadMiddleware.array('files'), this.equipmentController.updateService);
     this.router.get(`${this.path}/boat/:id`, this.equipmentController.getBoat);
     this.router.get(`${this.path}/equipment/:id`, this.equipmentController.getEquipment);
     this.router.get(`${this.path}/hebergement/:id`, this.equipmentController.getHebergement);
