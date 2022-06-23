@@ -90,5 +90,6 @@ class EquipmentRoute implements Route {
     this.router.get(`${this.path}/contents/all`, this.adminController.findAllContents);
   }
 }
+//comentaire
 
 export default EquipmentRoute;
