@@ -140,7 +140,7 @@ class EquipmentController {
       const boatdId: string = req.params.id;
       boatData.owner = user._id;
       if (req.files) {
-       
+
         boatData.images = req.files.map(file => file.path.split('/').splice(1).join('/'));
       }
       /*     if (req.file) {
