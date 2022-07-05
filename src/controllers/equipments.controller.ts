@@ -126,7 +126,7 @@ class EquipmentController {
       /*     if (req.file) {
         serviceData.image = req.file.path.split('/').splice(1).join('/');
       } */
-      const service: Service = await this.equipmentService.updateHebergement(serviceData, serviceId);
+      const service: Service = await this.equipmentService.updateService(serviceData, serviceId);
       res.status(201).json({ data: service, message: 'Updated Service' });
     } catch (error) {
       next(error);
