@@ -57,22 +57,29 @@ const equipmentSchema = new mongoose.Schema({
   details: { type: mongoose.Schema.Types.Mixed, required: false },
 });
 
-const serviceShema = new mongoose.Schema({
+const serviceSchema = new mongoose.Schema({
   name: String,
   country: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String },
   images: [{ type: String }],
   adress: String,
-  type: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceType', required: true },
   description: String,
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
   price: Number,
   position: {
     coordinates: { type: [Number], index: '2dsphere' },
   },
+  type: { type: mongoose.Schema.Types.ObjectId, ref: 'ServiceType', required: true },
+
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
   details: { type: mongoose.Schema.Types.Mixed, required: false },
 });
+
+/*   details: { type: mongoose.Schema.Types.Mixed, required: false },
+}); */
+
+
+
 
 const hebergementSchema = new mongoose.Schema({
   name: String,
@@ -80,7 +87,7 @@ const hebergementSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String },
   images: [{ type: String }],
-  adress: String,
+  address: String,
   description: String,
   price: Number,
   position: {
@@ -122,7 +129,7 @@ equipmentSchema.set('timestamps', true);
 hebergementSchema.set('timestamps', true);
 boatSchema.set('timestamps', true);
 reviewSchema.set('timestamps', true);
-serviceShema.set('timestamps', true);
+serviceSchema.set('timestamps', true);
 
 const serviceTypeModel = mongoose.model<ServiceType & mongoose.Document>('ServiceType', serviceTypeSchema);
 //@ts-ignore
@@ -133,7 +140,7 @@ const boatType = mongoose.model<BoatType & mongoose.Document>('BoatType', boatTy
 const hebergementtModel = mongoose.model<Hebergement & mongoose.Document>('Hebergement', hebergementSchema);
 const boattModel = mongoose.model<Boat & mongoose.Document>('Boat', boatSchema);
 const reviewModel = mongoose.model<Review & mongoose.Document>('Review', reviewSchema);
-const serviceModel = mongoose.model<Service & mongoose.Document>('Service', serviceShema);
+const serviceModel = mongoose.model<Service & mongoose.Document>('Service', serviceSchema);
 const models = {
   equipmentModel,
   equipmentTypetModel,
