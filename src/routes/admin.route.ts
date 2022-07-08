@@ -64,10 +64,10 @@ class AdminRoute implements Route {
     );
 
     //Update Type Categries
-    this.router.put(`${this.path}/boat/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateBoatType);
-    this.router.put(`${this.path}/hebrgementType/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateHebergementType);
-    this.router.put(`${this.path}/equipmentType/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateEquipmentType);
-    this.router.put(`${this.path}/serviceType/:id`, adminMiddleware, uploadMiddleware.single('file'), this.adminController.updateServiceType);
+    this.router.put(`${this.path}/boat/:id`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.updateBoatType);
+    this.router.put(`${this.path}/hebrgementType/:id`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.updateHebergementType);
+    this.router.put(`${this.path}/equipmentType/:id`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.updateEquipmentType);
+    this.router.put(`${this.path}/serviceType/:id`, adminMiddleware, uploadMiddleware.single('files'), this.adminController.updateServiceType);
 
     // a verifier
     this.router.get(`${this.path}/hebergementType/:id`), adminMiddleware;

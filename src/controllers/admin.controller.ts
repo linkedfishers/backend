@@ -98,6 +98,7 @@ class AdminController {
   public addBoatType = async (req: RequestWithFile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const boatData = req.body;
+
       if (req.file) {
         boatData.icon = req.file.path.split('/').splice(1).join('/');
       }
@@ -161,6 +162,7 @@ class AdminController {
     try {
       const typeId: string = req.params.id;
       const boatTypeData = req.body;
+     
       if (req.file) {
         boatTypeData.icon = req.file.path.split('/').splice(1).join('/');
       }
